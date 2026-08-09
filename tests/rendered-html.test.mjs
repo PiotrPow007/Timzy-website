@@ -69,6 +69,11 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /SPA I BEAUTY/);
   assert.match(plHtml, /INNE BRANŻE/);
   assert.match(plHtml, /Twoi klienci pozostają Twoimi klientami/);
+  assert.match(plHtml, /Timzy sprawdza się wszędzie tam, gdzie klient rezerwuje czas specjalisty/);
+  assert.match(plHtml, /Trenerzy i eksperci/);
+  assert.match(plHtml, /Salony beauty/);
+  assert.match(plHtml, /Kliniki i gabinety/);
+  assert.match(plHtml, /Każdy biznes usługowy/);
   assert.match(plHtml, /Nie wykorzystujemy Twojej bazy klientów do promowania konkurencyjnych firm/);
   assert.match(plHtml, /Gotowy szablon/);
   assert.match(plHtml, /Wybierz z biblioteki gotowych template’ów aplikacji/);
