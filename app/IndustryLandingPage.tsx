@@ -380,7 +380,7 @@ const golfAutomationCopy: Record<SiteLocale, { eyebrow: string; title: string; b
 };
 
 function BrandMark({ compact = false }: { compact?: boolean }) {
-  return <span className={`brand-mark${compact ? " brand-mark--compact" : ""}`} aria-label="Timzy"><span className="brand-symbol" aria-hidden="true">T</span><span>imzy</span></span>;
+  return <span className={`brand-mark${compact ? " brand-mark--compact" : ""}`} aria-label="Timzy"><img className="brand-logo--purple" src="/assets/timzy-logo-official-purple.png" alt="" aria-hidden="true" /><img className="brand-logo--white" src="/assets/timzy-logo-official-white.png" alt="" aria-hidden="true" /></span>;
 }
 
 function localeRoot(locale: SiteLocale) {

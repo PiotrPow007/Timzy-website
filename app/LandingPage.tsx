@@ -284,8 +284,8 @@ export const landingCopy: Record<Locale, Copy> = {
 function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
     <span className={`brand-mark${compact ? " brand-mark--compact" : ""}`} aria-label="Timzy">
-      <span className="brand-symbol" aria-hidden="true">T</span>
-      <span>imzy</span>
+      <img className="brand-logo--purple" src="/assets/timzy-logo-official-purple.png" alt="" aria-hidden="true" />
+      <img className="brand-logo--white" src="/assets/timzy-logo-official-white.png" alt="" aria-hidden="true" />
     </span>
   );
 }
@@ -300,7 +300,7 @@ function BottomBar({ active = 0 }: { active?: number }) {
 }
 
 function HomeScreen() {
-  return <div className="app-screen app-home"><StatusBar /><div className="app-pad"><img src="/assets/timzy-logo.png" alt="Timzy SPA" className="app-logo" /><div className="beauty-collage"><img src="/assets/spa-hero.png" alt="" className="beauty-main" /><img src="/assets/spa-detail-3.png" alt="" className="beauty-card beauty-card--one" /><img src="/assets/spa-detail-4.png" alt="" className="beauty-card beauty-card--two" /></div><h3>Book an appointment<br />to our hair salon</h3><p>Quickly and conveniently!</p><button>Book your appointment</button></div><BottomBar /></div>;
+  return <div className="app-screen app-home"><StatusBar /><div className="app-pad"><img src="/assets/timzy-logo-official-purple.png" alt="Timzy SPA" className="app-logo" /><div className="beauty-collage"><img src="/assets/spa-hero.png" alt="" className="beauty-main" /><img src="/assets/spa-detail-3.png" alt="" className="beauty-card beauty-card--one" /><img src="/assets/spa-detail-4.png" alt="" className="beauty-card beauty-card--two" /></div><h3>Book an appointment<br />to our hair salon</h3><p>Quickly and conveniently!</p><button>Book your appointment</button></div><BottomBar /></div>;
 }
 
 function BookingScreen() {

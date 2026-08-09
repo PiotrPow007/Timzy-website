@@ -18,6 +18,8 @@ test("renders the English Timzy landing page", async () => {
   const html = await response.text();
   assert.match(html, /More bookings\. Less admin/);
   assert.match(html, /All under your brand/);
+  assert.match(html, /assets\/timzy-logo-official-purple\.png/);
+  assert.doesNotMatch(html, /class="brand-symbol"/);
   assert.match(html, /Book a free demo/);
   assert.match(html, /TRUE WHITE-LABEL/);
   assert.match(html, /Your clients remain your clients/);
