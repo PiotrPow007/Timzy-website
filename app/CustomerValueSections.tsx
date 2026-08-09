@@ -160,10 +160,10 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
 };
 
 const readyTemplateVisuals = [
-  { name: "Natural Sage", className: "ready-template-preview--sage", colours: ["#5AA79B", "#F6E9DD", "#315E58"] },
-  { name: "Noir Prestige", className: "ready-template-preview--noir", colours: ["#171313", "#C8966F", "#F3DEC0"] },
-  { name: "Sunset Energy", className: "ready-template-preview--sunset", colours: ["#FF9200", "#1A1010", "#F2D48A"] },
-  { name: "Fuchsia Pop", className: "ready-template-preview--fuchsia", colours: ["#E90083", "#FF95A8", "#4B163A"] },
+  { name: "Natural Sage", src: "/assets/templates/natural-sage.webp", colours: ["#5AA79B", "#F6E9DD", "#315E58"] },
+  { name: "Noir Prestige", src: "/assets/templates/noir-prestige.webp", colours: ["#171313", "#C8966F", "#F3DEC0"] },
+  { name: "Sunset Energy", src: "/assets/templates/sunset-energy.webp", colours: ["#FF9200", "#1A1010", "#F2D48A"] },
+  { name: "Fuchsia Pop", src: "/assets/templates/fuchsia-pop.webp", colours: ["#E90083", "#FF95A8", "#4B163A"] },
 ];
 
 export function CustomerOwnershipSection({ locale }: { locale: CustomerValueLocale }) {
@@ -192,7 +192,7 @@ export function TemplateChoiceSection({ locale, ctaHref }: { locale: CustomerVal
       <article className="template-option template-option--ready"><span>01</span><h3>{copy.readyTitle}</h3><p>{copy.readyBody}</p><ul>{copy.readyPoints.map((point) => <li key={point}><i>✓</i>{point}</li>)}</ul></article>
       <article className="template-option template-option--custom"><span>02</span><h3>{copy.customTitle}</h3><p>{copy.customBody}</p><ul>{copy.customPoints.map((point) => <li key={point}><i>✓</i>{point}</li>)}</ul></article>
     </div>
-    <div className="template-gallery"><div className="template-gallery-heading"><p>{copy.templateExamples}</p><span>{copy.templateLibraryNote}</span></div><div className="ready-template-grid">{readyTemplateVisuals.map((visual) => <article className="ready-template-card" key={visual.name}><div className={`ready-template-preview ${visual.className}`}><img src="/assets/templates/ready-template-library.webp" alt={`${visual.name} ready Timzy app template`} loading="lazy" /></div><div className="ready-template-meta"><div><span>{copy.templateReadyLabel}</span><b>{visual.name}</b><small>{copy.templateVariantLine}</small></div><div className="ready-template-colours">{visual.colours.map((colour) => <i key={colour} style={{ backgroundColor: colour }} />)}</div></div></article>)}</div></div>
+    <div className="template-gallery"><div className="template-gallery-heading"><p>{copy.templateExamples}</p><span>{copy.templateLibraryNote}</span></div><div className="ready-template-grid">{readyTemplateVisuals.map((visual) => <article className="ready-template-card" key={visual.name}><div className="ready-template-preview"><img src={visual.src} alt={`${visual.name} ready Timzy app template`} loading="lazy" /></div><div className="ready-template-meta"><div><span>{copy.templateReadyLabel}</span><b>{visual.name}</b><small>{copy.templateVariantLine}</small></div><div className="ready-template-colours">{visual.colours.map((colour) => <i key={colour} style={{ backgroundColor: colour }} />)}</div></div></article>)}</div></div>
     <a className="button" href={ctaHref} target="_blank" rel="noreferrer">{copy.templateCta}<span>→</span></a>
   </section>;
 }

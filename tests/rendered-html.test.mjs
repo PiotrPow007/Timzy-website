@@ -23,7 +23,10 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /Your clients remain your clients/);
   assert.match(html, /Start from a proven template or commission a fully custom design/);
   assert.match(html, /Choose from a library of ready-made app templates/);
-  assert.match(html, /assets\/templates\/ready-template-library\.webp/);
+  for (const template of ["natural-sage", "noir-prestige", "sunset-energy", "fuchsia-pop"]) {
+    assert.match(html, new RegExp(`assets/templates/${template}\\.webp`));
+  }
+  assert.doesNotMatch(html, /assets\/templates\/ready-template-library\.webp/);
   assert.match(html, /Natural Sage/);
   assert.match(html, /Noir Prestige/);
   assert.match(html, /Sunset Energy/);
@@ -46,9 +49,9 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /assets\/industries\/spa\.webp/);
   assert.match(html, /assets\/industries\/sport\.webp/);
   assert.match(html, /assets\/industries\/detailing\.webp/);
-  assert.match(html, /assets\/industries\/clinic\.webp/);
-  assert.match(html, /assets\/industries\/salon\.webp/);
-  assert.match(html, /assets\/industries\/golf\.webp/);
+  assert.match(html, /assets\/industries\/psychology\.webp/);
+  assert.match(html, /assets\/industries\/tailor\.webp/);
+  assert.match(html, /assets\/industries\/nutrition\.webp/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
   assert.doesNotMatch(html, /Your business, today|Signature ritual/);
 });

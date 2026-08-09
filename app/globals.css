@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap; src: url("/assets/fonts/manrope-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap; src: url("/assets/fonts/manrope-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "DM Serif Display"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/dm-serif-display-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "DM Serif Display"; font-style: normal; font-weight: 400; font-display: swap; src: url("/assets/fonts/dm-serif-display-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "DM Serif Display"; font-style: italic; font-weight: 400; font-display: swap; src: url("/assets/fonts/dm-serif-display-italic-latin-ext.woff2") format("woff2"); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "DM Serif Display"; font-style: italic; font-weight: 400; font-display: swap; src: url("/assets/fonts/dm-serif-display-italic-latin.woff2") format("woff2"); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+
 :root {
   --ink: #17141f;
   --muted: #6e6879;
@@ -22,7 +29,7 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Manrope", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; text-decoration: none; }
@@ -112,7 +119,7 @@ img { display: block; max-width: 100%; }
 .phone { position: absolute; width: 246px; aspect-ratio: 9 / 19.5; filter: drop-shadow(0 28px 36px rgba(42,29,68,.2)); }
 .phone-frame { position: relative; width: 100%; height: 100%; padding: 8px; border: 2px solid #312f35; border-radius: 43px; background: linear-gradient(135deg, #4b474e, #18171a 42%, #625d65 70%, #1c1b1e); box-shadow: inset 0 0 0 1px rgba(255,255,255,.45); }
 .phone-island { position: absolute; z-index: 8; top: 16px; left: 50%; transform: translateX(-50%); width: 80px; height: 24px; border-radius: 16px; background: #151419; }
-.app-screen { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 35px; background: #f7f4ff; font-family: Inter, ui-sans-serif, sans-serif; }
+.app-screen { position: relative; width: 100%; height: 100%; overflow: hidden; border-radius: 35px; background: #f7f4ff; font-family: "Manrope", ui-sans-serif, sans-serif; }
 .phone-status { position: relative; z-index: 4; height: 39px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; font-size: 8px; font-weight: 750; }
 .app-pad { position: absolute; inset: 39px 0 0; padding: 8px 17px 74px; text-align: center; background: radial-gradient(circle at 15% 30%, rgba(217,202,255,.65), transparent 35%), linear-gradient(180deg, #fbfaff, #f1edfb); }
 .app-logo { width: 94px; height: 46px; object-fit: contain; margin: 0 auto 8px; }
@@ -220,12 +227,11 @@ img { display: block; max-width: 100%; }
 .industry-card:hover .industry-photo { transform: scale(1.045); }
 .industry-visual::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 45%, rgba(18,13,25,.56)); }
 .industry-photo-tag { position: absolute; z-index: 2; left: 22px; bottom: 22px; padding: 9px 12px; border: 1px solid rgba(255,255,255,.4); border-radius: 999px; color: white; background: rgba(23,18,30,.46); backdrop-filter: blur(10px); font-size: 8px; font-weight: 850; letter-spacing: .13em; }
-.industry-collage { position: absolute; inset: 0; display: grid; grid-template-columns: 1.08fr .92fr; grid-template-rows: .94fr 1.06fr; gap: 7px; padding: 12px; background: #e9e4f0; }
+.industry-collage { position: absolute; inset: 0; display: grid; grid-template-columns: 1.08fr .92fr; grid-template-rows: repeat(2, minmax(0,1fr)); gap: 7px; padding: 12px; background: #e9e4f0; }
 .industry-collage-tile { width: 100%; height: 100%; min-width: 0; min-height: 0; display: block; object-fit: cover; border-radius: 15px; transition: transform .45s ease; }
-.industry-collage-tile--1 { object-position: 58% 50%; }
-.industry-collage-tile--2 { object-position: 52% 50%; }
-.industry-collage-tile--3 { object-position: 43% 50%; }
-.industry-collage-tile--4 { object-position: 55% 50%; }
+.industry-collage-tile--1 { grid-row: 1 / 3; object-position: 54% 50%; }
+.industry-collage-tile--2 { object-position: 48% 50%; }
+.industry-collage-tile--3 { object-position: 52% 50%; }
 .industry-card:hover .industry-collage-tile:nth-child(odd) { transform: scale(1.025); }
 .industry-visual--other::after { background: linear-gradient(180deg, transparent 62%, rgba(18,13,25,.48)); }
 .industry-copy { display: flex; flex-direction: column; justify-content: center; padding: 44px 34px; }
@@ -308,12 +314,8 @@ img { display: block; max-width: 100%; }
 .ready-template-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 16px; }
 .ready-template-card { overflow: hidden; border: 1px solid rgba(91,65,130,.13); border-radius: 28px; background: white; box-shadow: 0 18px 45px rgba(55,39,80,.06); transition: transform .22s ease, box-shadow .22s ease; }
 .ready-template-card:hover { transform: translateY(-5px); box-shadow: 0 26px 56px rgba(55,39,80,.12); }
-.ready-template-preview { position: relative; overflow: hidden; aspect-ratio: .78; background: #eee8f5; }
-.ready-template-preview img { position: absolute; top: -10%; width: 420%; max-width: none; height: auto; }
-.ready-template-preview--sage img { left: -23%; }
-.ready-template-preview--noir img { left: -124%; }
-.ready-template-preview--sunset img { left: -225%; }
-.ready-template-preview--fuchsia img { left: -326%; }
+.ready-template-preview { display: grid; place-items: center; overflow: hidden; aspect-ratio: 364 / 545; background: #eee8f5; }
+.ready-template-preview img { width: 100%; height: 100%; object-fit: contain; object-position: center; }
 .ready-template-meta { min-height: 125px; display: flex; align-items: flex-end; justify-content: space-between; gap: 15px; padding: 20px 20px 22px; }
 .ready-template-meta > div:first-child { display: flex; flex-direction: column; }
 .ready-template-meta span { color: var(--violet); font-size: 7px; font-weight: 850; letter-spacing: .12em; }
@@ -547,6 +549,31 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .industry-final { background: linear-gradient(135deg, #fbfafc, var(--industry-soft)); }
 .industry-final .button { background: var(--industry-accent); }
 
+/* Premium editorial typography */
+.hero h1,
+.section-intro h2,
+.ownership-copy h2,
+.white-copy h2,
+.template-heading h2,
+.template-gallery-heading > p,
+.process-heading h2,
+.offer-copy h2,
+.final-cta h2,
+.implementation-heading h2,
+.custom-development-copy h2,
+.data-architecture-copy h2,
+.industry-hero h1,
+.industry-problem-copy h2,
+.industry-product h2,
+.golf-automation h2 {
+  font-family: "DM Serif Display", Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+.hero h1 span { font-style: italic; letter-spacing: -.025em; }
+.hero-body, .section-intro > p:last-child, .template-heading > p:last-child { letter-spacing: -.012em; }
+
 @media (max-width: 1100px) {
   .actual-screen-grid { grid-template-columns: repeat(3, minmax(0,1fr)); gap: 35px 20px; }
   .actual-screen-card:nth-child(even) { margin-top: 0; }
@@ -634,8 +661,8 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .hero { grid-template-columns: .85fr 1.15fr; padding-inline: 32px; }
   .hero h1 { font-size: clamp(52px, 6vw, 74px); }
   .hero-visual { transform: scale(.88); transform-origin: center; }
-  .industry-card { grid-template-columns: 1fr; }
-  .industry-visual { min-height: 270px; }
+  .industry-card { min-height: 0; grid-template-columns: 1fr; grid-template-rows: 300px auto; }
+  .industry-visual { height: 300px; min-height: 0; }
   .industry-copy { padding: 32px; }
   .offer-card { right: 0; }
 }
@@ -649,8 +676,8 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .hero-actions, .proof-row { justify-content: center; }
   .hero-visual { height: 590px; transform: scale(.9); }
   .industry-grid { grid-template-columns: 1fr; }
-  .industry-card { grid-template-columns: .8fr 1.2fr; min-height: 420px; }
-  .industry-visual { min-height: 100%; }
+  .industry-card { grid-template-columns: .8fr 1.2fr; grid-template-rows: 1fr; min-height: 420px; }
+  .industry-visual { height: 100%; min-height: 100%; }
   .white-label, .offer { grid-template-columns: 1fr; }
   .white-label { padding-block: 100px; }
   .white-copy { max-width: 720px; }
@@ -685,8 +712,8 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .section-intro { margin-bottom: 42px; }
   .section-intro h2, .white-copy h2, .process-heading h2, .offer-copy h2, .final-cta h2 { font-size: 40px; }
   .section-intro > p:last-child, .white-copy > p, .offer-copy > p, .final-cta > p { font-size: 15px; }
-  .industry-card { grid-template-columns: 1fr; min-height: 0; }
-  .industry-visual { min-height: 260px; }
+  .industry-card { grid-template-columns: 1fr; grid-template-rows: 260px auto; min-height: 0; }
+  .industry-visual { height: 260px; min-height: 0; }
   .industry-copy { padding: 30px 24px 36px; }
   .white-label { gap: 25px; padding: 88px 18px 65px; }
   .brand-stage { min-height: 570px; transform: scale(.9); margin-inline: -22px; }

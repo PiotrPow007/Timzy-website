@@ -336,10 +336,14 @@ function industryHref(locale: Locale, slug: Copy["industries"][number]["slug"]) 
 }
 
 const industryImages = {
-  "spa-beauty": ["/assets/industries/spa.webp"],
-  sport: ["/assets/industries/sport.webp"],
-  "car-wash-detailing": ["/assets/industries/detailing.webp"],
-  other: ["/assets/industries/clinic.webp", "/assets/industries/salon.webp", "/assets/industries/golf.webp", "/assets/industries/sport.webp"],
+  "spa-beauty": [{ src: "/assets/industries/spa.webp", alt: "Premium spa treatment" }],
+  sport: [{ src: "/assets/industries/sport.webp", alt: "Private racquet club training" }],
+  "car-wash-detailing": [{ src: "/assets/industries/detailing.webp", alt: "Porsche in a premium detailing studio" }],
+  other: [
+    { src: "/assets/industries/psychology.webp", alt: "Private psychology consultation" },
+    { src: "/assets/industries/tailor.webp", alt: "Bespoke tailoring appointment" },
+    { src: "/assets/industries/nutrition.webp", alt: "Personal nutrition consultation" },
+  ],
 } as const;
 
 function whatsappHref(locale: Locale, industry?: string) {
@@ -366,7 +370,7 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <div className="signal-strip">{signalItems.map((item, index) => <span key={item}>{item}{index < signalItems.length - 1 ? <i /> : null}</span>)}</div>
 
-      <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className={`industry-visual industry-visual--${industry.slug}`}>{industry.slug === "other" ? <div className="industry-collage">{industryImages.other.map((src, tileIndex) => <img src={src} alt="" loading="lazy" key={src} className={`industry-collage-tile industry-collage-tile--${tileIndex + 1}`} />)}</div> : <img className="industry-photo" src={industryImages[industry.slug][0]} alt={`${industry.tag} business supported by Timzy`} loading="lazy" />}<span className="industry-photo-tag">{industry.tag}</span></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
+      <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className={`industry-visual industry-visual--${industry.slug}`}>{industry.slug === "other" ? <div className="industry-collage">{industryImages.other.map((image, tileIndex) => <img src={image.src} alt={image.alt} loading="lazy" key={image.src} className={`industry-collage-tile industry-collage-tile--${tileIndex + 1}`} />)}</div> : <img className="industry-photo" src={industryImages[industry.slug][0].src} alt={industryImages[industry.slug][0].alt} loading="lazy" />}<span className="industry-photo-tag">{industry.tag}</span></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
 
       <CustomerOwnershipSection locale={locale} />
 
