@@ -211,19 +211,22 @@ img { display: block; max-width: 100%; }
 .industry-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; }
 .industry-card { min-height: 480px; overflow: hidden; display: grid; grid-template-columns: .86fr 1.14fr; border: 1px solid var(--line); border-radius: 34px; background: white; box-shadow: 0 22px 55px rgba(57,41,86,.06); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .industry-card:hover { transform: translateY(-5px); border-color: rgba(111,69,234,.28); box-shadow: 0 30px 70px rgba(57,41,86,.12); }
-.industry-visual { position: relative; overflow: hidden; min-height: 100%; background: #eee7ff; }
-.industry-card--1 .industry-visual { background: #e1f2df; }
-.industry-card--2 .industry-visual { background: #fff0df; }
-.industry-card--3 .industry-visual { background: #e3f3f4; }
-.industry-art { position: absolute; width: 260px; height: 340px; left: -86px; top: 52px; transform: rotate(-17deg); border-radius: 50%; background: linear-gradient(145deg, #9e71ff, #5e38d1); box-shadow: 0 0 0 30px rgba(255,255,255,.18), 0 0 0 61px rgba(255,255,255,.12); }
-.industry-card--1 .industry-art { background: linear-gradient(145deg, #9cc56f, #185c50); }
-.industry-card--2 .industry-art { background: linear-gradient(145deg, #ffb45d, #dc6f57); }
-.industry-card--3 .industry-art { background: linear-gradient(145deg, #6edcd6, #36708e); }
-.industry-art span { position: absolute; right: 72px; top: 125px; color: white; font-size: 64px; }
-.industry-mini-screen { position: absolute; right: 22px; bottom: 34px; width: 146px; height: 190px; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 7px solid #29262d; border-radius: 28px; color: #342a43; background: rgba(255,255,255,.96); box-shadow: 0 22px 35px rgba(44,31,64,.2); }
-.industry-mini-screen small { color: var(--violet); font-size: 7px; font-weight: 850; letter-spacing: .1em; }
-.industry-mini-screen b { margin: 16px 0 3px; font-size: 34px; letter-spacing: -.06em; }
-.industry-mini-screen em { color: var(--muted); font-size: 8px; font-style: normal; }
+.industry-visual { position: relative; overflow: hidden; min-height: 100%; background: #eae5f0; }
+.industry-photo { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+.industry-visual--spa-beauty .industry-photo { object-position: 53% 48%; }
+.industry-visual--sport .industry-photo { object-position: 55% 50%; }
+.industry-visual--car-wash-detailing .industry-photo { object-position: 52% 50%; filter: contrast(1.05); }
+.industry-card:hover .industry-photo { transform: scale(1.045); }
+.industry-visual::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 45%, rgba(18,13,25,.56)); }
+.industry-photo-tag { position: absolute; z-index: 2; left: 22px; bottom: 22px; padding: 9px 12px; border: 1px solid rgba(255,255,255,.4); border-radius: 999px; color: white; background: rgba(23,18,30,.46); backdrop-filter: blur(10px); font-size: 8px; font-weight: 850; letter-spacing: .13em; }
+.industry-collage { position: absolute; inset: 0; display: grid; grid-template-columns: 1.08fr .92fr; grid-template-rows: .94fr 1.06fr; gap: 7px; padding: 12px; background: #e9e4f0; }
+.industry-collage-tile { width: 100%; height: 100%; min-width: 0; min-height: 0; display: block; object-fit: cover; border-radius: 15px; transition: transform .45s ease; }
+.industry-collage-tile--1 { object-position: 58% 50%; }
+.industry-collage-tile--2 { object-position: 52% 50%; }
+.industry-collage-tile--3 { object-position: 43% 50%; }
+.industry-collage-tile--4 { object-position: 55% 50%; }
+.industry-card:hover .industry-collage-tile:nth-child(odd) { transform: scale(1.025); }
+.industry-visual--other::after { background: linear-gradient(180deg, transparent 62%, rgba(18,13,25,.48)); }
 .industry-copy { display: flex; flex-direction: column; justify-content: center; padding: 44px 34px; }
 .card-tag { margin: 0 0 17px !important; color: var(--violet) !important; font-size: 9px !important; font-weight: 850; letter-spacing: .15em; }
 .industry-copy h3 { margin: 0; font-size: 28px; line-height: 1.12; letter-spacing: -.04em; }

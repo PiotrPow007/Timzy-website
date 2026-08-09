@@ -17,7 +17,7 @@ type Copy = {
   industriesEyebrow: string;
   industriesTitle: string;
   industriesBody: string;
-  industries: Array<{ slug: "sport" | "golf" | "tennis" | "car-wash-detailing"; tag: string; title: string; body: string; points: string[] }>;
+  industries: Array<{ slug: "spa-beauty" | "sport" | "car-wash-detailing" | "other"; tag: string; title: string; body: string; points: string[] }>;
   industryLink: string;
   whiteEyebrow: string;
   whiteTitle: string;
@@ -66,10 +66,10 @@ export const landingCopy: Record<Locale, Copy> = {
     industriesBody:
       "Your app is configured around the way you actually work, not around a generic marketplace template.",
     industries: [
-      { slug: "sport", tag: "SPORT CLUBS", title: "One place for club life", body: "Bring bookings, training, events and member communication into one branded club app.", points: ["Training and games", "Tournaments and camps", "Club news and reports"] },
-      { slug: "golf", tag: "GOLF", title: "Keep players close to the club", body: "Let players book games and training, follow tournaments and stay up to date with club life.", points: ["Games and training", "Coach calendars", "Tournaments and camps"] },
-      { slug: "tennis", tag: "TENNIS", title: "Fill courts and coaching hours", body: "Turn court time, lessons and club events into a simple mobile booking journey.", points: ["Courts and lessons", "Coach availability", "Events and reminders"] },
+      { slug: "spa-beauty", tag: "SPA & BEAUTY", title: "Turn a first visit into a loyal relationship", body: "Combine bookings, specialists, vouchers, products and client communication in one elegant branded app.", points: ["Treatments and specialist calendars", "Vouchers and loyalty", "Shop and promotions"] },
+      { slug: "sport", tag: "SPORT", title: "One app for the whole club", body: "Bring clubs, coaches, golf, tennis and team activities into one branded mobile experience.", points: ["Training, games and bookings", "Tournaments and camps", "Member communication"] },
       { slug: "car-wash-detailing", tag: "CAR WASH & DETAILING", title: "Turn enquiries into booked visits", body: "Help clients choose a service package, see available dates and receive clear booking updates.", points: ["Service packages", "Live availability", "Automated reminders"] },
+      { slug: "other", tag: "OTHER INDUSTRIES", title: "Timzy adapts to your service model", body: "Clinics, premium coaches, studios and specialist services can select the modules and journey they actually need.", points: ["Flexible service catalogue", "Roles and locations", "Individual configuration"] },
     ],
     industryLink: "See the solution",
     whiteEyebrow: "TRUE WHITE-LABEL",
@@ -144,10 +144,10 @@ export const landingCopy: Record<Locale, Copy> = {
     industriesTitle: "Jedna platforma. Inne doświadczenie dla każdej branży.",
     industriesBody: "Aplikacja powstaje wokół Twojego sposobu pracy, a nie szablonu ogólnego marketplace’u.",
     industries: [
-      { slug: "sport", tag: "KLUBY SPORTOWE", title: "Całe życie klubu w jednym miejscu", body: "Połącz rezerwacje, treningi, wydarzenia i komunikację z członkami w aplikacji pod marką klubu.", points: ["Treningi i gry", "Turnieje i obozy", "Aktualności i raporty"] },
-      { slug: "golf", tag: "GOLF", title: "Zostań bliżej swoich graczy", body: "Gracze rezerwują gry i treningi, śledzą turnieje i są na bieżąco z życiem klubu.", points: ["Gry i treningi", "Kalendarze trenerów", "Turnieje i obozy"] },
-      { slug: "tennis", tag: "TENIS", title: "Zapełniaj korty i godziny trenerów", body: "Połącz rezerwacje kortów, treningów i wydarzeń w jeden prosty proces mobilny.", points: ["Korty i treningi", "Dostępność trenerów", "Wydarzenia i przypomnienia"] },
+      { slug: "spa-beauty", tag: "SPA I BEAUTY", title: "Zmieniaj pierwszą wizytę w lojalną relację", body: "Połącz rezerwacje, specjalistów, vouchery, produkty i komunikację w eleganckiej aplikacji pod swoją marką.", points: ["Zabiegi i kalendarze specjalistów", "Vouchery i lojalność", "Sklep i promocje"] },
+      { slug: "sport", tag: "SPORT", title: "Całe życie klubu w jednej aplikacji", body: "Połącz kluby, trenerów, golf, tenis i sporty zespołowe w jednym mobilnym doświadczeniu pod marką organizacji.", points: ["Treningi, gry i rezerwacje", "Turnieje i obozy", "Komunikacja z członkami"] },
       { slug: "car-wash-detailing", tag: "MYJNIE I DETAILING", title: "Zmieniaj zapytania w umówione wizyty", body: "Klient wybiera pakiet, widzi wolne terminy i otrzymuje jasne informacje o rezerwacji.", points: ["Pakiety usług", "Dostępne terminy", "Automatyczne przypomnienia"] },
+      { slug: "other", tag: "INNE BRANŻE", title: "Timzy dopasowuje się do Twojego modelu usług", body: "Kliniki, trenerzy premium, studia i specjalistyczne usługi wybierają moduły oraz ścieżkę klienta, których naprawdę potrzebują.", points: ["Elastyczny katalog usług", "Role i lokalizacje", "Konfiguracja indywidualna"] },
     ],
     industryLink: "Zobacz rozwiązanie",
     whiteEyebrow: "PRAWDZIWY WHITE-LABEL",
@@ -219,10 +219,10 @@ export const landingCopy: Record<Locale, Copy> = {
     industriesTitle: "Una plataforma. Una experiencia distinta para cada sector.",
     industriesBody: "Tu app se configura según tu forma real de trabajar, no según una plantilla genérica de marketplace.",
     industries: [
-      { slug: "sport", tag: "CLUBES DEPORTIVOS", title: "Toda la vida del club en un solo lugar", body: "Une reservas, entrenamientos, eventos y comunicación con socios en una app con tu marca.", points: ["Entrenamientos y juegos", "Torneos y campus", "Noticias e informes"] },
-      { slug: "golf", tag: "GOLF", title: "Mantén a los jugadores cerca del club", body: "Los jugadores reservan partidos y clases, siguen torneos y reciben las novedades del club.", points: ["Partidos y clases", "Agenda de entrenadores", "Torneos y campus"] },
-      { slug: "tennis", tag: "TENIS", title: "Llena pistas y horas de entrenamiento", body: "Convierte pistas, clases y eventos en un proceso de reserva móvil sencillo.", points: ["Pistas y clases", "Disponibilidad de entrenadores", "Eventos y recordatorios"] },
+      { slug: "spa-beauty", tag: "SPA Y BEAUTY", title: "Convierte una primera visita en una relación fiel", body: "Une reservas, especialistas, vales, productos y comunicación en una app elegante con tu marca.", points: ["Tratamientos y agendas", "Vales y fidelización", "Tienda y promociones"] },
+      { slug: "sport", tag: "DEPORTE", title: "Toda la vida del club en una app", body: "Une clubes, entrenadores, golf, tenis y deportes de equipo en una experiencia móvil con tu marca.", points: ["Entrenamientos, partidos y reservas", "Torneos y campus", "Comunicación con socios"] },
       { slug: "car-wash-detailing", tag: "LAVADO Y DETAILING", title: "Convierte consultas en citas", body: "El cliente elige un pack, ve las horas libres y recibe información clara de su reserva.", points: ["Packs de servicios", "Disponibilidad en vivo", "Recordatorios automáticos"] },
+      { slug: "other", tag: "OTROS SECTORES", title: "Timzy se adapta a tu modelo de servicio", body: "Clínicas, entrenadores premium, estudios y servicios especializados eligen los módulos y el recorrido que necesitan.", points: ["Catálogo flexible", "Roles y ubicaciones", "Configuración individual"] },
     ],
     industryLink: "Ver la solución",
     whiteEyebrow: "WHITE-LABEL DE VERDAD",
@@ -331,8 +331,16 @@ function LanguageNav({ locale }: { locale: Locale }) {
 }
 
 function industryHref(locale: Locale, slug: Copy["industries"][number]["slug"]) {
+  if (slug === "spa-beauty" || slug === "other") return "#capabilities";
   return `${locale === "en" ? "" : `/${locale}`}/${slug}/`;
 }
+
+const industryImages = {
+  "spa-beauty": ["/assets/industries/spa.webp"],
+  sport: ["/assets/industries/sport.webp"],
+  "car-wash-detailing": ["/assets/industries/detailing.webp"],
+  other: ["/assets/industries/clinic.webp", "/assets/industries/salon.webp", "/assets/industries/golf.webp", "/assets/industries/sport.webp"],
+} as const;
 
 function whatsappHref(locale: Locale, industry?: string) {
   const messages = {
@@ -353,7 +361,7 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <div className="signal-strip"><span>ONE APP</span><i /><span>BOOKINGS</span><i /><span>LOYALTY</span><i /><span>SALES</span><i /><span>CUSTOMER CARE</span></div>
 
-      <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className="industry-visual"><div className="industry-art"><span>{index === 0 ? "✦" : index === 1 ? "●" : index === 2 ? "◇" : "＋"}</span></div><div className="industry-mini-screen"><small>{industry.tag}</small><b>{index === 0 ? "09:30" : index === 1 ? "18:00" : index === 2 ? "11:45" : "14:20"}</b><em>available</em></div></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
+      <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className={`industry-visual industry-visual--${industry.slug}`}>{industry.slug === "other" ? <div className="industry-collage">{industryImages.other.map((src, tileIndex) => <img src={src} alt="" loading="lazy" key={src} className={`industry-collage-tile industry-collage-tile--${tileIndex + 1}`} />)}</div> : <img className="industry-photo" src={industryImages[industry.slug][0]} alt={`${industry.tag} business supported by Timzy`} loading="lazy" />}<span className="industry-photo-tag">{industry.tag}</span></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
 
       <CustomerOwnershipSection locale={locale} />
 

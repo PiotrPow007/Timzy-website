@@ -36,8 +36,15 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /THE COMPLETE TIMZY ECOSYSTEM/);
   assert.match(html, /A separate data environment for each client/);
   assert.match(html, /Typical marketplace/);
+  assert.match(html, /SPA &amp; BEAUTY|SPA & BEAUTY/);
   assert.match(html, /CAR WASH &amp; DETAILING|CAR WASH & DETAILING/);
-  assert.match(html, /href="\/tennis\//);
+  assert.match(html, /OTHER INDUSTRIES/);
+  assert.match(html, /assets\/industries\/spa\.webp/);
+  assert.match(html, /assets\/industries\/sport\.webp/);
+  assert.match(html, /assets\/industries\/detailing\.webp/);
+  assert.match(html, /assets\/industries\/clinic\.webp/);
+  assert.match(html, /assets\/industries\/salon\.webp/);
+  assert.match(html, /assets\/industries\/golf\.webp/);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
   assert.doesNotMatch(html, /Your business, today|Signature ritual/);
 });
@@ -48,6 +55,8 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.equal(es.status, 200);
   const plHtml = await pl.text();
   assert.match(plHtml, /Więcej rezerwacji\. Mniej obsługi/);
+  assert.match(plHtml, /SPA I BEAUTY/);
+  assert.match(plHtml, /INNE BRANŻE/);
   assert.match(plHtml, /Twoi klienci pozostają Twoimi klientami/);
   assert.match(plHtml, /Nie wykorzystujemy Twojej bazy klientów do promowania konkurencyjnych firm/);
   assert.match(plHtml, /Gotowy szablon/);
