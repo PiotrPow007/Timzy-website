@@ -58,8 +58,8 @@ export const landingCopy: Record<Locale, Copy> = {
     heroAccent: "All under your brand.",
     heroBody:
       "Timzy gives clients one branded place to book, stay informed and return more often. Your team gets one live calendar instead of calls, messages and scattered tools.",
-    heroCta: "Choose your industry",
-    heroCta2: "Talk to us on WhatsApp",
+    heroCta: "Book a free demo",
+    heroCta2: "Explore industries",
     proof: ["iOS & Android", "Your logo and colours", "Direct client relationship"],
     industriesEyebrow: "BUILT AROUND YOUR BUSINESS",
     industriesTitle: "One platform. A different experience for every industry.",
@@ -113,7 +113,7 @@ export const landingCopy: Record<Locale, Copy> = {
       ["Commission on bookings", "May apply to promotional acquisition", "No Timzy commission per booking"],
       ["Reservation data environment", "Shared platform environment", "Separate client instance"],
       ["Shop, loyalty and content", "Platform dependent", "Part of your ecosystem"],
-      ["Website, branding and QR/NFC", "Usually outside the platform", "Available in one implementation"],
+      ["Complete website, ecommerce, branding and QR/NFC", "Usually outside the platform", "Available in one implementation"],
     ],
     offerEyebrow: "A PROPOSAL THAT FITS",
     offerTitle: "Pay for the setup your business actually needs.",
@@ -137,8 +137,8 @@ export const landingCopy: Record<Locale, Copy> = {
     heroAccent: "Wszystko pod Twoją marką.",
     heroBody:
       "Timzy daje klientom jedno miejsce do rezerwacji, kontaktu i powrotów. Twój zespół dostaje aktualny grafik zamiast telefonów, wiadomości i rozproszonych narzędzi.",
-    heroCta: "Wybierz swoją branżę",
-    heroCta2: "Napisz na WhatsApp",
+    heroCta: "Umów bezpłatne demo",
+    heroCta2: "Zobacz branże",
     proof: ["iOS i Android", "Twoje logo i kolory", "Bezpośrednia relacja z klientem"],
     industriesEyebrow: "DOPASOWANE DO TWOJEGO BIZNESU",
     industriesTitle: "Jedna platforma. Inne doświadczenie dla każdej branży.",
@@ -190,7 +190,7 @@ export const landingCopy: Record<Locale, Copy> = {
       ["Prowizja od rezerwacji", "Możliwa przy płatnym pozyskiwaniu klientów", "Brak prowizji Timzy od rezerwacji"],
       ["Środowisko danych rezerwacji", "Wspólne środowisko platformy", "Osobna instancja klienta"],
       ["Sklep, lojalność i treści", "Zależne od platformy", "Część Twojego ekosystemu"],
-      ["Strona, branding i QR/NFC", "Zwykle poza platformą", "Dostępne w jednym wdrożeniu"],
+      ["Kompletna strona WWW, sklep, branding i QR/NFC", "Zwykle poza platformą", "Dostępne w jednym wdrożeniu"],
     ],
     offerEyebrow: "OFERTA DOPASOWANA DO FIRMY",
     offerTitle: "Płacisz za rozwiązanie, którego naprawdę potrzebujesz.",
@@ -212,8 +212,8 @@ export const landingCopy: Record<Locale, Copy> = {
     heroTitle: "Más reservas. Menos gestión.",
     heroAccent: "Todo con tu marca.",
     heroBody: "Timzy ofrece a tus clientes un único lugar para reservar, mantenerse informados y volver. Tu equipo trabaja con una agenda en vivo, sin llamadas ni herramientas dispersas.",
-    heroCta: "Elegir mi sector",
-    heroCta2: "Hablar por WhatsApp",
+    heroCta: "Reservar una demo gratis",
+    heroCta2: "Explorar sectores",
     proof: ["iOS y Android", "Tu logo y tus colores", "Relación directa con el cliente"],
     industriesEyebrow: "CREADA PARA TU NEGOCIO",
     industriesTitle: "Una plataforma. Una experiencia distinta para cada sector.",
@@ -352,14 +352,19 @@ function whatsappHref(locale: Locale, industry?: string) {
 }
 
 export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
+  const signalItems = {
+    en: ["YOUR APP", "BOOKINGS", "COMPLETE WEBSITE", "SALES", "CUSTOM FEATURES", "QR / NFC"],
+    pl: ["TWOJA APLIKACJA", "REZERWACJE", "KOMPLETNA STRONA WWW", "SPRZEDAŻ", "FUNKCJE NA ZAMÓWIENIE", "QR / NFC"],
+    es: ["TU APP", "RESERVAS", "WEB COMPLETA", "VENTAS", "FUNCIONES A MEDIDA", "QR / NFC"],
+  }[locale];
   return (
     <main id="top" lang={locale === "pl" ? "pl" : locale === "es" ? "es" : "en-GB"}>
       <a className="skip-link" href="#content">{copy.skip}</a>
       <header className="site-header"><a href={locale === "en" ? "/" : `/${locale}/`} className="logo-link"><BrandMark /></a><nav aria-label="Main navigation"><a href="#clients">{copy.nav[0]}</a><a href="#industries">{copy.nav[1]}</a><a href="#process">{copy.nav[2]}</a><a href="#compare">{copy.nav[3]}</a></nav><div className="header-actions"><LanguageNav locale={locale} /><a href={whatsappHref(locale)} className="button button--small" target="_blank" rel="noreferrer">{copy.navCta}</a></div></header>
 
-      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href="#industries">{copy.heroCta}<span aria-hidden="true">↘</span></a><a className="text-link" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.heroCta2}<span aria-hidden="true">→</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><ActualAppScreen src="/assets/mockups/client-services.webp" alt="Actual Timzy services screen" className="phone--left" /><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual Timzy home screen" className="phone--centre" eager /><ActualAppScreen src="/assets/mockups/client-shop.webp" alt="Actual Timzy shop screen" className="phone--right" /><div className="floating-note floating-note--proof"><span>✓</span><p><b>{locale === "pl" ? "Aktualna aplikacja" : locale === "es" ? "Aplicación actual" : "Actual product"}</b><small>{locale === "pl" ? "Prawdziwe ekrany Timzy" : locale === "es" ? "Pantallas reales de Timzy" : "Real Timzy screens"}</small></p></div></div></section>
+      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.heroCta}<span aria-hidden="true">→</span></a><a className="text-link" href="#industries">{copy.heroCta2}<span aria-hidden="true">↘</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><ActualAppScreen src="/assets/mockups/client-services.webp" alt="Actual Timzy services screen" className="phone--left" /><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual Timzy home screen" className="phone--centre" eager /><ActualAppScreen src="/assets/mockups/client-shop.webp" alt="Actual Timzy shop screen" className="phone--right" /><div className="floating-note floating-note--proof"><span>✓</span><p><b>{locale === "pl" ? "Aktualna aplikacja" : locale === "es" ? "Aplicación actual" : "Actual product"}</b><small>{locale === "pl" ? "Prawdziwe ekrany Timzy" : locale === "es" ? "Pantallas reales de Timzy" : "Real Timzy screens"}</small></p></div></div></section>
 
-      <div className="signal-strip"><span>ONE APP</span><i /><span>BOOKINGS</span><i /><span>LOYALTY</span><i /><span>SALES</span><i /><span>CUSTOMER CARE</span></div>
+      <div className="signal-strip">{signalItems.map((item, index) => <span key={item}>{item}{index < signalItems.length - 1 ? <i /> : null}</span>)}</div>
 
       <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className={`industry-visual industry-visual--${industry.slug}`}>{industry.slug === "other" ? <div className="industry-collage">{industryImages.other.map((src, tileIndex) => <img src={src} alt="" loading="lazy" key={src} className={`industry-collage-tile industry-collage-tile--${tileIndex + 1}`} />)}</div> : <img className="industry-photo" src={industryImages[industry.slug][0]} alt={`${industry.tag} business supported by Timzy`} loading="lazy" />}<span className="industry-photo-tag">{industry.tag}</span></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
 

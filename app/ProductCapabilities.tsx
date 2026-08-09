@@ -6,6 +6,12 @@ type CapabilityCopy = {
   body: string;
   groups: Array<{ icon: string; title: string; body: string; items: string[] }>;
   optionalLabel: string;
+  flexibilityEyebrow: string;
+  flexibilityTitle: string;
+  flexibilityBody: string;
+  flexibilityPoints: Array<{ title: string; body: string }>;
+  flexibilityCta: string;
+  flexibilityNote: string;
   extrasEyebrow: string;
   extrasTitle: string;
   extrasBody: string;
@@ -30,16 +36,27 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
       { icon: "T", title: "Your app and your brand", body: "Timzy provides the technology while your business remains visible at every step.", items: ["Separate iOS and Android app", "Publication under your brand", "Logo, colours, icons and content", "Template or full visual personalisation", "Client, employee and administrator roles", "A separate data environment for each client"] },
     ],
     optionalLabel: "Optional modules are configured and priced according to scope and may require third-party provider setup.",
+    flexibilityEyebrow: "BUILT TO ADAPT",
+    flexibilityTitle: "Need a function outside the standard modules? We can design and build it.",
+    flexibilityBody: "Timzy is modular, not a closed box. We first understand the workflow and business value, then define a safe extension that fits the rest of your system.",
+    flexibilityPoints: [
+      { title: "Dedicated modules", body: "Industry-specific journeys, rules, roles, reports and administrative tools." },
+      { title: "Integrations and automation", body: "Selected external systems, access control, notifications, payments and data flows." },
+      { title: "Multiple locations and teams", body: "Configuration around branches, permissions, specialists and operational differences." },
+      { title: "A clear development scope", body: "You receive a feasibility review, defined scope and separate estimate before development begins." },
+    ],
+    flexibilityCta: "Discuss my custom function",
+    flexibilityNote: "Custom development is estimated separately after a feasibility, security and business-value review.",
     extrasEyebrow: "MORE THAN SOFTWARE",
-    extrasTitle: "One partner for the app, launch and brand materials.",
+    extrasTitle: "One partner for the app, complete website, online store and brand materials.",
     extrasBody: "These services are prepared individually and can be added to the Timzy implementation.",
     extras: [
-      { title: "Website or online store", body: "A branded website, service presentation or extended online store." },
+      { title: "Complete website or online store", body: "Not only a single landing page. We can create a multi-page website with services, forms, news, SEO foundations and ecommerce, depending on scope." },
       { title: "Branding and design", body: "Logo, colours, icons, app graphics and a consistent visual system." },
       { title: "QR and NFC materials", body: "Stands, cards and posters that take clients directly to the app or booking flow." },
       { title: "Marketing support", body: "Social media support, print materials and launch communication." },
       { title: "Partner screen", body: "An optional launch screen for a sponsor, partner or campaign." },
-      { title: "Custom integrations", body: "Selected automations and industry-specific extensions scoped separately." },
+      { title: "Dedicated features and integrations", body: "When your process needs more than standard modules, we can scope custom functions, automation and integrations separately." },
     ],
     architectureEyebrow: "A DIFFERENT DATA MODEL",
     architectureTitle: "A separate client environment instead of one central marketplace database.",
@@ -63,16 +80,27 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
       { icon: "T", title: "Twoja aplikacja i marka", body: "Timzy dostarcza technologię, a Twoja firma pozostaje widoczna na każdym ekranie.", items: ["Osobna aplikacja na iOS i Android", "Publikacja pod marką klienta", "Logo, kolory, ikony i własne treści", "Szablon lub pełna personalizacja wizualna", "Role klienta, pracownika i administratora", "Osobne środowisko danych dla każdego klienta"] },
     ],
     optionalLabel: "Moduły opcjonalne konfigurujemy i wyceniamy zależnie od zakresu. Część z nich wymaga uruchomienia usług zewnętrznego dostawcy.",
+    flexibilityEyebrow: "SYSTEM, KTÓRY DOPASOWUJE SIĘ DO FIRMY",
+    flexibilityTitle: "Potrzebujesz funkcji, której nie ma na liście? Możemy ją zaprojektować i dorobić.",
+    flexibilityBody: "Timzy jest systemem modułowym, a nie zamkniętym pudełkiem. Najpierw poznajemy proces i wartość biznesową, a następnie definiujemy bezpieczne rozszerzenie dopasowane do całego rozwiązania.",
+    flexibilityPoints: [
+      { title: "Dedykowane moduły", body: "Indywidualne ścieżki branżowe, zasady, role, raporty i narzędzia administratora." },
+      { title: "Integracje i automatyzacje", body: "Wybrane systemy zewnętrzne, kontrola dostępu, powiadomienia, płatności i przepływy danych." },
+      { title: "Wiele lokalizacji i zespołów", body: "Konfiguracja pod oddziały, uprawnienia, specjalistów oraz różne sposoby pracy." },
+      { title: "Jasny zakres rozwoju", body: "Przed rozpoczęciem otrzymujesz analizę wykonalności, opis zakresu i osobną wycenę." },
+    ],
+    flexibilityCta: "Omów moją funkcję",
+    flexibilityNote: "Funkcje dedykowane wyceniamy osobno po analizie wykonalności, bezpieczeństwa i wartości biznesowej.",
     extrasEyebrow: "WIĘCEJ NIŻ OPROGRAMOWANIE",
-    extrasTitle: "Jeden partner dla aplikacji, wdrożenia i materiałów marki.",
+    extrasTitle: "Jeden partner dla aplikacji, kompletnej strony WWW, sklepu i materiałów marki.",
     extrasBody: "Poniższe usługi przygotowujemy indywidualnie i możemy dołączyć do wdrożenia Timzy.",
     extras: [
-      { title: "Strona internetowa lub sklep", body: "Strona pod Twoją marką, prezentacja usług albo rozbudowany sklep internetowy." },
+      { title: "Kompletna strona WWW lub sklep internetowy", body: "Nie tylko pojedynczy landing page. Możemy przygotować wielostronicowy serwis z ofertą, stronami usług, formularzami, aktualnościami, podstawami SEO i sklepem, zależnie od zakresu." },
       { title: "Branding i projekt graficzny", body: "Logo, kolorystyka, ikony, grafiki aplikacji i spójny system wizualny." },
       { title: "Materiały QR i NFC", body: "Standy, wizytówki i plakaty prowadzące bezpośrednio do aplikacji lub rezerwacji." },
       { title: "Wsparcie marketingowe", body: "Prowadzenie social media, materiały drukowane i komunikacja startowa." },
       { title: "Ekran partnera", body: "Opcjonalny ekran startowy dla sponsora, partnera biznesowego lub kampanii." },
-      { title: "Integracje indywidualne", body: "Wybrane automatyzacje i rozszerzenia branżowe wyceniane jako osobny zakres." },
+      { title: "Dedykowane funkcje i integracje", body: "Jeżeli Twój proces wymaga czegoś więcej niż standardowe moduły, możemy osobno zaprojektować i wycenić funkcje, automatyzacje oraz integracje." },
     ],
     architectureEyebrow: "INNY MODEL DANYCH",
     architectureTitle: "Osobne środowisko klienta zamiast jednej centralnej bazy marketplace'u.",
@@ -96,16 +124,27 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
       { icon: "T", title: "Tu app y tu marca", body: "Timzy aporta la tecnología y tu negocio sigue visible en cada paso.", items: ["App separada para iOS y Android", "Publicación con tu marca", "Logo, colores, iconos y contenido", "Plantilla o personalización visual completa", "Roles de cliente, empleado y administrador", "Entorno de datos separado para cada cliente"] },
     ],
     optionalLabel: "Los módulos opcionales se configuran y presupuestan según el alcance y pueden requerir servicios de terceros.",
+    flexibilityEyebrow: "CREADA PARA ADAPTARSE",
+    flexibilityTitle: "¿Necesitas una función fuera de los módulos estándar? Podemos diseñarla y desarrollarla.",
+    flexibilityBody: "Timzy es modular, no una caja cerrada. Primero entendemos el proceso y el valor de negocio; después definimos una ampliación segura que encaje con todo el sistema.",
+    flexibilityPoints: [
+      { title: "Módulos dedicados", body: "Recorridos sectoriales, reglas, roles, informes y herramientas administrativas." },
+      { title: "Integraciones y automatización", body: "Sistemas externos seleccionados, accesos, avisos, pagos y flujos de datos." },
+      { title: "Múltiples sedes y equipos", body: "Configuración para sucursales, permisos, especialistas y distintas formas de trabajar." },
+      { title: "Alcance de desarrollo claro", body: "Recibes un análisis de viabilidad, alcance definido y presupuesto separado antes de empezar." },
+    ],
+    flexibilityCta: "Hablar de mi función",
+    flexibilityNote: "El desarrollo a medida se presupuesta por separado tras revisar viabilidad, seguridad y valor de negocio.",
     extrasEyebrow: "MÁS QUE SOFTWARE",
-    extrasTitle: "Un socio para la app, el lanzamiento y los materiales de marca.",
+    extrasTitle: "Un socio para la app, la web completa, la tienda online y los materiales de marca.",
     extrasBody: "Estos servicios se preparan de forma individual y pueden añadirse a la implantación de Timzy.",
     extras: [
-      { title: "Web o tienda online", body: "Una web con tu marca, presentación de servicios o tienda ampliada." },
+      { title: "Web completa o tienda online", body: "No solo una landing. Podemos crear una web multipágina con servicios, formularios, noticias, bases SEO y ecommerce, según el alcance." },
       { title: "Branding y diseño", body: "Logo, colores, iconos, gráficos y un sistema visual coherente." },
       { title: "Materiales QR y NFC", body: "Expositores, tarjetas y carteles con acceso directo a la app o reserva." },
       { title: "Apoyo de marketing", body: "Redes sociales, materiales impresos y comunicación de lanzamiento." },
       { title: "Pantalla de colaborador", body: "Pantalla inicial opcional para patrocinador, colaborador o campaña." },
-      { title: "Integraciones a medida", body: "Automatizaciones y extensiones sectoriales presupuestadas aparte." },
+      { title: "Funciones e integraciones dedicadas", body: "Si tu proceso necesita más que los módulos estándar, podemos diseñar y presupuestar funciones, automatizaciones e integraciones." },
     ],
     architectureEyebrow: "UN MODELO DE DATOS DIFERENTE",
     architectureTitle: "Un entorno separado por cliente, no una base central de marketplace.",
@@ -122,8 +161,11 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
 
 export function ProductCapabilities({ locale, includeArchitecture = true }: { locale: CapabilityLocale; includeArchitecture?: boolean }) {
   const copy = capabilityCopy[locale];
+  const customFunctionHref = `https://wa.me/34600659705?text=${encodeURIComponent(locale === "pl" ? "Dzień dobry, chcę omówić dedykowaną funkcję lub integrację w Timzy." : locale === "es" ? "Hola, quiero hablar de una función o integración a medida en Timzy." : "Hi, I would like to discuss a custom Timzy function or integration.")}`;
   return <>
     <section className="capability-catalog" id="capabilities"><div className="section-intro section-intro--wide"><p className="eyebrow">{copy.eyebrow}</p><h2>{copy.title}</h2><p>{copy.body}</p></div><div className="capability-grid">{copy.groups.map((group) => <article key={group.title}><span className="capability-icon">{group.icon}</span><h3>{group.title}</h3><p>{group.body}</p><ul>{group.items.map((item) => <li key={item}><i>✓</i>{item}</li>)}</ul></article>)}</div><p className="capability-note">{copy.optionalLabel}</p></section>
+
+    <section className="custom-development"><div className="custom-development-copy"><p className="eyebrow">{copy.flexibilityEyebrow}</p><h2>{copy.flexibilityTitle}</h2><p>{copy.flexibilityBody}</p><a className="button" href={customFunctionHref} target="_blank" rel="noreferrer">{copy.flexibilityCta}<span>→</span></a><small>{copy.flexibilityNote}</small></div><div className="custom-development-grid">{copy.flexibilityPoints.map((point, index) => <article key={point.title}><span>0{index + 1}</span><h3>{point.title}</h3><p>{point.body}</p></article>)}</div></section>
 
     <section className="implementation-extras"><div className="implementation-heading"><p className="eyebrow">{copy.extrasEyebrow}</p><h2>{copy.extrasTitle}</h2><p>{copy.extrasBody}</p></div><div className="extras-grid">{copy.extras.map((extra, index) => <article key={extra.title}><span>0{index + 1}</span><h3>{extra.title}</h3><p>{extra.body}</p></article>)}</div></section>
 

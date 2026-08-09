@@ -201,7 +201,8 @@ img { display: block; max-width: 100%; }
 .floating-note small { color: var(--muted); font-size: 7px; }
 .floating-note--proof > span { color: #314e21; background: var(--lime); }
 .signal-strip { height: 72px; display: flex; align-items: center; justify-content: center; gap: clamp(16px, 3.5vw, 60px); overflow: hidden; color: #756e80; background: white; border-block: 1px solid var(--line); font-size: 10px; font-weight: 820; letter-spacing: .15em; white-space: nowrap; }
-.signal-strip i { width: 4px; height: 4px; border-radius: 50%; background: var(--violet-2); }
+.signal-strip span { display: flex; align-items: center; gap: clamp(16px, 3.5vw, 60px); }
+.signal-strip i { width: 4px; height: 4px; flex: 0 0 auto; border-radius: 50%; background: var(--violet-2); }
 
 .section { padding: 128px max(32px, calc((100vw - 1280px) / 2)); }
 .section-intro { max-width: 760px; margin: 0 auto 64px; text-align: center; }
@@ -423,6 +424,17 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .capability-grid li { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; color: #4e4755; font-size: 12px; line-height: 1.45; font-weight: 650; }
 .capability-grid li i { width: 19px; height: 19px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: var(--industry-accent, var(--violet)); background: var(--industry-soft, var(--soft)); font-size: 8px; font-style: normal; }
 .capability-note { max-width: 860px; margin: 26px auto 0; color: #7e7787; text-align: center; font-size: 11px; line-height: 1.6; }
+.custom-development { display: grid; grid-template-columns: .9fr 1.1fr; align-items: center; gap: 70px; padding: 120px max(32px, calc((100vw - 1280px) / 2)); color: #1d2818; background: #edf8d8; }
+.custom-development .eyebrow { color: #557629; }
+.custom-development-copy h2 { margin: 0; font-size: clamp(42px, 4.4vw, 64px); line-height: 1.04; letter-spacing: -.052em; font-weight: 690; }
+.custom-development-copy > p:last-of-type { max-width: 650px; margin: 24px 0 0; color: #58654f; font-size: 16px; line-height: 1.72; }
+.custom-development-copy .button { margin-top: 30px; background: #26361b; box-shadow: 0 14px 32px rgba(38,54,27,.18); }
+.custom-development-copy > small { display: block; max-width: 610px; margin-top: 16px; color: #738067; font-size: 9px; line-height: 1.6; }
+.custom-development-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+.custom-development-grid article { min-height: 220px; padding: 28px; border: 1px solid rgba(67,91,43,.15); border-radius: 26px; background: rgba(255,255,255,.68); }
+.custom-development-grid article > span { color: #668b35; font-size: 9px; font-weight: 850; letter-spacing: .13em; }
+.custom-development-grid h3 { margin: 44px 0 0; font-size: 20px; line-height: 1.18; letter-spacing: -.03em; }
+.custom-development-grid p { margin: 13px 0 0; color: #66715e; font-size: 12px; line-height: 1.62; }
 .implementation-extras { padding: 120px max(32px, calc((100vw - 1280px) / 2)); background: #f3eff8; }
 .implementation-heading { max-width: 850px; margin-bottom: 58px; }
 .implementation-heading h2, .data-architecture-copy h2 { margin: 0; font-size: clamp(42px, 4.4vw, 64px); line-height: 1.04; letter-spacing: -.052em; font-weight: 690; }
@@ -551,6 +563,7 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .ready-template-grid { grid-template-columns: 1fr 1fr; }
   .capability-grid { grid-template-columns: 1fr; }
   .capability-grid article { min-height: 0; }
+  .custom-development { grid-template-columns: 1fr; gap: 55px; }
   .extras-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
   .data-architecture { grid-template-columns: 1fr; gap: 55px; }
   .golf-automation { grid-template-columns: 1fr; gap: 45px; }
@@ -583,9 +596,12 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .ready-template-card { scroll-snap-align: start; }
   .actual-screen-grid { width: calc(100% + 18px); grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(230px, 72vw); gap: 14px; overflow-x: auto; padding: 0 18px 24px 0; scroll-snap-type: x mandatory; }
   .actual-screen-card { scroll-snap-align: start; }
-  .capability-catalog, .implementation-extras, .data-architecture { padding: 90px 18px; }
+  .capability-catalog, .custom-development, .implementation-extras, .data-architecture { padding: 90px 18px; }
   .capability-grid article { padding: 29px 24px; }
   .capability-icon { margin-bottom: 32px; }
+  .custom-development-copy h2 { font-size: 40px; }
+  .custom-development-grid { grid-template-columns: 1fr; }
+  .custom-development-grid article { min-height: 0; }
   .extras-grid { grid-template-columns: 1fr; }
   .implementation-heading h2, .data-architecture-copy h2 { font-size: 40px; }
   .golf-automation { padding: 85px 18px; }

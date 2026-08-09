@@ -18,6 +18,7 @@ test("renders the English Timzy landing page", async () => {
   const html = await response.text();
   assert.match(html, /More bookings\. Less admin/);
   assert.match(html, /All under your brand/);
+  assert.match(html, /Book a free demo/);
   assert.match(html, /TRUE WHITE-LABEL/);
   assert.match(html, /Your clients remain your clients/);
   assert.match(html, /Start from a proven template or commission a fully custom design/);
@@ -34,6 +35,9 @@ test("renders the English Timzy landing page", async () => {
   }
   assert.match(html, /Not a concept\. This is the real Timzy client app/);
   assert.match(html, /THE COMPLETE TIMZY ECOSYSTEM/);
+  assert.match(html, /Need a function outside the standard modules/);
+  assert.match(html, /Complete website or online store/);
+  assert.match(html, /Dedicated features and integrations/);
   assert.match(html, /A separate data environment for each client/);
   assert.match(html, /Typical marketplace/);
   assert.match(html, /SPA &amp; BEAUTY|SPA & BEAUTY/);
@@ -55,6 +59,7 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.equal(es.status, 200);
   const plHtml = await pl.text();
   assert.match(plHtml, /Więcej rezerwacji\. Mniej obsługi/);
+  assert.match(plHtml, /Umów bezpłatne demo/);
   assert.match(plHtml, /SPA I BEAUTY/);
   assert.match(plHtml, /INNE BRANŻE/);
   assert.match(plHtml, /Twoi klienci pozostają Twoimi klientami/);
@@ -64,6 +69,10 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /Projekt indywidualny/);
   assert.match(plHtml, /Tak wygląda aktualna aplikacja Timzy/);
   assert.match(plHtml, /Osobne środowisko klienta zamiast jednej centralnej bazy/);
+  assert.match(plHtml, /Potrzebujesz funkcji, której nie ma na liście/);
+  assert.match(plHtml, /Kompletna strona WWW lub sklep internetowy/);
+  assert.match(plHtml, /Dedykowane funkcje i integracje/);
+  assert.match(plHtml, /Funkcje dedykowane wyceniamy osobno/);
   assert.match(plHtml, /Nie stanowi automatycznej gwarancji zwolnienia prawnego/);
   assert.match(plHtml, /45% netto wartości usług/);
   assert.match(await es.text(), /Más reservas\. Menos gestión/);
