@@ -84,6 +84,11 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /Potrzebujesz funkcji, której nie ma na liście/);
   assert.match(plHtml, /Kompletna strona WWW lub sklep internetowy/);
   assert.match(plHtml, /Dedykowane funkcje i integracje/);
+  assert.match(plHtml, /Do 3 pracowników bez dodatkowej opłaty/);
+  assert.match(plHtml, /Notatki po wizycie i pełna historia klienta/);
+  assert.match(plHtml, /Płatność całości lub części kwoty przy rezerwacji/);
+  assert.match(plHtml, /Brak prowizji Timzy od płatności za rezerwację/);
+  assert.match(plHtml, /standardowe opłaty operatora Stripe/);
   assert.match(plHtml, /Funkcje dedykowane wyceniamy osobno/);
   assert.match(plHtml, /Nie stanowi automatycznej gwarancji zwolnienia prawnego/);
   assert.match(plHtml, /45% netto wartości usług/);
