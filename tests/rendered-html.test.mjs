@@ -19,12 +19,20 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /More bookings\. Less admin/);
   assert.match(html, /All under your brand/);
   assert.match(html, /TRUE WHITE-LABEL/);
+  assert.match(html, /Your clients remain your clients/);
+  assert.match(html, /Start from a proven template or commission a fully custom design/);
+  assert.match(html, /assets\/mockups\/client-home\.webp/);
+  for (const screen of ["client-login", "client-home", "client-services", "client-calendar", "client-shop", "client-vouchers"]) {
+    assert.match(html, new RegExp(`assets/mockups/${screen}\\.webp`));
+  }
+  assert.match(html, /Not a concept\. This is the real Timzy client app/);
   assert.match(html, /THE COMPLETE TIMZY ECOSYSTEM/);
   assert.match(html, /A separate data environment for each client/);
   assert.match(html, /Typical marketplace/);
   assert.match(html, /CAR WASH &amp; DETAILING|CAR WASH & DETAILING/);
   assert.match(html, /href="\/tennis\//);
   assert.doesNotMatch(html, /codex-preview|react-loading-skeleton/i);
+  assert.doesNotMatch(html, /Your business, today|Signature ritual/);
 });
 
 test("renders localized Polish and Spanish landing pages", async () => {
@@ -33,6 +41,11 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.equal(es.status, 200);
   const plHtml = await pl.text();
   assert.match(plHtml, /Więcej rezerwacji\. Mniej obsługi/);
+  assert.match(plHtml, /Twoi klienci pozostają Twoimi klientami/);
+  assert.match(plHtml, /Nie wykorzystujemy Twojej bazy klientów do promowania konkurencyjnych firm/);
+  assert.match(plHtml, /Gotowy szablon/);
+  assert.match(plHtml, /Projekt indywidualny/);
+  assert.match(plHtml, /Tak wygląda aktualna aplikacja Timzy/);
   assert.match(plHtml, /Osobne środowisko klienta zamiast jednej centralnej bazy/);
   assert.match(plHtml, /Nie stanowi automatycznej gwarancji zwolnienia prawnego/);
   assert.match(plHtml, /45% netto wartości usług/);

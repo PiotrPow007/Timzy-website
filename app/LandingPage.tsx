@@ -1,4 +1,5 @@
 import { ProductCapabilities } from "./ProductCapabilities";
+import { ActualProductShowcase, CustomerOwnershipSection, TemplateChoiceSection } from "./CustomerValueSections";
 
 type Locale = "en" | "pl" | "es";
 
@@ -50,7 +51,7 @@ type Copy = {
 export const landingCopy: Record<Locale, Copy> = {
   en: {
     skip: "Skip to content",
-    nav: ["Why Timzy", "Industries", "How it works", "Compare"],
+    nav: ["Your clients", "Industries", "How it works", "Compare"],
     navCta: "Talk to us on WhatsApp",
     eyebrow: "YOUR BRAND. YOUR CLIENTS. YOUR APP.",
     heroTitle: "More bookings. Less admin.",
@@ -129,7 +130,7 @@ export const landingCopy: Record<Locale, Copy> = {
   },
   pl: {
     skip: "Przejdź do treści",
-    nav: ["Dlaczego Timzy", "Branże", "Jak to działa", "Porównanie"],
+    nav: ["Twoi klienci", "Branże", "Jak to działa", "Porównanie"],
     navCta: "Napisz na WhatsApp",
     eyebrow: "TWOJA MARKA. TWOI KLIENCI. TWOJA APLIKACJA.",
     heroTitle: "Więcej rezerwacji. Mniej obsługi.",
@@ -205,7 +206,7 @@ export const landingCopy: Record<Locale, Copy> = {
   },
   es: {
     skip: "Ir al contenido",
-    nav: ["Por qué Timzy", "Sectores", "Cómo funciona", "Comparar"],
+    nav: ["Tus clientes", "Sectores", "Cómo funciona", "Comparar"],
     navCta: "Hablar por WhatsApp",
     eyebrow: "TU MARCA. TUS CLIENTES. TU APP.",
     heroTitle: "Más reservas. Menos gestión.",
@@ -320,6 +321,10 @@ function Phone({ screen, className = "" }: { screen: "home" | "booking" | "calen
   return <div className={`phone ${className}`} aria-hidden="true"><div className="phone-frame"><div className="phone-island" />{screens[screen]}</div></div>;
 }
 
+function ActualAppScreen({ src, alt, className = "", eager = false }: { src: string; alt: string; className?: string; eager?: boolean }) {
+  return <figure className={`real-phone ${className}`}><div className="real-phone-shell"><img src={src} alt={alt} loading={eager ? "eager" : "lazy"} /></div></figure>;
+}
+
 function LanguageNav({ locale }: { locale: Locale }) {
   const paths = { en: "/", pl: "/pl/", es: "/es/" };
   return <div className="languages" aria-label="Language"><a href={paths.en} className={locale === "en" ? "is-active" : ""}>EN</a><a href={paths.pl} className={locale === "pl" ? "is-active" : ""}>PL</a><a href={paths.es} className={locale === "es" ? "is-active" : ""}>ES</a></div>;
@@ -342,15 +347,21 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
   return (
     <main id="top" lang={locale === "pl" ? "pl" : locale === "es" ? "es" : "en-GB"}>
       <a className="skip-link" href="#content">{copy.skip}</a>
-      <header className="site-header"><a href={locale === "en" ? "/" : `/${locale}/`} className="logo-link"><BrandMark /></a><nav aria-label="Main navigation"><a href="#why">{copy.nav[0]}</a><a href="#industries">{copy.nav[1]}</a><a href="#process">{copy.nav[2]}</a><a href="#compare">{copy.nav[3]}</a></nav><div className="header-actions"><LanguageNav locale={locale} /><a href={whatsappHref(locale)} className="button button--small" target="_blank" rel="noreferrer">{copy.navCta}</a></div></header>
+      <header className="site-header"><a href={locale === "en" ? "/" : `/${locale}/`} className="logo-link"><BrandMark /></a><nav aria-label="Main navigation"><a href="#clients">{copy.nav[0]}</a><a href="#industries">{copy.nav[1]}</a><a href="#process">{copy.nav[2]}</a><a href="#compare">{copy.nav[3]}</a></nav><div className="header-actions"><LanguageNav locale={locale} /><a href={whatsappHref(locale)} className="button button--small" target="_blank" rel="noreferrer">{copy.navCta}</a></div></header>
 
-      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href="#industries">{copy.heroCta}<span aria-hidden="true">↘</span></a><a className="text-link" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.heroCta2}<span aria-hidden="true">→</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><Phone screen="booking" className="phone--left" /><Phone screen="home" className="phone--centre" /><Phone screen="admin" className="phone--right" /><div className="floating-note"><span>↗</span><p><b>Available slot filled</b><small>Automatic push alert sent</small></p></div></div></section>
+      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href="#industries">{copy.heroCta}<span aria-hidden="true">↘</span></a><a className="text-link" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.heroCta2}<span aria-hidden="true">→</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><ActualAppScreen src="/assets/mockups/client-services.webp" alt="Actual Timzy services screen" className="phone--left" /><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual Timzy home screen" className="phone--centre" eager /><ActualAppScreen src="/assets/mockups/client-shop.webp" alt="Actual Timzy shop screen" className="phone--right" /><div className="floating-note floating-note--proof"><span>✓</span><p><b>{locale === "pl" ? "Aktualna aplikacja" : locale === "es" ? "Aplicación actual" : "Actual product"}</b><small>{locale === "pl" ? "Prawdziwe ekrany Timzy" : locale === "es" ? "Pantallas reales de Timzy" : "Real Timzy screens"}</small></p></div></div></section>
 
       <div className="signal-strip"><span>ONE APP</span><i /><span>BOOKINGS</span><i /><span>LOYALTY</span><i /><span>SALES</span><i /><span>CUSTOMER CARE</span></div>
 
       <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className="industry-visual"><div className="industry-art"><span>{index === 0 ? "✦" : index === 1 ? "●" : index === 2 ? "◇" : "＋"}</span></div><div className="industry-mini-screen"><small>{industry.tag}</small><b>{index === 0 ? "09:30" : index === 1 ? "18:00" : index === 2 ? "11:45" : "14:20"}</b><em>available</em></div></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
 
-      <section className="white-label" id="why"><div className="white-copy"><p className="eyebrow">{copy.whiteEyebrow}</p><h2>{copy.whiteTitle}</h2><p>{copy.whiteBody}</p><div className="white-points">{copy.whitePoints.map((point, index) => <div key={point.title}><span>0{index + 1}</span><p><b>{point.title}</b><small>{point.body}</small></p></div>)}</div></div><div className="brand-stage"><div className="brand-chip brand-chip--one">YOUR LOGO</div><div className="brand-chip brand-chip--two">#7C58F7</div><div className="brand-chip brand-chip--three">YOUR APP</div><Phone screen="home" className="phone--brand" /><div className="brand-caption"><BrandMark compact /><span>Technology in the background.<br /><b>Your brand in the foreground.</b></span></div></div></section>
+      <CustomerOwnershipSection locale={locale} />
+
+      <section className="white-label" id="why"><div className="white-copy"><p className="eyebrow">{copy.whiteEyebrow}</p><h2>{copy.whiteTitle}</h2><p>{copy.whiteBody}</p><div className="white-points">{copy.whitePoints.map((point, index) => <div key={point.title}><span>0{index + 1}</span><p><b>{point.title}</b><small>{point.body}</small></p></div>)}</div></div><div className="brand-stage"><div className="brand-chip brand-chip--one">YOUR LOGO</div><div className="brand-chip brand-chip--two">#7C58F7</div><div className="brand-chip brand-chip--three">YOUR APP</div><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual branded Timzy home screen" className="phone--brand" /><div className="brand-caption"><BrandMark compact /><span>Technology in the background.<br /><b>Your brand in the foreground.</b></span></div></div></section>
+
+      <TemplateChoiceSection locale={locale} ctaHref={whatsappHref(locale)} />
+
+      <ActualProductShowcase locale={locale} />
 
       <section className="section features"><div className="section-intro section-intro--wide"><p className="eyebrow">{copy.featuresEyebrow}</p><h2>{copy.featuresTitle}</h2><p>{copy.featuresBody}</p></div><div className="feature-grid">{copy.features.map((feature, index) => <article className={index === 1 ? "feature-card feature-card--highlight" : "feature-card"} key={feature.title}><span className="feature-icon">{feature.icon}</span><h3>{feature.title}</h3><p>{feature.body}</p></article>)}</div></section>
 
@@ -360,7 +371,7 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <section className="section comparison" id="compare"><div className="section-intro"><p className="eyebrow">{copy.compareEyebrow}</p><h2>{copy.compareTitle}</h2><p>{copy.compareBody}</p></div><div className="comparison-table" role="table" aria-label={copy.compareTitle}><div className="comparison-head" role="row">{copy.compareLabels.map((label, index) => <span className={index === 2 ? "timzy-col" : ""} role="columnheader" key={label}>{index === 2 ? <BrandMark compact /> : label}</span>)}</div>{copy.compareRows.map(row => <div className="comparison-row" role="row" key={row[0]}><b role="cell">{row[0]}</b><span role="cell"><i>−</i>{row[1]}</span><span className="timzy-col" role="cell"><i>✓</i>{row[2]}</span></div>)}</div>{locale === "pl" ? <p className="comparison-evidence"><b>Konkretny przykład:</b> Booksy podaje obecnie, że opcjonalny Boost pobiera 45% netto wartości usług z pierwszej zakończonej wizyty nowego klienta Boost. Rezerwacje z bezpośredniego linku mogą być bezprowizyjne. Timzy nie pobiera prowizji od rezerwacji. <a href="https://biz.booksy.com/pl-pl/funkcje/boost" target="_blank" rel="noreferrer">Oficjalne zasady Booksy Boost →</a><small>Stan informacji: sierpień 2026.</small></p> : null}</section>
 
-      <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.offerCta}<span>→</span></a></div><div className="offer-visual"><Phone screen="calendar" className="phone--offer" /><div className="offer-card"><span>♡</span><p><b>Welcome voucher</b><small>10% off the first booking</small></p></div><div className="offer-card offer-card--bottom"><span>✓</span><p><b>Booking confirmed</b><small>Wednesday, 10:30</small></p></div></div></section>
+      <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.offerCta}<span>→</span></a></div><div className="offer-visual"><ActualAppScreen src="/assets/mockups/client-calendar.webp" alt="Actual Timzy booking calendar" className="phone--offer" /><div className="offer-card"><span>♡</span><p><b>Welcome voucher</b><small>10% off the first booking</small></p></div><div className="offer-card offer-card--bottom"><span>✓</span><p><b>Booking confirmed</b><small>Wednesday, 10:30</small></p></div></div></section>
 
       <section className="final-cta"><div className="final-ring final-ring--one" /><div className="final-ring final-ring--two" /><p className="eyebrow">{copy.finalEyebrow}</p><h2>{copy.finalTitle}</h2><p>{copy.finalBody}</p><a className="button" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.finalCta}<span>→</span></a><a className="final-email" href="mailto:hello@timzy.app">{copy.finalAlt}</a></section>
 
