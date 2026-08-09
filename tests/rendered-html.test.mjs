@@ -21,6 +21,13 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /TRUE WHITE-LABEL/);
   assert.match(html, /Your clients remain your clients/);
   assert.match(html, /Start from a proven template or commission a fully custom design/);
+  assert.match(html, /Choose from a library of ready-made app templates/);
+  assert.match(html, /assets\/templates\/ready-template-library\.webp/);
+  assert.match(html, /Natural Sage/);
+  assert.match(html, /Noir Prestige/);
+  assert.match(html, /Sunset Energy/);
+  assert.match(html, /Fuchsia Pop/);
+  assert.doesNotMatch(html, /SPA Light|SPA Luxury|Sport Club/);
   assert.match(html, /assets\/mockups\/client-home\.webp/);
   for (const screen of ["client-login", "client-home", "client-services", "client-calendar", "client-shop", "client-vouchers"]) {
     assert.match(html, new RegExp(`assets/mockups/${screen}\\.webp`));
@@ -44,6 +51,7 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /Twoi klienci pozostają Twoimi klientami/);
   assert.match(plHtml, /Nie wykorzystujemy Twojej bazy klientów do promowania konkurencyjnych firm/);
   assert.match(plHtml, /Gotowy szablon/);
+  assert.match(plHtml, /Wybierz z biblioteki gotowych template’ów aplikacji/);
   assert.match(plHtml, /Projekt indywidualny/);
   assert.match(plHtml, /Tak wygląda aktualna aplikacja Timzy/);
   assert.match(plHtml, /Osobne środowisko klienta zamiast jednej centralnej bazy/);

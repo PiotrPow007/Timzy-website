@@ -21,6 +21,9 @@ type CustomerValueCopy = {
   customPoints: string[];
   templateCta: string;
   templateExamples: string;
+  templateReadyLabel: string;
+  templateVariantLine: string;
+  templateLibraryNote: string;
   showcaseEyebrow: string;
   showcaseTitle: string;
   showcaseBody: string;
@@ -54,7 +57,10 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     customBody: "We create a distinct visual system around your brand, positioning and customer experience.",
     customPoints: ["Individual art direction", "Custom graphics and icons", "Unique home screen", "Extended design scope quoted separately"],
     templateCta: "See my brand in Timzy",
-    templateExamples: "Examples of working Timzy visual directions",
+    templateExamples: "Choose from a library of ready-made app templates",
+    templateReadyLabel: "READY TEMPLATE",
+    templateVariantLine: "Your logo · colours · imagery · content",
+    templateLibraryNote: "Below are selected examples. Each template can be adapted with a different palette, typography, photos and background graphics.",
     showcaseEyebrow: "THE ACTUAL PRODUCT",
     showcaseTitle: "Not a concept. This is the real Timzy client app.",
     showcaseBody: "From login and booking to the shop and vouchers, the client stays inside one consistent branded experience.",
@@ -93,7 +99,10 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     customBody: "Tworzymy odrębny system wizualny wokół charakteru marki, jej pozycjonowania i doświadczenia klienta.",
     customPoints: ["Indywidualny kierunek artystyczny", "Dedykowane grafiki i ikony", "Unikalny ekran główny", "Rozszerzony zakres wyceniany osobno"],
     templateCta: "Zobacz moją markę w Timzy",
-    templateExamples: "Przykłady działających kierunków wizualnych Timzy",
+    templateExamples: "Wybierz z biblioteki gotowych template’ów aplikacji",
+    templateReadyLabel: "GOTOWY TEMPLATE",
+    templateVariantLine: "Twoje logo · kolory · grafiki · treści",
+    templateLibraryNote: "Poniżej pokazujemy wybrane przykłady. Każdy template może otrzymać inną paletę, typografię, zdjęcia i grafiki tła.",
     showcaseEyebrow: "PRAWDZIWY PRODUKT",
     showcaseTitle: "To nie jest koncepcja. Tak wygląda aktualna aplikacja Timzy.",
     showcaseBody: "Od logowania i rezerwacji po sklep oraz vouchery klient porusza się w jednym, spójnym doświadczeniu pod marką firmy.",
@@ -132,7 +141,10 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     customBody: "Creamos un sistema visual propio alrededor de tu marca, posicionamiento y experiencia de cliente.",
     customPoints: ["Dirección artística individual", "Gráficos e iconos propios", "Pantalla inicial única", "Alcance ampliado presupuestado aparte"],
     templateCta: "Ver mi marca en Timzy",
-    templateExamples: "Ejemplos de direcciones visuales Timzy en funcionamiento",
+    templateExamples: "Elige entre una biblioteca de plantillas de app preparadas",
+    templateReadyLabel: "PLANTILLA LISTA",
+    templateVariantLine: "Tu logo · colores · imágenes · contenido",
+    templateLibraryNote: "Mostramos algunos ejemplos. Cada plantilla puede adaptarse con otra paleta, tipografía, fotos y gráficos de fondo.",
     showcaseEyebrow: "EL PRODUCTO REAL",
     showcaseTitle: "No es un concepto. Esta es la app Timzy actual.",
     showcaseBody: "Desde el acceso y la reserva hasta la tienda y los vales, el cliente permanece en una experiencia coherente con tu marca.",
@@ -147,10 +159,11 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
   },
 };
 
-const templateVisuals = [
-  { name: "SPA Light", className: "template-preset--light", image: "/assets/mockups/client-home.webp", colours: ["#7C58F7", "#9E71FF", "#F7F3FF"] },
-  { name: "SPA Luxury", className: "template-preset--luxury", image: "/assets/templates/spa-luxury.webp", colours: ["#170F0C", "#C89B66", "#F3E2C8"] },
-  { name: "Sport Club", className: "template-preset--sport", image: "/assets/templates/sport-club.webp", colours: ["#045556", "#99BC66", "#E6F0DB"] },
+const readyTemplateVisuals = [
+  { name: "Natural Sage", className: "ready-template-preview--sage", colours: ["#5AA79B", "#F6E9DD", "#315E58"] },
+  { name: "Noir Prestige", className: "ready-template-preview--noir", colours: ["#171313", "#C8966F", "#F3DEC0"] },
+  { name: "Sunset Energy", className: "ready-template-preview--sunset", colours: ["#FF9200", "#1A1010", "#F2D48A"] },
+  { name: "Fuchsia Pop", className: "ready-template-preview--fuchsia", colours: ["#E90083", "#FF95A8", "#4B163A"] },
 ];
 
 export function CustomerOwnershipSection({ locale }: { locale: CustomerValueLocale }) {
@@ -179,7 +192,7 @@ export function TemplateChoiceSection({ locale, ctaHref }: { locale: CustomerVal
       <article className="template-option template-option--ready"><span>01</span><h3>{copy.readyTitle}</h3><p>{copy.readyBody}</p><ul>{copy.readyPoints.map((point) => <li key={point}><i>✓</i>{point}</li>)}</ul></article>
       <article className="template-option template-option--custom"><span>02</span><h3>{copy.customTitle}</h3><p>{copy.customBody}</p><ul>{copy.customPoints.map((point) => <li key={point}><i>✓</i>{point}</li>)}</ul></article>
     </div>
-    <div className="template-gallery"><p>{copy.templateExamples}</p><div>{templateVisuals.map((visual) => <article className={`template-preset ${visual.className}`} key={visual.name}><div className="template-preset-art"><img src={visual.image} alt="" loading="lazy" /></div><div className="template-preset-meta"><b>{visual.name}</b><span>{visual.colours.map((colour) => <i key={colour} style={{ backgroundColor: colour }} />)}</span></div></article>)}</div></div>
+    <div className="template-gallery"><div className="template-gallery-heading"><p>{copy.templateExamples}</p><span>{copy.templateLibraryNote}</span></div><div className="ready-template-grid">{readyTemplateVisuals.map((visual) => <article className="ready-template-card" key={visual.name}><div className={`ready-template-preview ${visual.className}`}><img src="/assets/templates/ready-template-library.webp" alt={`${visual.name} ready Timzy app template`} loading="lazy" /></div><div className="ready-template-meta"><div><span>{copy.templateReadyLabel}</span><b>{visual.name}</b><small>{copy.templateVariantLine}</small></div><div className="ready-template-colours">{visual.colours.map((colour) => <i key={colour} style={{ backgroundColor: colour }} />)}</div></div></article>)}</div></div>
     <a className="button" href={ctaHref} target="_blank" rel="noreferrer">{copy.templateCta}<span>→</span></a>
   </section>;
 }
