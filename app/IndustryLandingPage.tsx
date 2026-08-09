@@ -1,4 +1,5 @@
 import { ProductCapabilities } from "./ProductCapabilities";
+import { ContactSection } from "./ContactSection";
 
 export type SiteLocale = "en" | "pl" | "es";
 export type IndustryKey = "sport" | "golf" | "tennis" | "car-wash-detailing";
@@ -414,6 +415,12 @@ export function IndustryLandingPage({ locale, industry }: { locale: SiteLocale; 
   const content = industryCopy[locale][industry];
   const otherIndustries = industryOrder.filter((item) => item !== industry);
   const language = locale === "pl" ? "pl" : locale === "es" ? "es" : "en-GB";
+  const legalLinks = {
+    en: { privacy: "Privacy and cookies", privacyHref: "/privacy-policy/", terms: "Terms", faq: "FAQ" },
+    pl: { privacy: "Prywatność i cookies", privacyHref: "/pl/polityka-prywatnosci/", terms: "Regulamin", faq: "FAQ" },
+    es: { privacy: "Privacidad y cookies", privacyHref: "/es/politica-privacidad/", terms: "Condiciones", faq: "FAQ" },
+  }[locale];
+  const contactIndustry = industry === "car-wash-detailing" ? "car" : "sport";
 
   return <main id="top" lang={language} className={`industry-page industry-page--${industry}`}>
     <a className="skip-link" href="#content">Skip to content</a>
@@ -433,8 +440,8 @@ export function IndustryLandingPage({ locale, industry }: { locale: SiteLocale; 
 
     <section className="other-industries"><div className="section-intro"><p className="eyebrow">{shared.otherEyebrow}</p><h2>{shared.otherTitle}</h2></div><div className="other-industry-grid">{otherIndustries.map((item) => { const other = industryCopy[locale][item]; return <a href={localeIndustryPath(locale, item)} key={item}><span>{other.tag}</span><b>{other.title}</b><small>{shared.otherLink} →</small></a>; })}</div></section>
 
-    <section className="final-cta industry-final"><p className="eyebrow">{shared.finalEyebrow}</p><h2>{content.finalTitle}</h2><p>{content.finalBody}</p><WhatsAppLink locale={locale} label={shared.finalCta} industry={content.tag} /><a className="final-email" href="mailto:hello@timzy.app">{shared.finalAlt}</a></section>
+    <ContactSection locale={locale} initialIndustry={contactIndustry} />
 
-    <footer><div className="footer-brand"><BrandMark /><p>{shared.footer}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href="https://timzy.app/privacy-policy/">Privacy Policy</a><a href="https://timzy.app/terms-conditions/">Terms</a><a href="https://timzy.app/faq/">FAQ</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><IndustryLanguageNav locale={locale} industry={industry} /><a href="#top">{shared.backTop}</a></div></footer>
+    <footer><div className="footer-brand"><BrandMark /><p>{shared.footer}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href={legalLinks.privacyHref}>{legalLinks.privacy}</a><a href="https://timzy.app/terms-conditions/">{legalLinks.terms}</a><a href="https://timzy.app/faq/">{legalLinks.faq}</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><IndustryLanguageNav locale={locale} industry={industry} /><a href="#top">{shared.backTop}</a></div></footer>
   </main>;
 }

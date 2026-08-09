@@ -1,5 +1,6 @@
 import { ProductCapabilities } from "./ProductCapabilities";
 import { ActualProductShowcase, CustomerOwnershipSection, TemplateChoiceSection } from "./CustomerValueSections";
+import { ContactSection } from "./ContactSection";
 
 type Locale = "en" | "pl" | "es";
 
@@ -364,12 +365,17 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
     pl: ["TWOJA APLIKACJA", "REZERWACJE", "KOMPLETNA STRONA WWW", "SPRZEDAŻ", "FUNKCJE NA ZAMÓWIENIE", "QR / NFC"],
     es: ["TU APP", "RESERVAS", "WEB COMPLETA", "VENTAS", "FUNCIONES A MEDIDA", "QR / NFC"],
   }[locale];
+  const legalLinks = {
+    en: { privacy: "Privacy and cookies", privacyHref: "/privacy-policy/", terms: "Terms", faq: "FAQ", back: "Back to top ↑" },
+    pl: { privacy: "Prywatność i cookies", privacyHref: "/pl/polityka-prywatnosci/", terms: "Regulamin", faq: "FAQ", back: "Wróć na górę ↑" },
+    es: { privacy: "Privacidad y cookies", privacyHref: "/es/politica-privacidad/", terms: "Condiciones", faq: "FAQ", back: "Volver arriba ↑" },
+  }[locale];
   return (
     <main id="top" lang={locale === "pl" ? "pl" : locale === "es" ? "es" : "en-GB"}>
       <a className="skip-link" href="#content">{copy.skip}</a>
       <header className="site-header"><a href={locale === "en" ? "/" : `/${locale}/`} className="logo-link"><BrandMark /></a><nav aria-label="Main navigation"><a href="#clients">{copy.nav[0]}</a><a href="#industries">{copy.nav[1]}</a><a href="#process">{copy.nav[2]}</a><a href="#compare">{copy.nav[3]}</a></nav><div className="header-actions"><LanguageNav locale={locale} /><a href={whatsappHref(locale)} className="button button--small" target="_blank" rel="noreferrer">{copy.navCta}</a></div></header>
 
-      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.heroCta}<span aria-hidden="true">→</span></a><a className="text-link" href="#industries">{copy.heroCta2}<span aria-hidden="true">↘</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><ActualAppScreen src="/assets/mockups/client-services.webp" alt="Actual Timzy services screen" className="phone--left" /><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual Timzy home screen" className="phone--centre" eager /><ActualAppScreen src="/assets/mockups/client-shop.webp" alt="Actual Timzy shop screen" className="phone--right" /></div></section>
+      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href="#kontakt">{copy.heroCta}<span aria-hidden="true">→</span></a><a className="text-link" href="#industries">{copy.heroCta2}<span aria-hidden="true">↘</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><ActualAppScreen src="/assets/mockups/client-services.webp" alt="Actual Timzy services screen" className="phone--left" /><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual Timzy home screen" className="phone--centre" eager /><ActualAppScreen src="/assets/mockups/client-shop.webp" alt="Actual Timzy shop screen" className="phone--right" /></div></section>
 
       <div className="signal-strip">{signalItems.map((item, index) => <span key={item}>{item}{index < signalItems.length - 1 ? <i /> : null}</span>)}</div>
 
@@ -379,7 +385,7 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <section className="white-label" id="why"><div className="white-copy"><p className="eyebrow">{copy.whiteEyebrow}</p><h2>{copy.whiteTitle}</h2><p>{copy.whiteBody}</p><div className="white-points">{copy.whitePoints.map((point, index) => <div key={point.title}><span>0{index + 1}</span><p><b>{point.title}</b><small>{point.body}</small></p></div>)}</div></div><div className="brand-stage"><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual branded Timzy home screen" className="phone--brand" /></div></section>
 
-      <TemplateChoiceSection locale={locale} ctaHref={whatsappHref(locale)} />
+      <TemplateChoiceSection locale={locale} ctaHref="#kontakt" />
 
       <ActualProductShowcase locale={locale} />
 
@@ -391,11 +397,11 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <section className="section comparison" id="compare"><div className="section-intro"><p className="eyebrow">{copy.compareEyebrow}</p><h2>{copy.compareTitle}</h2><p>{copy.compareBody}</p></div><div className="comparison-table" role="table" aria-label={copy.compareTitle}><div className="comparison-head" role="row">{copy.compareLabels.map((label, index) => <span className={index === 2 ? "timzy-col" : ""} role="columnheader" key={label}>{index === 2 ? <BrandMark compact /> : label}</span>)}</div>{copy.compareRows.map(row => <div className="comparison-row" role="row" key={row[0]}><b role="cell">{row[0]}</b><span role="cell"><i>−</i>{row[1]}</span><span className="timzy-col" role="cell"><i>✓</i>{row[2]}</span></div>)}</div>{locale === "pl" ? <p className="comparison-evidence"><b>Konkretny przykład:</b> Booksy podaje obecnie, że opcjonalny Boost pobiera 45% netto wartości usług z pierwszej zakończonej wizyty nowego klienta Boost. Rezerwacje z bezpośredniego linku mogą być bezprowizyjne. Timzy nie pobiera własnej prowizji ani od rezerwacji, ani od płatności za rezerwację. Przy płatnościach online nadal obowiązują standardowe opłaty operatora Stripe. <a href="https://biz.booksy.com/pl-pl/funkcje/boost" target="_blank" rel="noreferrer">Oficjalne zasady Booksy Boost →</a><small>Stan informacji: sierpień 2026.</small></p> : null}</section>
 
-      <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.offerCta}<span>→</span></a></div><div className="offer-visual"><ActualAppScreen src="/assets/mockups/client-vouchers.webp" alt="Actual Timzy vouchers screen" className="phone--offer" /></div></section>
+      <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href="#kontakt">{copy.offerCta}<span>→</span></a></div><div className="offer-visual"><ActualAppScreen src="/assets/mockups/client-vouchers.webp" alt="Actual Timzy vouchers screen" className="phone--offer" /></div></section>
 
-      <section className="final-cta"><div className="final-ring final-ring--one" /><div className="final-ring final-ring--two" /><p className="eyebrow">{copy.finalEyebrow}</p><h2>{copy.finalTitle}</h2><p>{copy.finalBody}</p><a className="button" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.finalCta}<span>→</span></a><a className="final-email" href="mailto:hello@timzy.app">{copy.finalAlt}</a></section>
+      <ContactSection locale={locale} />
 
-      <footer><div className="footer-brand"><BrandMark /><p>{copy.footerLine}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href="https://timzy.app/privacy-policy/">Privacy Policy</a><a href="https://timzy.app/terms-conditions/">Terms</a><a href="https://timzy.app/faq/">FAQ</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><LanguageNav locale={locale} /><a href="#top">Back to top ↑</a></div></footer>
+      <footer><div className="footer-brand"><BrandMark /><p>{copy.footerLine}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href={legalLinks.privacyHref}>{legalLinks.privacy}</a><a href="https://timzy.app/terms-conditions/">{legalLinks.terms}</a><a href="https://timzy.app/faq/">{legalLinks.faq}</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><LanguageNav locale={locale} /><a href="#top">{legalLinks.back}</a></div></footer>
     </main>
   );
 }

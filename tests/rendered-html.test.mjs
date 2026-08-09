@@ -1,13 +1,13 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-async function render(pathname = "/") {
+async function render(pathname = "/", env = {}) {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
   workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
   const { default: worker } = await import(workerUrl.href);
   return worker.fetch(
     new Request(`http://localhost${pathname}`, { headers: { accept: "text/html" } }),
-    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) } },
+    { ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) }, ...env },
     { waitUntil() {}, passThroughOnException() {} },
   );
 }
@@ -21,6 +21,8 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /assets\/timzy-logo-official-purple\.png/);
   assert.doesNotMatch(html, /class="brand-symbol"/);
   assert.match(html, /Book a free demo/);
+  assert.match(html, /Request a free demo/);
+  assert.match(html, /privacy information/);
   assert.match(html, /TRUE WHITE-LABEL/);
   assert.match(html, /Your clients remain your clients/);
   assert.match(html, /Start from a proven template or commission a fully custom design/);
@@ -66,6 +68,8 @@ test("renders localized Polish and Spanish landing pages", async () => {
   const plHtml = await pl.text();
   assert.match(plHtml, /Więcej rezerwacji\. Mniej obsługi/);
   assert.match(plHtml, /Umów bezpłatne demo/);
+  assert.match(plHtml, /Poproś o bezpłatne demo/);
+  assert.match(plHtml, /informacją o przetwarzaniu danych/);
   assert.match(plHtml, /SPA I BEAUTY/);
   assert.match(plHtml, /INNE BRANŻE/);
   assert.match(plHtml, /Twoi klienci pozostają Twoimi klientami/);
@@ -93,6 +97,22 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /Nie stanowi automatycznej gwarancji zwolnienia prawnego/);
   assert.match(plHtml, /45% netto wartości usług/);
   assert.match(await es.text(), /Más reservas\. Menos gestión/);
+});
+
+test("renders privacy pages and a signed contact challenge", async () => {
+  const [privacy, challenge] = await Promise.all([
+    render("/pl/polityka-prywatnosci"),
+    render("/api/contact-challenge", { CAPTCHA_SECRET: "test-secret-that-is-long-enough" }),
+  ]);
+  assert.equal(privacy.status, 200);
+  const privacyHtml = await privacy.text();
+  assert.match(privacyHtml, /Polityka prywatności strony Timzy/);
+  assert.match(privacyHtml, /7Software Sp\. z o\.o\./);
+  assert.match(privacyHtml, /Cookies i podobne technologie/);
+  assert.equal(challenge.status, 200);
+  const payload = await challenge.json();
+  assert.match(payload.question, /^\d+ \+ \d+ =$/);
+  assert.match(payload.token, /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/);
 });
 
 test("renders all industry landing pages in every language", async () => {
