@@ -14,7 +14,8 @@ type Copy = {
   industriesEyebrow: string;
   industriesTitle: string;
   industriesBody: string;
-  industries: Array<{ tag: string; title: string; body: string; points: string[] }>;
+  industries: Array<{ slug: "sport" | "golf" | "tennis" | "car-wash-detailing"; tag: string; title: string; body: string; points: string[] }>;
+  industryLink: string;
   whiteEyebrow: string;
   whiteTitle: string;
   whiteBody: string;
@@ -48,25 +49,26 @@ export const landingCopy: Record<Locale, Copy> = {
   en: {
     skip: "Skip to content",
     nav: ["Why Timzy", "Industries", "How it works", "Compare"],
-    navCta: "Book a free demo",
+    navCta: "Talk to us on WhatsApp",
     eyebrow: "YOUR BRAND. YOUR CLIENTS. YOUR APP.",
-    heroTitle: "Your own booking app.",
-    heroAccent: "Under your brand.",
+    heroTitle: "More bookings. Less admin.",
+    heroAccent: "All under your brand.",
     heroBody:
-      "Timzy turns your services, team and calendar into a branded mobile experience your clients can use 24/7. No marketplace. No competitors next to your offer.",
-    heroCta: "See a demo for your industry",
-    heroCta2: "Book a free presentation",
+      "Timzy gives clients one branded place to book, stay informed and return more often. Your team gets one live calendar instead of calls, messages and scattered tools.",
+    heroCta: "Choose your industry",
+    heroCta2: "Talk to us on WhatsApp",
     proof: ["iOS & Android", "Your logo and colours", "Direct client relationship"],
     industriesEyebrow: "BUILT AROUND YOUR BUSINESS",
     industriesTitle: "One platform. A different experience for every industry.",
     industriesBody:
       "Your app is configured around the way you actually work, not around a generic marketplace template.",
     industries: [
-      { tag: "BEAUTY & SPA", title: "More bookings, less phone time", body: "Let clients choose a service, specialist and available time without calling the front desk.", points: ["Treatments and staff", "Reminders and vouchers", "Product shop"] },
-      { tag: "GOLF & SPORT", title: "Schedules that keep up with your club", body: "Manage training, games, events and coach availability in one branded experience.", points: ["Training and games", "Coach calendars", "News and events"] },
-      { tag: "CAR CARE", title: "A smoother route from quote to visit", body: "Turn service selection, booking and customer updates into one clear mobile flow.", points: ["Service packages", "Live availability", "Automated updates"] },
-      { tag: "OTHER SERVICES", title: "Configured for your workflow", body: "Clinics, consultants, schools, studios and local services can shape Timzy around their process.", points: ["Flexible services", "Team permissions", "Multi-language"] },
+      { slug: "sport", tag: "SPORT CLUBS", title: "One place for club life", body: "Bring bookings, training, events and member communication into one branded club app.", points: ["Training and games", "Tournaments and camps", "Club news and reports"] },
+      { slug: "golf", tag: "GOLF", title: "Keep players close to the club", body: "Let players book games and training, follow tournaments and stay up to date with club life.", points: ["Games and training", "Coach calendars", "Tournaments and camps"] },
+      { slug: "tennis", tag: "TENNIS", title: "Fill courts and coaching hours", body: "Turn court time, lessons and club events into a simple mobile booking journey.", points: ["Courts and lessons", "Coach availability", "Events and reminders"] },
+      { slug: "car-wash-detailing", tag: "CAR WASH & DETAILING", title: "Turn enquiries into booked visits", body: "Help clients choose a service package, see available dates and receive clear booking updates.", points: ["Service packages", "Live availability", "Automated reminders"] },
     ],
+    industryLink: "See the solution",
     whiteEyebrow: "TRUE WHITE-LABEL",
     whiteTitle: "Your clients never enter a marketplace. They enter your world.",
     whiteBody:
@@ -122,24 +124,25 @@ export const landingCopy: Record<Locale, Copy> = {
   pl: {
     skip: "Przejdź do treści",
     nav: ["Dlaczego Timzy", "Branże", "Jak to działa", "Porównanie"],
-    navCta: "Umów bezpłatne demo",
+    navCta: "Napisz na WhatsApp",
     eyebrow: "TWOJA MARKA. TWOI KLIENCI. TWOJA APLIKACJA.",
-    heroTitle: "Własna aplikacja do rezerwacji.",
-    heroAccent: "Pod Twoją marką.",
+    heroTitle: "Więcej rezerwacji. Mniej obsługi.",
+    heroAccent: "Wszystko pod Twoją marką.",
     heroBody:
-      "Timzy zamienia Twoje usługi, zespół i kalendarz w aplikację mobilną dostępną dla klientów przez całą dobę. Bez marketplace’u i konkurencji obok Twojej oferty.",
-    heroCta: "Zobacz demo dla swojej branży",
-    heroCta2: "Umów bezpłatną prezentację",
+      "Timzy daje klientom jedno miejsce do rezerwacji, kontaktu i powrotów. Twój zespół dostaje aktualny grafik zamiast telefonów, wiadomości i rozproszonych narzędzi.",
+    heroCta: "Wybierz swoją branżę",
+    heroCta2: "Napisz na WhatsApp",
     proof: ["iOS i Android", "Twoje logo i kolory", "Bezpośrednia relacja z klientem"],
     industriesEyebrow: "DOPASOWANE DO TWOJEGO BIZNESU",
     industriesTitle: "Jedna platforma. Inne doświadczenie dla każdej branży.",
     industriesBody: "Aplikacja powstaje wokół Twojego sposobu pracy, a nie szablonu ogólnego marketplace’u.",
     industries: [
-      { tag: "BEAUTY & SPA", title: "Więcej rezerwacji, mniej telefonów", body: "Klient sam wybiera usługę, specjalistę i dostępny termin bez angażowania recepcji.", points: ["Zabiegi i pracownicy", "Przypomnienia i vouchery", "Sklep z produktami"] },
-      { tag: "GOLF I SPORT", title: "Grafik, który nadąża za klubem", body: "Zarządzaj treningami, grami, wydarzeniami i dostępnością trenerów w jednej aplikacji.", points: ["Treningi i gry", "Kalendarze trenerów", "Aktualności i wydarzenia"] },
-      { tag: "AUTO DETAILING", title: "Prosta droga od usługi do wizyty", body: "Połącz wybór pakietu, rezerwację i informacje dla klienta w jeden czytelny proces.", points: ["Pakiety usług", "Dostępne terminy", "Automatyczne aktualizacje"] },
-      { tag: "INNE USŁUGI", title: "Konfiguracja pod Twój proces", body: "Gabinety, doradcy, szkoły, studia i lokalne usługi dopasują Timzy do swojej pracy.", points: ["Elastyczne usługi", "Role w zespole", "Wiele języków"] },
+      { slug: "sport", tag: "KLUBY SPORTOWE", title: "Całe życie klubu w jednym miejscu", body: "Połącz rezerwacje, treningi, wydarzenia i komunikację z członkami w aplikacji pod marką klubu.", points: ["Treningi i gry", "Turnieje i obozy", "Aktualności i raporty"] },
+      { slug: "golf", tag: "GOLF", title: "Zostań bliżej swoich graczy", body: "Gracze rezerwują gry i treningi, śledzą turnieje i są na bieżąco z życiem klubu.", points: ["Gry i treningi", "Kalendarze trenerów", "Turnieje i obozy"] },
+      { slug: "tennis", tag: "TENIS", title: "Zapełniaj korty i godziny trenerów", body: "Połącz rezerwacje kortów, treningów i wydarzeń w jeden prosty proces mobilny.", points: ["Korty i treningi", "Dostępność trenerów", "Wydarzenia i przypomnienia"] },
+      { slug: "car-wash-detailing", tag: "MYJNIE I DETAILING", title: "Zmieniaj zapytania w umówione wizyty", body: "Klient wybiera pakiet, widzi wolne terminy i otrzymuje jasne informacje o rezerwacji.", points: ["Pakiety usług", "Dostępne terminy", "Automatyczne przypomnienia"] },
     ],
+    industryLink: "Zobacz rozwiązanie",
     whiteEyebrow: "PRAWDZIWY WHITE-LABEL",
     whiteTitle: "Klient nie wchodzi do marketplace’u. Wchodzi do świata Twojej marki.",
     whiteBody: "Timzy pozostaje technologią w tle, a Twoja marka jest na pierwszym planie od pierwszego kliknięcia po kolejną wizytę.",
@@ -193,23 +196,24 @@ export const landingCopy: Record<Locale, Copy> = {
   es: {
     skip: "Ir al contenido",
     nav: ["Por qué Timzy", "Sectores", "Cómo funciona", "Comparar"],
-    navCta: "Reservar demo gratis",
+    navCta: "Hablar por WhatsApp",
     eyebrow: "TU MARCA. TUS CLIENTES. TU APP.",
-    heroTitle: "Tu propia app de reservas.",
-    heroAccent: "Con tu marca.",
-    heroBody: "Timzy convierte tus servicios, equipo y agenda en una experiencia móvil disponible 24/7. Sin marketplace ni competidores junto a tu oferta.",
-    heroCta: "Ver una demo para mi sector",
-    heroCta2: "Reservar presentación gratuita",
+    heroTitle: "Más reservas. Menos gestión.",
+    heroAccent: "Todo con tu marca.",
+    heroBody: "Timzy ofrece a tus clientes un único lugar para reservar, mantenerse informados y volver. Tu equipo trabaja con una agenda en vivo, sin llamadas ni herramientas dispersas.",
+    heroCta: "Elegir mi sector",
+    heroCta2: "Hablar por WhatsApp",
     proof: ["iOS y Android", "Tu logo y tus colores", "Relación directa con el cliente"],
     industriesEyebrow: "CREADA PARA TU NEGOCIO",
     industriesTitle: "Una plataforma. Una experiencia distinta para cada sector.",
     industriesBody: "Tu app se configura según tu forma real de trabajar, no según una plantilla genérica de marketplace.",
     industries: [
-      { tag: "BEAUTY & SPA", title: "Más reservas, menos llamadas", body: "El cliente elige servicio, especialista y hora disponible sin llamar a recepción.", points: ["Tratamientos y equipo", "Recordatorios y vales", "Tienda de productos"] },
-      { tag: "GOLF Y DEPORTE", title: "Una agenda al ritmo de tu club", body: "Gestiona entrenamientos, partidos, eventos y disponibilidad de entrenadores en tu propia app.", points: ["Entrenamientos y juegos", "Agenda de entrenadores", "Noticias y eventos"] },
-      { tag: "CUIDADO DEL COCHE", title: "Del servicio a la cita sin fricción", body: "Une selección de servicios, reserva y avisos al cliente en un proceso claro.", points: ["Paquetes de servicios", "Disponibilidad en vivo", "Avisos automáticos"] },
-      { tag: "OTROS SERVICIOS", title: "Configurada para tu proceso", body: "Clínicas, asesores, escuelas, estudios y negocios locales adaptan Timzy a su trabajo.", points: ["Servicios flexibles", "Permisos de equipo", "Varios idiomas"] },
+      { slug: "sport", tag: "CLUBES DEPORTIVOS", title: "Toda la vida del club en un solo lugar", body: "Une reservas, entrenamientos, eventos y comunicación con socios en una app con tu marca.", points: ["Entrenamientos y juegos", "Torneos y campus", "Noticias e informes"] },
+      { slug: "golf", tag: "GOLF", title: "Mantén a los jugadores cerca del club", body: "Los jugadores reservan partidos y clases, siguen torneos y reciben las novedades del club.", points: ["Partidos y clases", "Agenda de entrenadores", "Torneos y campus"] },
+      { slug: "tennis", tag: "TENIS", title: "Llena pistas y horas de entrenamiento", body: "Convierte pistas, clases y eventos en un proceso de reserva móvil sencillo.", points: ["Pistas y clases", "Disponibilidad de entrenadores", "Eventos y recordatorios"] },
+      { slug: "car-wash-detailing", tag: "LAVADO Y DETAILING", title: "Convierte consultas en citas", body: "El cliente elige un pack, ve las horas libres y recibe información clara de su reserva.", points: ["Packs de servicios", "Disponibilidad en vivo", "Recordatorios automáticos"] },
     ],
+    industryLink: "Ver la solución",
     whiteEyebrow: "WHITE-LABEL DE VERDAD",
     whiteTitle: "Tu cliente no entra en un marketplace. Entra en el mundo de tu marca.",
     whiteBody: "Timzy mantiene la tecnología en segundo plano y tu marca en primer plano, desde el primer toque hasta la siguiente visita.",
@@ -303,22 +307,34 @@ function Phone({ screen, className = "" }: { screen: "home" | "booking" | "calen
 }
 
 function LanguageNav({ locale }: { locale: Locale }) {
-  return <div className="languages" aria-label="Language"><a href="/" className={locale === "en" ? "is-active" : ""}>EN</a><a href="/pl/" className={locale === "pl" ? "is-active" : ""}>PL</a><a href="/es/" className={locale === "es" ? "is-active" : ""}>ES</a></div>;
+  const paths = { en: "/", pl: "/pl/", es: "/es/" };
+  return <div className="languages" aria-label="Language"><a href={paths.en} className={locale === "en" ? "is-active" : ""}>EN</a><a href={paths.pl} className={locale === "pl" ? "is-active" : ""}>PL</a><a href={paths.es} className={locale === "es" ? "is-active" : ""}>ES</a></div>;
 }
 
-const mailHref = "mailto:hello@timzy.app?subject=Free%20Timzy%20demo";
+function industryHref(locale: Locale, slug: Copy["industries"][number]["slug"]) {
+  return `${locale === "en" ? "" : `/${locale}`}/${slug}/`;
+}
+
+function whatsappHref(locale: Locale, industry?: string) {
+  const messages = {
+    en: `Hi, I would like to see a Timzy demo${industry ? ` for ${industry}` : " for my industry"}.`,
+    pl: `Dzień dobry, chcę zobaczyć demo Timzy${industry ? ` dla branży ${industry}` : " dla mojej branży"}.`,
+    es: `Hola, quiero ver una demo de Timzy${industry ? ` para ${industry}` : " para mi sector"}.`,
+  };
+  return `https://wa.me/34600659705?text=${encodeURIComponent(messages[locale])}`;
+}
 
 export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
   return (
     <main id="top" lang={locale === "pl" ? "pl" : locale === "es" ? "es" : "en-GB"}>
       <a className="skip-link" href="#content">{copy.skip}</a>
-      <header className="site-header"><a href={locale === "en" ? "/" : `/${locale}/`} className="logo-link"><BrandMark /></a><nav aria-label="Main navigation"><a href="#why">{copy.nav[0]}</a><a href="#industries">{copy.nav[1]}</a><a href="#process">{copy.nav[2]}</a><a href="#compare">{copy.nav[3]}</a></nav><div className="header-actions"><LanguageNav locale={locale} /><a href={mailHref} className="button button--small">{copy.navCta}</a></div></header>
+      <header className="site-header"><a href={locale === "en" ? "/" : `/${locale}/`} className="logo-link"><BrandMark /></a><nav aria-label="Main navigation"><a href="#why">{copy.nav[0]}</a><a href="#industries">{copy.nav[1]}</a><a href="#process">{copy.nav[2]}</a><a href="#compare">{copy.nav[3]}</a></nav><div className="header-actions"><LanguageNav locale={locale} /><a href={whatsappHref(locale)} className="button button--small" target="_blank" rel="noreferrer">{copy.navCta}</a></div></header>
 
-      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href="#industries">{copy.heroCta}<span aria-hidden="true">↘</span></a><a className="text-link" href={mailHref}>{copy.heroCta2}<span aria-hidden="true">→</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><Phone screen="booking" className="phone--left" /><Phone screen="home" className="phone--centre" /><Phone screen="admin" className="phone--right" /><div className="floating-note"><span>↗</span><p><b>Available slot filled</b><small>Automatic push alert sent</small></p></div></div></section>
+      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href="#industries">{copy.heroCta}<span aria-hidden="true">↘</span></a><a className="text-link" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.heroCta2}<span aria-hidden="true">→</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><Phone screen="booking" className="phone--left" /><Phone screen="home" className="phone--centre" /><Phone screen="admin" className="phone--right" /><div className="floating-note"><span>↗</span><p><b>Available slot filled</b><small>Automatic push alert sent</small></p></div></div></section>
 
       <div className="signal-strip"><span>ONE APP</span><i /><span>BOOKINGS</span><i /><span>LOYALTY</span><i /><span>SALES</span><i /><span>CUSTOMER CARE</span></div>
 
-      <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <article className={`industry-card industry-card--${index}`} key={industry.tag}><div className="industry-visual"><div className="industry-art"><span>{index === 0 ? "✦" : index === 1 ? "●" : index === 2 ? "◇" : "＋"}</span></div><div className="industry-mini-screen"><small>{industry.tag}</small><b>{index === 0 ? "09:30" : index === 1 ? "18:00" : index === 2 ? "11:45" : "14:20"}</b><em>available</em></div></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul></div></article>)}</div></section>
+      <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className="industry-visual"><div className="industry-art"><span>{index === 0 ? "✦" : index === 1 ? "●" : index === 2 ? "◇" : "＋"}</span></div><div className="industry-mini-screen"><small>{industry.tag}</small><b>{index === 0 ? "09:30" : index === 1 ? "18:00" : index === 2 ? "11:45" : "14:20"}</b><em>available</em></div></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
 
       <section className="white-label" id="why"><div className="white-copy"><p className="eyebrow">{copy.whiteEyebrow}</p><h2>{copy.whiteTitle}</h2><p>{copy.whiteBody}</p><div className="white-points">{copy.whitePoints.map((point, index) => <div key={point.title}><span>0{index + 1}</span><p><b>{point.title}</b><small>{point.body}</small></p></div>)}</div></div><div className="brand-stage"><div className="brand-chip brand-chip--one">YOUR LOGO</div><div className="brand-chip brand-chip--two">#7C58F7</div><div className="brand-chip brand-chip--three">YOUR APP</div><Phone screen="home" className="phone--brand" /><div className="brand-caption"><BrandMark compact /><span>Technology in the background.<br /><b>Your brand in the foreground.</b></span></div></div></section>
 
@@ -328,9 +344,9 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <section className="section comparison" id="compare"><div className="section-intro"><p className="eyebrow">{copy.compareEyebrow}</p><h2>{copy.compareTitle}</h2><p>{copy.compareBody}</p></div><div className="comparison-table" role="table" aria-label={copy.compareTitle}><div className="comparison-head" role="row">{copy.compareLabels.map((label, index) => <span className={index === 2 ? "timzy-col" : ""} role="columnheader" key={label}>{index === 2 ? <BrandMark compact /> : label}</span>)}</div>{copy.compareRows.map(row => <div className="comparison-row" role="row" key={row[0]}><b role="cell">{row[0]}</b><span role="cell"><i>−</i>{row[1]}</span><span className="timzy-col" role="cell"><i>✓</i>{row[2]}</span></div>)}</div></section>
 
-      <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href={mailHref}>{copy.offerCta}<span>→</span></a></div><div className="offer-visual"><Phone screen="calendar" className="phone--offer" /><div className="offer-card"><span>♡</span><p><b>Welcome voucher</b><small>10% off the first booking</small></p></div><div className="offer-card offer-card--bottom"><span>✓</span><p><b>Booking confirmed</b><small>Wednesday, 10:30</small></p></div></div></section>
+      <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.offerCta}<span>→</span></a></div><div className="offer-visual"><Phone screen="calendar" className="phone--offer" /><div className="offer-card"><span>♡</span><p><b>Welcome voucher</b><small>10% off the first booking</small></p></div><div className="offer-card offer-card--bottom"><span>✓</span><p><b>Booking confirmed</b><small>Wednesday, 10:30</small></p></div></div></section>
 
-      <section className="final-cta"><div className="final-ring final-ring--one" /><div className="final-ring final-ring--two" /><p className="eyebrow">{copy.finalEyebrow}</p><h2>{copy.finalTitle}</h2><p>{copy.finalBody}</p><a className="button" href={mailHref}>{copy.finalCta}<span>→</span></a><a className="final-email" href="mailto:hello@timzy.app">{copy.finalAlt}</a></section>
+      <section className="final-cta"><div className="final-ring final-ring--one" /><div className="final-ring final-ring--two" /><p className="eyebrow">{copy.finalEyebrow}</p><h2>{copy.finalTitle}</h2><p>{copy.finalBody}</p><a className="button" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.finalCta}<span>→</span></a><a className="final-email" href="mailto:hello@timzy.app">{copy.finalAlt}</a></section>
 
       <footer><div className="footer-brand"><BrandMark /><p>{copy.footerLine}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href="https://timzy.app/privacy-policy/">Privacy Policy</a><a href="https://timzy.app/terms-conditions/">Terms</a><a href="https://timzy.app/faq/">FAQ</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><LanguageNav locale={locale} /><a href="#top">Back to top ↑</a></div></footer>
     </main>

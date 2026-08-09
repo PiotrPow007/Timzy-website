@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { LandingPage, landingCopy } from "../LandingPage";
 
 export const metadata: Metadata = {
-  title: "Własna aplikacja do rezerwacji pod Twoją marką",
+  title: "Więcej rezerwacji, mniej obsługi — pod Twoją marką",
   description:
-    "Uruchom aplikację do rezerwacji z logo i kolorami Twojej firmy. Rezerwacje, powiadomienia, lojalność, sklep i zarządzanie klientami w jednym miejscu.",
+    "Uruchom aplikację do rezerwacji dla sportu, golfa, tenisa, myjni i detailingu. Grafiki, powiadomienia i kontakt z klientem pod Twoją marką.",
   alternates: {
     canonical: "/pl/",
     languages: { "en-GB": "/", pl: "/pl/", es: "/es/" },

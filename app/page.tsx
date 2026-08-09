@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { LandingPage, landingCopy } from "./LandingPage";
 
 export const metadata: Metadata = {
-  title: "Your own booking app, under your brand",
+  title: "More bookings, less admin — under your brand",
   description:
-    "Launch a branded booking app for your service business. Online bookings, reminders, loyalty, shop, payments and customer management in one place.",
+    "Launch a branded booking app for sport clubs, golf, tennis, car wash and detailing. Online bookings, calendars, reminders and customer communication in one place.",
   alternates: {
     canonical: "/",
     languages: { "en-GB": "/", pl: "/pl/", es: "/es/" },
