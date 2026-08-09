@@ -37,6 +37,7 @@ test("renders the English Timzy landing page", async () => {
     assert.match(html, new RegExp(`assets/mockups/${screen}\\.webp`));
   }
   assert.match(html, /Not a concept\. This is the real Timzy client app/);
+  assert.doesNotMatch(html, /Welcome voucher|Booking confirmed|Technology in the background|YOUR LOGO|#7C58F7/);
   assert.match(html, /THE COMPLETE TIMZY ECOSYSTEM/);
   assert.match(html, /Need a function outside the standard modules/);
   assert.match(html, /Complete website or online store/);
@@ -71,6 +72,7 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /Wybierz z biblioteki gotowych template’ów aplikacji/);
   assert.match(plHtml, /Projekt indywidualny/);
   assert.match(plHtml, /Tak wygląda aktualna aplikacja Timzy/);
+  assert.doesNotMatch(plHtml, /Aktualna aplikacja|Prawdziwe ekrany Timzy|Welcome voucher|Booking confirmed|YOUR LOGO|#7C58F7/);
   assert.match(plHtml, /Osobne środowisko klienta zamiast jednej centralnej bazy/);
   assert.match(plHtml, /Potrzebujesz funkcji, której nie ma na liście/);
   assert.match(plHtml, /Kompletna strona WWW lub sklep internetowy/);
