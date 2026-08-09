@@ -292,6 +292,9 @@ img { display: block; max-width: 100%; }
 .comparison-row i { width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%; color: #9a929f; background: #f0edf2; font-style: normal; }
 .comparison-row .timzy-col { color: #efeafd; background: #2d2342; }
 .comparison-row .timzy-col i { color: #453068; background: var(--lime); }
+.comparison-evidence { max-width: 920px; margin: 26px auto 0; padding: 21px 24px; border: 1px solid #e2d9fb; border-radius: 20px; color: #5d5668; background: #f4efff; font-size: 11px; line-height: 1.65; }
+.comparison-evidence a { margin-left: 5px; color: var(--violet); font-weight: 800; }
+.comparison-evidence small { display: block; margin-top: 6px; color: #8d8497; font-size: 9px; }
 
 .offer { min-height: 750px; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 80px; padding: 100px max(32px, calc((100vw - 1160px) / 2)); color: white; background: var(--violet); }
 .offer .eyebrow { color: #dfd3ff; }
@@ -329,6 +332,37 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .footer-bottom { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 25px; margin-top: 30px; color: #736b7a; font-size: 10px; }
 .footer-bottom .languages { border-color: rgba(255,255,255,.1); background: rgba(255,255,255,.04); }
 .footer-bottom > a { justify-self: end; }
+
+/* Complete product presentation */
+.capability-catalog { padding: 128px max(32px, calc((100vw - 1280px) / 2)); background: #fbfafc; }
+.capability-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px; }
+.capability-grid article { min-height: 480px; padding: 38px; border: 1px solid var(--line); border-radius: 32px; background: white; box-shadow: 0 22px 55px rgba(57,41,86,.055); }
+.capability-icon { width: 56px; height: 56px; display: grid; place-items: center; margin-bottom: 38px; border-radius: 18px; color: var(--industry-accent, var(--violet)); background: var(--industry-soft, var(--soft)); font-size: 18px; font-weight: 830; }
+.capability-grid h3 { margin: 0; font-size: 27px; line-height: 1.12; letter-spacing: -.038em; }
+.capability-grid article > p { max-width: 510px; margin: 15px 0 25px; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.capability-grid ul { margin: 0; padding: 0; list-style: none; }
+.capability-grid li { display: flex; align-items: flex-start; gap: 10px; padding: 7px 0; color: #4e4755; font-size: 12px; line-height: 1.45; font-weight: 650; }
+.capability-grid li i { width: 19px; height: 19px; flex: 0 0 auto; display: grid; place-items: center; border-radius: 50%; color: var(--industry-accent, var(--violet)); background: var(--industry-soft, var(--soft)); font-size: 8px; font-style: normal; }
+.capability-note { max-width: 860px; margin: 26px auto 0; color: #7e7787; text-align: center; font-size: 11px; line-height: 1.6; }
+.implementation-extras { padding: 120px max(32px, calc((100vw - 1280px) / 2)); background: #f3eff8; }
+.implementation-heading { max-width: 850px; margin-bottom: 58px; }
+.implementation-heading h2, .data-architecture-copy h2 { margin: 0; font-size: clamp(42px, 4.4vw, 64px); line-height: 1.04; letter-spacing: -.052em; font-weight: 690; }
+.implementation-heading > p:last-child { max-width: 680px; margin: 23px 0 0; color: var(--muted); font-size: 16px; line-height: 1.7; }
+.extras-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; }
+.extras-grid article { min-height: 230px; padding: 30px; border: 1px solid rgba(111,69,234,.12); border-radius: 26px; background: rgba(255,255,255,.72); }
+.extras-grid article > span { color: var(--industry-accent, var(--violet)); font-size: 9px; font-weight: 850; letter-spacing: .13em; }
+.extras-grid h3 { margin: 45px 0 0; font-size: 20px; line-height: 1.18; letter-spacing: -.03em; }
+.extras-grid p { margin: 13px 0 0; color: var(--muted); font-size: 12px; line-height: 1.62; }
+.data-architecture { display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: 80px; padding: 120px max(32px, calc((100vw - 1280px) / 2)); color: white; background: #17202a; }
+.data-architecture .eyebrow { color: #9ee8dc; }
+.data-architecture-copy > p { max-width: 690px; margin: 24px 0 0; color: #b5c1cb; font-size: 16px; line-height: 1.72; }
+.data-architecture-copy > small { display: block; max-width: 720px; margin-top: 28px; padding-top: 22px; border-top: 1px solid rgba(255,255,255,.13); color: #7f8c97; font-size: 9px; line-height: 1.65; }
+.data-architecture-copy > small a { display: block; width: fit-content; margin-top: 10px; color: #9ee8dc; font-weight: 760; }
+.data-architecture-grid { display: grid; gap: 13px; }
+.data-architecture-grid article { padding: 25px 28px; border: 1px solid rgba(255,255,255,.12); border-radius: 23px; background: rgba(255,255,255,.055); }
+.data-architecture-grid article > span { color: #82dacc; font-size: 9px; font-weight: 850; letter-spacing: .12em; }
+.data-architecture-grid h3 { margin: 13px 0 0; font-size: 18px; letter-spacing: -.025em; }
+.data-architecture-grid p { margin: 10px 0 0; color: #9facb6; font-size: 12px; line-height: 1.6; }
 
 /* Industry conversion pages */
 .industry-page { --industry-accent: #6f45ea; --industry-dark: #211a31; --industry-soft: #eee7ff; background: #fbfafc; }
@@ -404,6 +438,12 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .industry-product-visual { position: relative; min-height: 620px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle, color-mix(in srgb, var(--industry-accent) 55%, transparent), transparent 66%); }
 .industry-product-visual::before { content: ""; position: absolute; width: 480px; height: 480px; border: 1px solid rgba(255,255,255,.13); border-radius: 50%; box-shadow: 0 0 0 70px rgba(255,255,255,.025); }
 .industry-product-visual .vertical-phone { width: 274px; transform: rotate(3deg); }
+.golf-automation { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 80px; padding: 95px max(32px, calc((100vw - 1280px) / 2)); background: #e6f0db; }
+.golf-automation h2 { margin: 0; font-size: clamp(38px, 4vw, 58px); line-height: 1.04; letter-spacing: -.05em; font-weight: 690; }
+.golf-automation > div > p:last-child { max-width: 650px; margin: 22px 0 0; color: #53605a; font-size: 15px; line-height: 1.7; }
+.golf-automation ul { margin: 0; padding: 0; list-style: none; }
+.golf-automation li { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-bottom: 1px solid rgba(4,85,86,.17); color: #244344; font-size: 13px; font-weight: 680; }
+.golf-automation li > span { width: 24px; height: 24px; display: grid; place-items: center; border-radius: 50%; color: white; background: #045556; font-size: 9px; }
 .industry-process .eyebrow { color: #cdbaff; }
 .process-grid--three { grid-template-columns: repeat(3, 1fr); }
 .other-industries { padding: 120px max(32px, calc((100vw - 1280px) / 2)); background: #f7f5fa; }
@@ -424,6 +464,11 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 }
 
 @media (max-width: 900px) {
+  .capability-grid { grid-template-columns: 1fr; }
+  .capability-grid article { min-height: 0; }
+  .extras-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .data-architecture { grid-template-columns: 1fr; gap: 55px; }
+  .golf-automation { grid-template-columns: 1fr; gap: 45px; }
   .industry-hero { min-height: auto; grid-template-columns: 1fr; padding: 125px 24px 55px; text-align: center; }
   .industry-hero-copy { max-width: 760px; margin: 0 auto; }
   .industry-hero-body { margin-inline: auto; }
@@ -437,6 +482,13 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 }
 
 @media (max-width: 640px) {
+  .capability-catalog, .implementation-extras, .data-architecture { padding: 90px 18px; }
+  .capability-grid article { padding: 29px 24px; }
+  .capability-icon { margin-bottom: 32px; }
+  .extras-grid { grid-template-columns: 1fr; }
+  .implementation-heading h2, .data-architecture-copy h2 { font-size: 40px; }
+  .golf-automation { padding: 85px 18px; }
+  .golf-automation h2 { font-size: 38px; }
   .industry-header { width: calc(100% - 36px); }
   .industry-hero { padding-top: 105px; }
   .industry-back { margin-bottom: 22px; }

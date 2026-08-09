@@ -1,3 +1,5 @@
+import { ProductCapabilities } from "./ProductCapabilities";
+
 type Locale = "en" | "pl" | "es";
 
 type Copy = {
@@ -104,15 +106,19 @@ export const landingCopy: Record<Locale, Copy> = {
     compareRows: [
       ["Brand on the home screen", "Marketplace brand", "Your brand"],
       ["Competitors next to your offer", "Often visible", "Never"],
+      ["App in iOS and Android stores", "One shared marketplace app", "A separate app under your brand"],
       ["Look and customer journey", "Standardised", "Configured for you"],
       ["Direct client relationship", "Platform-led", "Business-led"],
+      ["Commission on bookings", "May apply to promotional acquisition", "No Timzy commission per booking"],
+      ["Reservation data environment", "Shared platform environment", "Separate client instance"],
       ["Shop, loyalty and content", "Platform dependent", "Part of your ecosystem"],
+      ["Website, branding and QR/NFC", "Usually outside the platform", "Available in one implementation"],
     ],
     offerEyebrow: "A PROPOSAL THAT FITS",
     offerTitle: "Pay for the setup your business actually needs.",
     offerBody:
-      "The right scope depends on your team, locations and modules. We prepare a clear proposal after a short demo, instead of forcing every business into the same package.",
-    offerPoints: ["No oversized custom software project", "Modules matched to your workflow", "Support during setup and launch"],
+      "The right scope depends on your team, locations and modules. You receive a clear setup and subscription proposal with no Timzy commission on individual bookings.",
+    offerPoints: ["No oversized custom software project", "No Timzy commission per booking", "Modules matched to your workflow", "Support during setup and launch"],
     offerCta: "Get a tailored proposal",
     finalEyebrow: "READY TO SEE YOUR BRAND IN THE APP?",
     finalTitle: "Your calendar can fill itself. Your brand should get the credit.",
@@ -177,14 +183,18 @@ export const landingCopy: Record<Locale, Copy> = {
     compareRows: [
       ["Marka na ekranie głównym", "Marka platformy", "Twoja marka"],
       ["Konkurencja obok oferty", "Często widoczna", "Nigdy"],
+      ["Aplikacja w sklepach iOS i Android", "Jedna wspólna aplikacja marketplace'u", "Osobna aplikacja pod Twoją marką"],
       ["Wygląd i ścieżka klienta", "Ustandaryzowane", "Dopasowane do Ciebie"],
       ["Bezpośrednia relacja", "Prowadzona przez platformę", "Prowadzona przez firmę"],
+      ["Prowizja od rezerwacji", "Możliwa przy płatnym pozyskiwaniu klientów", "Brak prowizji Timzy od rezerwacji"],
+      ["Środowisko danych rezerwacji", "Wspólne środowisko platformy", "Osobna instancja klienta"],
       ["Sklep, lojalność i treści", "Zależne od platformy", "Część Twojego ekosystemu"],
+      ["Strona, branding i QR/NFC", "Zwykle poza platformą", "Dostępne w jednym wdrożeniu"],
     ],
     offerEyebrow: "OFERTA DOPASOWANA DO FIRMY",
     offerTitle: "Płacisz za rozwiązanie, którego naprawdę potrzebujesz.",
-    offerBody: "Zakres zależy od zespołu, lokalizacji i wybranych modułów. Po krótkim demo przygotowujemy czytelną propozycję zamiast wciskać każdą firmę w ten sam pakiet.",
-    offerPoints: ["Bez kosztownego projektu od zera", "Moduły dobrane do procesu", "Wsparcie podczas wdrożenia i publikacji"],
+    offerBody: "Zakres zależy od zespołu, lokalizacji i wybranych modułów. Otrzymujesz czytelną ofertę wdrożenia i abonamentu, bez prowizji Timzy od pojedynczych rezerwacji.",
+    offerPoints: ["Bez kosztownego projektu od zera", "Bez prowizji Timzy od rezerwacji", "Moduły dobrane do procesu", "Wsparcie podczas wdrożenia i publikacji"],
     offerCta: "Otrzymaj dopasowaną ofertę",
     finalEyebrow: "CHCESZ ZOBACZYĆ SWOJĄ MARKĘ W APLIKACJI?",
     finalTitle: "Kalendarz może zapełniać się sam. Rozpoznawalność powinna pracować na Ciebie.",
@@ -248,14 +258,18 @@ export const landingCopy: Record<Locale, Copy> = {
     compareRows: [
       ["Marca en la pantalla inicial", "La plataforma", "Tu marca"],
       ["Competidores junto a tu oferta", "A menudo", "Nunca"],
+      ["App en las tiendas iOS y Android", "Una app compartida de marketplace", "Una app separada con tu marca"],
       ["Diseño y recorrido", "Estandarizado", "Configurado para ti"],
       ["Relación directa", "Dirigida por la plataforma", "Dirigida por tu negocio"],
+      ["Comisión por reserva", "Puede aplicarse a captación promocionada", "Sin comisión Timzy por reserva"],
+      ["Entorno de datos de reservas", "Entorno compartido de la plataforma", "Instancia separada del cliente"],
       ["Tienda, fidelización y contenido", "Depende de la plataforma", "Parte de tu ecosistema"],
+      ["Web, branding y QR/NFC", "Normalmente fuera de la plataforma", "Disponible en una implantación"],
     ],
     offerEyebrow: "UNA PROPUESTA A TU MEDIDA",
     offerTitle: "Paga por la solución que tu negocio necesita.",
-    offerBody: "El alcance depende de tu equipo, ubicaciones y módulos. Tras una breve demo preparamos una propuesta clara, sin obligar a todos los negocios a elegir el mismo paquete.",
-    offerPoints: ["Sin un proyecto de software sobredimensionado", "Módulos adaptados a tu proceso", "Soporte durante configuración y lanzamiento"],
+    offerBody: "El alcance depende de tu equipo, ubicaciones y módulos. Recibes una propuesta clara de implantación y suscripción, sin comisión Timzy por cada reserva.",
+    offerPoints: ["Sin un proyecto de software sobredimensionado", "Sin comisión Timzy por reserva", "Módulos adaptados a tu proceso", "Soporte durante configuración y lanzamiento"],
     offerCta: "Recibir una propuesta",
     finalEyebrow: "¿LISTO PARA VER TU MARCA EN LA APP?",
     finalTitle: "Tu agenda puede llenarse sola. El mérito debe ser de tu marca.",
@@ -340,9 +354,11 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <section className="section features"><div className="section-intro section-intro--wide"><p className="eyebrow">{copy.featuresEyebrow}</p><h2>{copy.featuresTitle}</h2><p>{copy.featuresBody}</p></div><div className="feature-grid">{copy.features.map((feature, index) => <article className={index === 1 ? "feature-card feature-card--highlight" : "feature-card"} key={feature.title}><span className="feature-icon">{feature.icon}</span><h3>{feature.title}</h3><p>{feature.body}</p></article>)}</div></section>
 
+      <ProductCapabilities locale={locale} />
+
       <section className="process" id="process"><div className="process-heading"><p className="eyebrow">{copy.processEyebrow}</p><h2>{copy.processTitle}</h2></div><div className="process-grid">{copy.process.map((step, index) => <article key={step.title}><span>0{index + 1}</span><div className="process-line"><i /></div><h3>{step.title}</h3><p>{step.body}</p></article>)}</div></section>
 
-      <section className="section comparison" id="compare"><div className="section-intro"><p className="eyebrow">{copy.compareEyebrow}</p><h2>{copy.compareTitle}</h2><p>{copy.compareBody}</p></div><div className="comparison-table" role="table" aria-label={copy.compareTitle}><div className="comparison-head" role="row">{copy.compareLabels.map((label, index) => <span className={index === 2 ? "timzy-col" : ""} role="columnheader" key={label}>{index === 2 ? <BrandMark compact /> : label}</span>)}</div>{copy.compareRows.map(row => <div className="comparison-row" role="row" key={row[0]}><b role="cell">{row[0]}</b><span role="cell"><i>−</i>{row[1]}</span><span className="timzy-col" role="cell"><i>✓</i>{row[2]}</span></div>)}</div></section>
+      <section className="section comparison" id="compare"><div className="section-intro"><p className="eyebrow">{copy.compareEyebrow}</p><h2>{copy.compareTitle}</h2><p>{copy.compareBody}</p></div><div className="comparison-table" role="table" aria-label={copy.compareTitle}><div className="comparison-head" role="row">{copy.compareLabels.map((label, index) => <span className={index === 2 ? "timzy-col" : ""} role="columnheader" key={label}>{index === 2 ? <BrandMark compact /> : label}</span>)}</div>{copy.compareRows.map(row => <div className="comparison-row" role="row" key={row[0]}><b role="cell">{row[0]}</b><span role="cell"><i>−</i>{row[1]}</span><span className="timzy-col" role="cell"><i>✓</i>{row[2]}</span></div>)}</div>{locale === "pl" ? <p className="comparison-evidence"><b>Konkretny przykład:</b> Booksy podaje obecnie, że opcjonalny Boost pobiera 45% netto wartości usług z pierwszej zakończonej wizyty nowego klienta Boost. Rezerwacje z bezpośredniego linku mogą być bezprowizyjne. Timzy nie pobiera prowizji od rezerwacji. <a href="https://biz.booksy.com/pl-pl/funkcje/boost" target="_blank" rel="noreferrer">Oficjalne zasady Booksy Boost →</a><small>Stan informacji: sierpień 2026.</small></p> : null}</section>
 
       <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href={whatsappHref(locale)} target="_blank" rel="noreferrer">{copy.offerCta}<span>→</span></a></div><div className="offer-visual"><Phone screen="calendar" className="phone--offer" /><div className="offer-card"><span>♡</span><p><b>Welcome voucher</b><small>10% off the first booking</small></p></div><div className="offer-card offer-card--bottom"><span>✓</span><p><b>Booking confirmed</b><small>Wednesday, 10:30</small></p></div></div></section>
 

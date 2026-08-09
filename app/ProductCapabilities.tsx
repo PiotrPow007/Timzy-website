@@ -1,0 +1,132 @@
+export type CapabilityLocale = "en" | "pl" | "es";
+
+type CapabilityCopy = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  groups: Array<{ icon: string; title: string; body: string; items: string[] }>;
+  optionalLabel: string;
+  extrasEyebrow: string;
+  extrasTitle: string;
+  extrasBody: string;
+  extras: Array<{ title: string; body: string }>;
+  architectureEyebrow: string;
+  architectureTitle: string;
+  architectureBody: string;
+  architecturePoints: Array<{ title: string; body: string }>;
+  legalNote: string;
+  legalSource: string;
+};
+
+const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
+  en: {
+    eyebrow: "THE COMPLETE TIMZY ECOSYSTEM",
+    title: "Everything you need to book, manage, sell and build loyalty.",
+    body: "Start with the modules your business needs today and expand the app as your workflow grows. Optional modules are activated for the selected configuration.",
+    groups: [
+      { icon: "24", title: "Bookings and daily operations", body: "Give clients a clear self-service journey and your team one current schedule.", items: ["Online booking 24/7", "Services, duration and availability", "Employee calendars, working hours and days off", "Services assigned to selected staff", "Booking history, preferences and comments", "Visit and activity reports"] },
+      { icon: "♡", title: "Clients and loyalty", body: "Stay useful after the first booking and create reasons to return.", items: ["Booking confirmations and reminders", "Push news, promotions and updates", "Client profiles and visit history", "Vouchers and welcome offers", "Configurable loyalty rewards", "English, Polish and Spanish support"] },
+      { icon: "＋", title: "Shop and payments", body: "Add products and payments to the same branded experience when your model needs them.", items: ["Product catalogue and categories", "Cart, checkout and order history", "Stock and order status management", "Pickup or delivery options", "Stripe online payments", "Administrative refunds and payment reports"] },
+      { icon: "T", title: "Your app and your brand", body: "Timzy provides the technology while your business remains visible at every step.", items: ["Separate iOS and Android app", "Publication under your brand", "Logo, colours, icons and content", "Template or full visual personalisation", "Client, employee and administrator roles", "A separate data environment for each client"] },
+    ],
+    optionalLabel: "Optional modules are configured and priced according to scope and may require third-party provider setup.",
+    extrasEyebrow: "MORE THAN SOFTWARE",
+    extrasTitle: "One partner for the app, launch and brand materials.",
+    extrasBody: "These services are prepared individually and can be added to the Timzy implementation.",
+    extras: [
+      { title: "Website or online store", body: "A branded website, service presentation or extended online store." },
+      { title: "Branding and design", body: "Logo, colours, icons, app graphics and a consistent visual system." },
+      { title: "QR and NFC materials", body: "Stands, cards and posters that take clients directly to the app or booking flow." },
+      { title: "Marketing support", body: "Social media support, print materials and launch communication." },
+      { title: "Partner screen", body: "An optional launch screen for a sponsor, partner or campaign." },
+      { title: "Custom integrations", body: "Selected automations and industry-specific extensions scoped separately." },
+    ],
+    architectureEyebrow: "A DIFFERENT DATA MODEL",
+    architectureTitle: "A separate client environment instead of one central marketplace database.",
+    architectureBody: "Each branded Timzy app points to its own data project. Timzy does not operate a shared seller catalogue where competing businesses and their bookings are combined.",
+    architecturePoints: [
+      { title: "No central seller catalogue", body: "Your offer is not displayed beside competitors in a shared search marketplace." },
+      { title: "No central reservation history", body: "Client records and bookings remain inside the separate environment configured for your app." },
+      { title: "Your customer relationship", body: "Your business remains the data controller and owns the direct relationship with its clients." },
+    ],
+    legalNote: "This describes Timzy's technical architecture. It is not a blanket legal exemption: each business remains responsible for its own tax and reporting obligations, and any DAC7 classification depends on the actual contractual and operating model.",
+    legalSource: "Read the Polish Ministry of Finance guidance on DAC7",
+  },
+  pl: {
+    eyebrow: "PEŁNY EKOSYSTEM TIMZY",
+    title: "Wszystko, czego potrzebujesz do rezerwacji, zarządzania, sprzedaży i lojalności.",
+    body: "Zacznij od modułów potrzebnych dzisiaj i rozwijaj aplikację razem z firmą. Moduły opcjonalne włączamy zgodnie z wybraną konfiguracją.",
+    groups: [
+      { icon: "24", title: "Rezerwacje i codzienna organizacja", body: "Klient sam przechodzi przez prosty proces, a zespół pracuje na jednym aktualnym grafiku.", items: ["Rezerwacje online 24/7", "Usługi, czas trwania i dostępność", "Grafiki pracowników, godziny pracy i dni wolne", "Przypisywanie usług do pracowników", "Historia wizyt, preferencje i komentarze", "Raporty wizyt i aktywności"] },
+      { icon: "♡", title: "Klienci i lojalność", body: "Pozostań blisko klienta po pierwszej rezerwacji i daj mu powód do powrotu.", items: ["Potwierdzenia i przypomnienia o rezerwacji", "Powiadomienia PUSH o nowościach i promocjach", "Profile klientów i historia wizyt", "Vouchery i oferty powitalne", "Konfigurowalne nagrody lojalnościowe", "Obsługa języka polskiego, angielskiego i hiszpańskiego"] },
+      { icon: "＋", title: "Sklep i płatności", body: "Jeśli Twój model tego potrzebuje, dodaj produkty i płatności do tego samego doświadczenia.", items: ["Katalog produktów i kategorie", "Koszyk, checkout i historia zamówień", "Kontrola zapasu i statusów zamówień", "Odbiór osobisty lub dostawa", "Płatności online Stripe", "Zwroty i raporty płatności dla administratora"] },
+      { icon: "T", title: "Twoja aplikacja i marka", body: "Timzy dostarcza technologię, a Twoja firma pozostaje widoczna na każdym ekranie.", items: ["Osobna aplikacja na iOS i Android", "Publikacja pod marką klienta", "Logo, kolory, ikony i własne treści", "Szablon lub pełna personalizacja wizualna", "Role klienta, pracownika i administratora", "Osobne środowisko danych dla każdego klienta"] },
+    ],
+    optionalLabel: "Moduły opcjonalne konfigurujemy i wyceniamy zależnie od zakresu. Część z nich wymaga uruchomienia usług zewnętrznego dostawcy.",
+    extrasEyebrow: "WIĘCEJ NIŻ OPROGRAMOWANIE",
+    extrasTitle: "Jeden partner dla aplikacji, wdrożenia i materiałów marki.",
+    extrasBody: "Poniższe usługi przygotowujemy indywidualnie i możemy dołączyć do wdrożenia Timzy.",
+    extras: [
+      { title: "Strona internetowa lub sklep", body: "Strona pod Twoją marką, prezentacja usług albo rozbudowany sklep internetowy." },
+      { title: "Branding i projekt graficzny", body: "Logo, kolorystyka, ikony, grafiki aplikacji i spójny system wizualny." },
+      { title: "Materiały QR i NFC", body: "Standy, wizytówki i plakaty prowadzące bezpośrednio do aplikacji lub rezerwacji." },
+      { title: "Wsparcie marketingowe", body: "Prowadzenie social media, materiały drukowane i komunikacja startowa." },
+      { title: "Ekran partnera", body: "Opcjonalny ekran startowy dla sponsora, partnera biznesowego lub kampanii." },
+      { title: "Integracje indywidualne", body: "Wybrane automatyzacje i rozszerzenia branżowe wyceniane jako osobny zakres." },
+    ],
+    architectureEyebrow: "INNY MODEL DANYCH",
+    architectureTitle: "Osobne środowisko klienta zamiast jednej centralnej bazy marketplace'u.",
+    architectureBody: "Każda aplikacja Timzy wskazuje własny projekt danych. Timzy nie prowadzi wspólnego katalogu sprzedawców, w którym łączone są oferty konkurencyjnych firm i ich rezerwacje.",
+    architecturePoints: [
+      { title: "Brak centralnego katalogu sprzedawców", body: "Twoja oferta nie jest wyświetlana obok konkurencji we wspólnej wyszukiwarce marketplace'u." },
+      { title: "Brak wspólnej historii rezerwacji", body: "Rezerwacje i kartoteki klientów pozostają w osobnym środowisku skonfigurowanym dla Twojej aplikacji." },
+      { title: "Twoja relacja z klientem", body: "Twoja firma pozostaje administratorem danych i prowadzi bezpośrednią relację ze swoimi klientami." },
+    ],
+    legalNote: "Ten opis dotyczy architektury technicznej Timzy. Nie stanowi automatycznej gwarancji zwolnienia prawnego: każda firma odpowiada za własne obowiązki podatkowe i sprawozdawcze, a ewentualna kwalifikacja w ramach DAC7 zależy od rzeczywistego modelu działania i zawartych umów.",
+    legalSource: "Sprawdź oficjalne informacje Ministerstwa Finansów o DAC7",
+  },
+  es: {
+    eyebrow: "EL ECOSISTEMA TIMZY COMPLETO",
+    title: "Todo para reservar, gestionar, vender y crear fidelidad.",
+    body: "Empieza con los módulos que necesitas hoy y amplía la app a medida que crece tu negocio. Los módulos opcionales se activan según la configuración elegida.",
+    groups: [
+      { icon: "24", title: "Reservas y trabajo diario", body: "El cliente reserva por sí mismo y el equipo trabaja con una agenda actualizada.", items: ["Reservas online 24/7", "Servicios, duración y disponibilidad", "Agendas, horarios y días libres del equipo", "Servicios asignados a empleados", "Historial, preferencias y comentarios", "Informes de visitas y actividad"] },
+      { icon: "♡", title: "Clientes y fidelización", body: "Sigue siendo útil tras la primera reserva y crea motivos para volver.", items: ["Confirmaciones y recordatorios", "Avisos PUSH de noticias y promociones", "Perfiles e historial de clientes", "Vales y ofertas de bienvenida", "Recompensas de fidelidad configurables", "Soporte en español, inglés y polaco"] },
+      { icon: "＋", title: "Tienda y pagos", body: "Añade productos y pagos a la misma experiencia cuando tu modelo lo necesite.", items: ["Catálogo y categorías", "Carrito, checkout e historial de pedidos", "Control de stock y estados", "Recogida o entrega", "Pagos online con Stripe", "Reembolsos e informes para administración"] },
+      { icon: "T", title: "Tu app y tu marca", body: "Timzy aporta la tecnología y tu negocio sigue visible en cada paso.", items: ["App separada para iOS y Android", "Publicación con tu marca", "Logo, colores, iconos y contenido", "Plantilla o personalización visual completa", "Roles de cliente, empleado y administrador", "Entorno de datos separado para cada cliente"] },
+    ],
+    optionalLabel: "Los módulos opcionales se configuran y presupuestan según el alcance y pueden requerir servicios de terceros.",
+    extrasEyebrow: "MÁS QUE SOFTWARE",
+    extrasTitle: "Un socio para la app, el lanzamiento y los materiales de marca.",
+    extrasBody: "Estos servicios se preparan de forma individual y pueden añadirse a la implantación de Timzy.",
+    extras: [
+      { title: "Web o tienda online", body: "Una web con tu marca, presentación de servicios o tienda ampliada." },
+      { title: "Branding y diseño", body: "Logo, colores, iconos, gráficos y un sistema visual coherente." },
+      { title: "Materiales QR y NFC", body: "Expositores, tarjetas y carteles con acceso directo a la app o reserva." },
+      { title: "Apoyo de marketing", body: "Redes sociales, materiales impresos y comunicación de lanzamiento." },
+      { title: "Pantalla de colaborador", body: "Pantalla inicial opcional para patrocinador, colaborador o campaña." },
+      { title: "Integraciones a medida", body: "Automatizaciones y extensiones sectoriales presupuestadas aparte." },
+    ],
+    architectureEyebrow: "UN MODELO DE DATOS DIFERENTE",
+    architectureTitle: "Un entorno separado por cliente, no una base central de marketplace.",
+    architectureBody: "Cada app Timzy apunta a su propio proyecto de datos. Timzy no opera un catálogo compartido que combine negocios competidores y sus reservas.",
+    architecturePoints: [
+      { title: "Sin catálogo central de vendedores", body: "Tu oferta no aparece junto a competidores en un buscador compartido." },
+      { title: "Sin historial central de reservas", body: "Reservas y fichas permanecen en el entorno separado de tu app." },
+      { title: "Tu relación con el cliente", body: "Tu negocio sigue siendo el responsable de los datos y mantiene la relación directa." },
+    ],
+    legalNote: "Esta descripción se refiere a la arquitectura técnica de Timzy. No constituye una exención legal general: cada negocio sigue siendo responsable de sus obligaciones fiscales y de información, y cualquier clasificación DAC7 depende del modelo contractual y operativo real.",
+    legalSource: "Consulta la información oficial del Ministerio de Finanzas de Polonia sobre DAC7",
+  },
+};
+
+export function ProductCapabilities({ locale, includeArchitecture = true }: { locale: CapabilityLocale; includeArchitecture?: boolean }) {
+  const copy = capabilityCopy[locale];
+  return <>
+    <section className="capability-catalog" id="capabilities"><div className="section-intro section-intro--wide"><p className="eyebrow">{copy.eyebrow}</p><h2>{copy.title}</h2><p>{copy.body}</p></div><div className="capability-grid">{copy.groups.map((group) => <article key={group.title}><span className="capability-icon">{group.icon}</span><h3>{group.title}</h3><p>{group.body}</p><ul>{group.items.map((item) => <li key={item}><i>✓</i>{item}</li>)}</ul></article>)}</div><p className="capability-note">{copy.optionalLabel}</p></section>
+
+    <section className="implementation-extras"><div className="implementation-heading"><p className="eyebrow">{copy.extrasEyebrow}</p><h2>{copy.extrasTitle}</h2><p>{copy.extrasBody}</p></div><div className="extras-grid">{copy.extras.map((extra, index) => <article key={extra.title}><span>0{index + 1}</span><h3>{extra.title}</h3><p>{extra.body}</p></article>)}</div></section>
+
+    {includeArchitecture ? <section className="data-architecture"><div className="data-architecture-copy"><p className="eyebrow">{copy.architectureEyebrow}</p><h2>{copy.architectureTitle}</h2><p>{copy.architectureBody}</p><small>{copy.legalNote}<a href="https://podatki.gov.pl/podatkowa-wspolpraca-miedzynarodowa/dpi-digital-platform-information" target="_blank" rel="noreferrer">{copy.legalSource} →</a></small></div><div className="data-architecture-grid">{copy.architecturePoints.map((point, index) => <article key={point.title}><span>0{index + 1}</span><h3>{point.title}</h3><p>{point.body}</p></article>)}</div></section> : null}
+  </>;
+}

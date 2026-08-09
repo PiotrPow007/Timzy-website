@@ -1,3 +1,5 @@
+import { ProductCapabilities } from "./ProductCapabilities";
+
 export type SiteLocale = "en" | "pl" | "es";
 export type IndustryKey = "sport" | "golf" | "tennis" | "car-wash-detailing";
 
@@ -371,6 +373,12 @@ export const industryCopy: Record<SiteLocale, Record<IndustryKey, IndustryConten
 
 const industryOrder: IndustryKey[] = ["sport", "golf", "tennis", "car-wash-detailing"];
 
+const golfAutomationCopy: Record<SiteLocale, { eyebrow: string; title: string; body: string; items: string[] }> = {
+  en: { eyebrow: "INDIVIDUAL GOLF AUTOMATION", title: "Timzy can extend beyond reservations.", body: "Selected equipment integrations are delivered as a separate scope after we verify the hardware, API and safety requirements.", items: ["Ball dispenser access from the app", "Machine and simulator maintenance schedules", "Partner or sponsor launch screen", "Golf equipment shop and order flow"] },
+  pl: { eyebrow: "INDYWIDUALNE AUTOMATYZACJE GOLFOWE", title: "Timzy może wyjść poza same rezerwacje.", body: "Integracje ze sprzętem realizujemy jako osobny zakres po sprawdzeniu urządzeń, dostępnego API i wymagań bezpieczeństwa.", items: ["Dostęp do dozownika piłek z aplikacji", "Harmonogram serwisu maszyn i symulatorów", "Ekran startowy partnera lub sponsora", "Sklep ze sprzętem golfowym i obsługa zamówień"] },
+  es: { eyebrow: "AUTOMATIZACIÓN DE GOLF A MEDIDA", title: "Timzy puede ir más allá de las reservas.", body: "Las integraciones con equipos se realizan como un alcance separado tras revisar el hardware, la API y los requisitos de seguridad.", items: ["Acceso al dispensador de bolas desde la app", "Agenda de mantenimiento de máquinas y simuladores", "Pantalla inicial para colaborador o patrocinador", "Tienda de material de golf y gestión de pedidos"] },
+};
+
 function BrandMark({ compact = false }: { compact?: boolean }) {
   return <span className={`brand-mark${compact ? " brand-mark--compact" : ""}`} aria-label="Timzy"><span className="brand-symbol" aria-hidden="true">T</span><span>imzy</span></span>;
 }
@@ -416,6 +424,10 @@ export function IndustryLandingPage({ locale, industry }: { locale: SiteLocale; 
     <section className="industry-problem"><div className="industry-problem-copy"><p className="eyebrow">{shared.problemEyebrow}</p><h2>{content.problemTitle}</h2><p>{content.problemBody}</p></div><div className="outcome-grid">{content.outcomes.map((outcome) => <article key={outcome.title}><span>{outcome.icon}</span><h3>{outcome.title}</h3><p>{outcome.body}</p></article>)}</div></section>
 
     <section className="industry-product" id="product"><div className="industry-product-copy"><p className="eyebrow">{shared.productEyebrow}</p><h2>{content.productTitle}</h2><p>{content.productBody}</p><ul>{content.features.map((feature) => <li key={feature}><span>✓</span>{feature}</li>)}</ul><WhatsAppLink locale={locale} label={content.primaryCta} industry={content.tag} className="button button--light" /></div><div className="industry-product-visual"><IndustryMockup content={content} /></div></section>
+
+    {industry === "golf" ? <section className="golf-automation"><div><p className="eyebrow">{golfAutomationCopy[locale].eyebrow}</p><h2>{golfAutomationCopy[locale].title}</h2><p>{golfAutomationCopy[locale].body}</p></div><ul>{golfAutomationCopy[locale].items.map((item) => <li key={item}><span>✓</span>{item}</li>)}</ul></section> : null}
+
+    <ProductCapabilities locale={locale} />
 
     <section className="process industry-process" id="process"><div className="process-heading"><p className="eyebrow">{shared.processEyebrow}</p><h2>{shared.processTitle}</h2></div><div className="process-grid process-grid--three">{shared.process.map((step, index) => <article key={step.title}><span>0{index + 1}</span><div className="process-line"><i /></div><h3>{step.title}</h3><p>{step.body}</p></article>)}</div></section>
 
