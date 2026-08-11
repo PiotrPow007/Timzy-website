@@ -401,7 +401,7 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <ContactSection locale={locale} />
 
-      <footer><div className="footer-brand"><BrandMark /><p>{copy.footerLine}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href={legalLinks.privacyHref}>{legalLinks.privacy}</a><a href="https://timzy.app/terms-conditions/">{legalLinks.terms}</a><a href="https://timzy.app/faq/">{legalLinks.faq}</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><LanguageNav locale={locale} /><a href="#top">{legalLinks.back}</a></div></footer>
+      <footer><div className="footer-brand"><BrandMark /><p>{copy.footerLine}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href={legalLinks.privacyHref}>{legalLinks.privacy}</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><LanguageNav locale={locale} /><a href="#top">{legalLinks.back}</a></div></footer>
     </main>
   );
 }
