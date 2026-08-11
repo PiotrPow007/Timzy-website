@@ -107,7 +107,9 @@ test("renders privacy pages and a signed contact challenge", async () => {
   assert.equal(privacy.status, 200);
   const privacyHtml = await privacy.text();
   assert.match(privacyHtml, /Polityka prywatności strony Timzy/);
-  assert.match(privacyHtml, /7Software Sp\. z o\.o\./);
+  assert.match(privacyHtml, /INNOVARE GROUP LTD/);
+  assert.match(privacyHtml, /12878269/);
+  assert.match(privacyHtml, /7 Bell Yard/);
   assert.match(privacyHtml, /Cookies i podobne technologie/);
   assert.equal(challenge.status, 200);
   const payload = await challenge.json();

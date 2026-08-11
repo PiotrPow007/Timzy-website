@@ -4,10 +4,10 @@ const content = {
   en: {
     label: "PRIVACY AND COOKIES",
     title: "Privacy policy for the Timzy website",
-    updated: "Last updated: 9 August 2026",
+    updated: "Last updated: 11 August 2026",
     intro: "This policy explains how personal data is processed when you visit this website or contact Timzy through the form.",
     sections: [
-      ["1. Data controller", <>The controller is <b>7Software Sp. z o.o.</b>, ul. Parkowa 5/2, 84-200 Pętkowice, Poland, NIP 5272813760. Contact: <a href="mailto:hello@timzy.app">hello@timzy.app</a>.</>],
+      ["1. Data controller", <>The controller is <b>INNOVARE GROUP LTD</b>, company number 12878269, with its registered office at 7 Bell Yard, London, England, WC2A 2JR. Contact: <a href="mailto:hello@timzy.app">hello@timzy.app</a>. You can verify the company details in the <a href="https://find-and-update.company-information.service.gov.uk/company/12878269" target="_blank" rel="noreferrer">Companies House register</a>.</>],
       ["2. Data we process", <>When you use the contact form, we process the information you provide, including your name, company, email address, optional phone number, industry and message. The website infrastructure may also process technical data necessary for security and reliable delivery, such as IP address, browser information and request logs.</>],
       ["3. Purposes and legal bases", <>We use contact details to answer your enquiry and take steps at your request before entering into a contract (Article 6(1)(b) GDPR). We protect the form, prevent spam and maintain website security based on our legitimate interest (Article 6(1)(f) GDPR). Where the law requires it, we process data to comply with a legal obligation (Article 6(1)(c) GDPR). We do not use a contact enquiry for unrelated marketing without a separate legal basis.</>],
       ["4. Recipients and transfers", <>Data may be processed by providers supporting the website, security, IT and email service, including the hosting infrastructure and cyber_Folks mail service, only to the extent necessary. If a provider processes data outside the EEA, appropriate safeguards required by GDPR are applied.</>],
@@ -22,10 +22,10 @@ const content = {
   pl: {
     label: "PRYWATNOŚĆ I COOKIES",
     title: "Polityka prywatności strony Timzy",
-    updated: "Ostatnia aktualizacja: 9 sierpnia 2026 r.",
+    updated: "Ostatnia aktualizacja: 11 sierpnia 2026 r.",
     intro: "Ta polityka wyjaśnia, jak przetwarzamy dane osobowe podczas korzystania ze strony i kontaktu z Timzy przez formularz.",
     sections: [
-      ["1. Administrator danych", <>Administratorem danych jest <b>7Software Sp. z o.o.</b>, ul. Parkowa 5/2, 84-200 Pętkowice, Polska, NIP 5272813760. Kontakt: <a href="mailto:hello@timzy.app">hello@timzy.app</a>.</>],
+      ["1. Administrator danych", <>Administratorem danych jest <b>INNOVARE GROUP LTD</b>, numer spółki 12878269, z siedzibą pod adresem 7 Bell Yard, London, England, WC2A 2JR. Kontakt: <a href="mailto:hello@timzy.app">hello@timzy.app</a>. Dane spółki możesz zweryfikować w <a href="https://find-and-update.company-information.service.gov.uk/company/12878269" target="_blank" rel="noreferrer">rejestrze Companies House</a>.</>],
       ["2. Jakie dane przetwarzamy", <>Gdy korzystasz z formularza, przetwarzamy przekazane przez Ciebie informacje: imię i nazwisko, firmę, adres e-mail, opcjonalny numer telefonu, branżę i treść wiadomości. Infrastruktura strony może również przetwarzać dane techniczne niezbędne do bezpieczeństwa i poprawnego doręczenia zapytania, takie jak adres IP, informacje o przeglądarce i logi żądań.</>],
       ["3. Cele i podstawy prawne", <>Dane kontaktowe wykorzystujemy, aby odpowiedzieć na zapytanie i podjąć działania na Twoje żądanie przed zawarciem umowy, na podstawie art. 6 ust. 1 lit. b RODO. Formularz zabezpieczamy, zapobiegamy spamowi i dbamy o bezpieczeństwo strony w naszym prawnie uzasadnionym interesie, na podstawie art. 6 ust. 1 lit. f RODO. Gdy wymagają tego przepisy, przetwarzamy dane w celu wykonania obowiązku prawnego, na podstawie art. 6 ust. 1 lit. c RODO. Nie wykorzystujemy zapytania kontaktowego do niezwiązanego marketingu bez odrębnej podstawy prawnej.</>],
       ["4. Odbiorcy danych i transfery", <>Dane mogą być przetwarzane przez dostawców wspierających stronę, bezpieczeństwo, obsługę IT i pocztę elektroniczną, w tym infrastrukturę hostingową oraz usługę pocztową cyber_Folks, wyłącznie w niezbędnym zakresie. Jeżeli dostawca przetwarza dane poza EOG, stosowane są odpowiednie zabezpieczenia wymagane przez RODO.</>],
@@ -40,10 +40,10 @@ const content = {
   es: {
     label: "PRIVACIDAD Y COOKIES",
     title: "Política de privacidad del sitio Timzy",
-    updated: "Última actualización: 9 de agosto de 2026",
+    updated: "Última actualización: 11 de agosto de 2026",
     intro: "Esta política explica cómo tratamos los datos personales cuando visitas el sitio o contactas con Timzy mediante el formulario.",
     sections: [
-      ["1. Responsable del tratamiento", <>El responsable es <b>7Software Sp. z o.o.</b>, ul. Parkowa 5/2, 84-200 Pętkowice, Polonia, NIP 5272813760. Contacto: <a href="mailto:hello@timzy.app">hello@timzy.app</a>.</>],
+      ["1. Responsable del tratamiento", <>El responsable es <b>INNOVARE GROUP LTD</b>, número de empresa 12878269, con domicilio social en 7 Bell Yard, London, England, WC2A 2JR. Contacto: <a href="mailto:hello@timzy.app">hello@timzy.app</a>. Puedes verificar los datos en el <a href="https://find-and-update.company-information.service.gov.uk/company/12878269" target="_blank" rel="noreferrer">registro de Companies House</a>.</>],
       ["2. Datos que tratamos", <>Al usar el formulario tratamos los datos que facilitas: nombre, empresa, email, teléfono opcional, sector y mensaje. La infraestructura también puede tratar datos técnicos necesarios para la seguridad y entrega, como IP, navegador y registros de solicitudes.</>],
       ["3. Finalidades y bases jurídicas", <>Tratamos tus datos para responder y adoptar medidas precontractuales a petición tuya conforme al artículo 6.1.b del RGPD. Protegemos el formulario y evitamos spam sobre la base de nuestro interés legítimo conforme al artículo 6.1.f. Las obligaciones legales se atienden conforme al artículo 6.1.c. No usamos una consulta para marketing no relacionado sin una base jurídica independiente.</>],
       ["4. Destinatarios y transferencias", <>Pueden tratar los datos proveedores de hosting, seguridad, soporte IT y correo, incluida la infraestructura del sitio y el servicio de correo cyber_Folks, solo en lo necesario. Si existe tratamiento fuera del EEE, se aplican las garantías exigidas por el RGPD.</>],
