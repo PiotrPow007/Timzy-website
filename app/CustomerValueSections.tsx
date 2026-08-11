@@ -27,7 +27,7 @@ type CustomerValueCopy = {
   showcaseEyebrow: string;
   showcaseTitle: string;
   showcaseBody: string;
-  screens: Array<{ src: string; label: string; body: string }>;
+  screens: Array<{ src: string; label: string; body: string; mockup?: boolean }>;
 };
 
 const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
@@ -68,7 +68,7 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
       { src: "/assets/mockups/client-login.webp", label: "Login", body: "Account access and language selection" },
       { src: "/assets/mockups/client-home.webp", label: "Branded home", body: "Brand, message and primary action" },
       { src: "/assets/mockups/client-services.webp", label: "Services", body: "Clear service selection" },
-      { src: "/assets/mockups/client-calendar.webp", label: "Booking", body: "Date, employee and time" },
+      { src: "/assets/mockups/client-calendar-mockup-transparent.png", label: "Booking", body: "Date, employee and time", mockup: true },
       { src: "/assets/mockups/client-shop.webp", label: "Shop", body: "Products, categories and cart" },
       { src: "/assets/mockups/client-vouchers.webp", label: "Vouchers", body: "Offers that bring clients back" },
     ],
@@ -110,7 +110,7 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
       { src: "/assets/mockups/client-login.webp", label: "Logowanie", body: "Dostęp do konta i wybór języka" },
       { src: "/assets/mockups/client-home.webp", label: "Ekran marki", body: "Marka, komunikat i główne CTA" },
       { src: "/assets/mockups/client-services.webp", label: "Usługi", body: "Czytelny wybór oferty" },
-      { src: "/assets/mockups/client-calendar.webp", label: "Rezerwacja", body: "Data, pracownik i godzina" },
+      { src: "/assets/mockups/client-calendar-mockup-transparent.png", label: "Rezerwacja", body: "Data, pracownik i godzina", mockup: true },
       { src: "/assets/mockups/client-shop.webp", label: "Sklep", body: "Produkty, kategorie i koszyk" },
       { src: "/assets/mockups/client-vouchers.webp", label: "Vouchery", body: "Oferty, które zachęcają do powrotu" },
     ],
@@ -152,7 +152,7 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
       { src: "/assets/mockups/client-login.webp", label: "Acceso", body: "Cuenta y selección de idioma" },
       { src: "/assets/mockups/client-home.webp", label: "Inicio de marca", body: "Marca, mensaje y acción principal" },
       { src: "/assets/mockups/client-services.webp", label: "Servicios", body: "Selección clara de la oferta" },
-      { src: "/assets/mockups/client-calendar.webp", label: "Reserva", body: "Fecha, empleado y hora" },
+      { src: "/assets/mockups/client-calendar-mockup-transparent.png", label: "Reserva", body: "Fecha, empleado y hora", mockup: true },
       { src: "/assets/mockups/client-shop.webp", label: "Tienda", body: "Productos, categorías y carrito" },
       { src: "/assets/mockups/client-vouchers.webp", label: "Vales", body: "Ofertas para volver" },
     ],
@@ -201,6 +201,6 @@ export function ActualProductShowcase({ locale }: { locale: CustomerValueLocale 
   const copy = customerValueCopy[locale];
   return <section className="actual-showcase" id="app-showcase">
     <div className="section-intro section-intro--wide"><p className="eyebrow">{copy.showcaseEyebrow}</p><h2>{copy.showcaseTitle}</h2><p>{copy.showcaseBody}</p></div>
-    <div className="actual-screen-grid">{copy.screens.map((screen, index) => <figure className={index === 1 || index === 3 ? "actual-screen-card actual-screen-card--featured" : "actual-screen-card"} key={screen.src}><div className="showcase-phone"><img src={screen.src} alt={`${screen.label}: ${screen.body}`} loading="lazy" /></div><figcaption><b>{screen.label}</b><span>{screen.body}</span></figcaption></figure>)}</div>
+    <div className="actual-screen-grid">{copy.screens.map((screen, index) => <figure className={index === 1 || index === 3 ? "actual-screen-card actual-screen-card--featured" : "actual-screen-card"} key={screen.src}><div className={screen.mockup ? "showcase-phone showcase-phone--device" : "showcase-phone"}><img src={screen.src} alt={`${screen.label}: ${screen.body}`} loading="lazy" /></div><figcaption><b>{screen.label}</b><span>{screen.body}</span></figcaption></figure>)}</div>
   </section>;
 }

@@ -318,6 +318,8 @@ img { display: block; max-width: 100%; }
 .actual-screen-card:nth-child(even) { margin-top: 45px; }
 .showcase-phone { overflow: hidden; padding: 3px; border: 1px solid #333037; border-radius: 31px; background: #151419; box-shadow: 0 22px 40px rgba(40,29,56,.15); }
 .showcase-phone img { display: block; width: 100%; height: auto; border-radius: 27px; background: white; }
+.showcase-phone--device { overflow: visible; padding: 0; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+.showcase-phone--device img { border-radius: 0; background: transparent; filter: drop-shadow(0 22px 24px rgba(40,29,56,.18)); }
 .actual-screen-card figcaption { display: flex; flex-direction: column; gap: 6px; padding: 17px 6px 0; }
 .actual-screen-card figcaption b { font-size: 13px; letter-spacing: -.02em; }
 .actual-screen-card figcaption span { color: var(--muted); font-size: 10px; line-height: 1.5; }
