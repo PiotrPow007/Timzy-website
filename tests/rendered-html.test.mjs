@@ -40,6 +40,9 @@ test("renders the English Timzy landing page", async () => {
   for (const screen of ["client-login", "client-home", "client-services", "client-calendar", "client-shop", "client-vouchers"]) {
     assert.match(html, new RegExp(`assets/mockups/${screen}\\.webp`));
   }
+  const offerSection = html.match(/<section class="offer">([\s\S]*?)<\/section>/)?.[1] ?? "";
+  assert.match(offerSection, /assets\/templates\/natural-sage\.webp/);
+  assert.doesNotMatch(offerSection, /assets\/mockups\/client-vouchers\.webp/);
   assert.match(html, /Not a concept\. This is the real Timzy client app/);
   assert.doesNotMatch(html, /Welcome voucher|Booking confirmed|Technology in the background|YOUR LOGO|#7C58F7/);
   assert.match(html, /THE COMPLETE TIMZY ECOSYSTEM/);
