@@ -160,7 +160,7 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
 };
 
 const readyTemplateVisuals = [
-  { name: "Natural Sage", src: "/assets/templates/natural-sage.webp", colours: ["#5AA79B", "#F6E9DD", "#315E58"] },
+  { name: "Natural Sage", src: "/assets/templates/natural-sage-phone-transparent.png", colours: ["#5AA79B", "#F6E9DD", "#315E58"] },
   { name: "Noir Prestige", src: "/assets/templates/noir-prestige.webp", colours: ["#171313", "#C8966F", "#F3DEC0"] },
   { name: "Sunset Energy", src: "/assets/templates/sunset-energy.webp", colours: ["#FF9200", "#1A1010", "#F2D48A"] },
   { name: "Fuchsia Pop", src: "/assets/templates/fuchsia-pop.webp", colours: ["#E90083", "#FF95A8", "#4B163A"] },
