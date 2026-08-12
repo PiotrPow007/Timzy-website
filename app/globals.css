@@ -106,7 +106,26 @@ img { display: block; max-width: 100%; }
 .hero-glow--two { width: 120px; height: 120px; left: 44%; bottom: 42px; background: rgba(114,230,224,.24); filter: blur(35px); }
 .hero-copy { position: relative; z-index: 3; max-width: 620px; padding-left: 18px; }
 .hero h1 { margin: 0; font-size: clamp(54px, 5.45vw, 88px); line-height: .96; letter-spacing: -.065em; font-weight: 690; }
-.hero h1 span { display: block; color: var(--violet); }
+.hero h1 span {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 24px;
+  color: var(--violet);
+  font-family: "Manrope", ui-sans-serif, sans-serif;
+  font-size: clamp(20px, 1.7vw, 27px);
+  line-height: 1.2;
+  font-weight: 760;
+}
+.hero h1 span::before {
+  content: "";
+  width: 38px;
+  height: 2px;
+  flex: 0 0 38px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--violet), #b197ff);
+}
 .hero-body { max-width: 590px; margin: 28px 0 0; color: var(--muted); font-size: 18px; line-height: 1.65; }
 .hero-actions { display: flex; align-items: center; gap: 26px; margin-top: 34px; }
 .proof-row { display: flex; flex-wrap: wrap; gap: 12px 24px; margin-top: 38px; color: #514b5b; font-size: 12px; font-weight: 650; }
@@ -645,7 +664,7 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   letter-spacing: -.035em;
   text-wrap: balance;
 }
-.hero h1 span { font-style: italic; letter-spacing: -.025em; }
+.hero h1 span { font-style: normal; letter-spacing: -.025em; }
 .hero-body, .section-intro > p:last-child, .template-heading > p:last-child { letter-spacing: -.012em; }
 
 @media (max-width: 1100px) {
@@ -749,6 +768,7 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .header-actions .button { display: none; }
   .hero { min-height: auto; grid-template-columns: 1fr; padding: 130px 24px 40px; }
   .hero-copy { max-width: 720px; padding-left: 0; text-align: center; }
+  .hero h1 span { margin-inline: auto; }
   .hero-body { margin-inline: auto; }
   .hero-actions, .proof-row { justify-content: center; }
   .hero-visual { height: 590px; transform: scale(.9); }
@@ -776,6 +796,8 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .languages a { min-width: 25px; height: 25px; }
   .hero { padding-top: 110px; }
   .hero h1 { font-size: 50px; }
+  .hero h1 span { gap: 10px; margin-top: 18px; font-size: 21px; }
+  .hero h1 span::before { width: 28px; flex-basis: 28px; }
   .hero-body { font-size: 16px; }
   .hero-actions { flex-direction: column; gap: 9px; }
   .hero-actions .button { width: 100%; max-width: 360px; }
