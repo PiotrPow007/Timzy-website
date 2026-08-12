@@ -561,7 +561,7 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .nfc-showcase-copy li { display: flex; align-items: center; gap: 11px; margin: 12px 0; color: #514a5a; font-size: 12px; font-weight: 680; }
 .nfc-showcase-copy li span { width: 22px; height: 22px; display: grid; place-items: center; flex: 0 0 22px; border-radius: 50%; color: #392c5e; background: var(--lime); font-size: 10px; }
 .nfc-showcase figure { overflow: hidden; margin: 0; border-radius: 34px; background: #ede8f4; box-shadow: 0 28px 65px rgba(55,39,80,.13); }
-.nfc-showcase img { width: 100%; aspect-ratio: 34 / 21; display: block; object-fit: cover; object-position: left center; }
+.nfc-showcase img { width: 100%; aspect-ratio: 798 / 493; display: block; object-fit: contain; object-position: center; background: #fff; }
 .nfc-showcase figcaption { padding: 14px 22px 17px; color: #766e80; background: white; font-size: 10px; line-height: 1.5; }
 .data-architecture { display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: 80px; padding: 120px max(32px, calc((100vw - 1280px) / 2)); color: white; background: #17202a; }
 .data-architecture .eyebrow { color: #9ee8dc; }
