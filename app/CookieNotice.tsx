@@ -12,9 +12,12 @@ export function CookieNotice() {
   const [visible, setVisible] = useState(false);
   const [locale, setLocale] = useState<keyof typeof notices>("en");
   useEffect(() => {
-    const path = window.location.pathname;
-    setLocale(path.startsWith("/pl") ? "pl" : path.startsWith("/es") ? "es" : "en");
-    setVisible(window.localStorage.getItem("timzy-cookie-notice-v1") !== "seen");
+    const timeout = window.setTimeout(() => {
+      const path = window.location.pathname;
+      setLocale(path.startsWith("/pl") ? "pl" : path.startsWith("/es") ? "es" : "en");
+      setVisible(window.localStorage.getItem("timzy-cookie-notice-v1") !== "seen");
+    }, 0);
+    return () => window.clearTimeout(timeout);
   }, []);
   if (!visible) return null;
   const t = notices[locale];

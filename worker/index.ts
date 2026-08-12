@@ -174,7 +174,7 @@ async function sendContactEmail(env: Env, details: { name: string; company: stri
   const body = [
     "Nowe zapytanie z formularza na stronie Timzy", "", `Imię i nazwisko: ${details.name}`, `Firma / marka: ${details.company}`,
     `E-mail: ${details.email}`, `Telefon: ${details.phone || "nie podano"}`, `Branża: ${details.industry}`, `Język strony: ${details.locale}`,
-    "", "Wiadomość:", details.message, "", `Otrzymano: ${new Date().toISOString()}`,
+    "", "Wiadomość:", details.message || "nie podano", "", `Otrzymano: ${new Date().toISOString()}`,
   ].join("\n");
   const message = [
     `From: Timzy Formularz <${safeHeader(from)}>`, `To: ${safeHeader(to)}`, `Reply-To: ${safeHeader(details.email)}`,
@@ -215,7 +215,7 @@ async function handleContact(request: Request, env: Env) {
   const locale = clean(payload.locale, 8) || "pl";
   const startedAt = typeof payload.startedAt === "number" ? payload.startedAt : 0;
   if (clean(payload.website, 200)) return json({ ok: true });
-  if (!name || !company || !industry || !message || payload.privacyAccepted !== true || !/^\S+@\S+\.\S+$/.test(email)) return json({ ok: false, code: "validation" }, 400);
+  if (!name || !company || !industry || payload.privacyAccepted !== true || !/^\S+@\S+\.\S+$/.test(email)) return json({ ok: false, code: "validation" }, 400);
   if (Date.now() - startedAt < 2_000 || Date.now() - startedAt > 2 * 60 * 60_000) return json({ ok: false, code: "captcha" }, 400);
   const captchaToken = clean(payload.captchaToken, 1200);
   const captchaAnswer = clean(payload.captchaAnswer, 10);

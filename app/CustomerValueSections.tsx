@@ -48,8 +48,8 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     audienceLabel: "Timzy works wherever clients book a specialist's time",
     audiences: ["Coaches and experts", "Beauty salons", "Clinics and practices", "SPA and wellness", "Sports clubs", "Any service business"],
     templateEyebrow: "YOUR STYLE, YOUR CHOICE",
-    templateTitle: "Start from a proven template or commission a fully custom design.",
-    templateBody: "The technology stays the same. What changes is the visual direction, modules and customer journey selected for your business.",
+    templateTitle: "The app should not look like Timzy. It should look like your brand.",
+    templateBody: "Choose a proven starting point or a fully custom design. We adapt the visual direction, modules and customer journey to your business.",
     readyTitle: "Ready-made template",
     readyBody: "Choose a proven Timzy direction and adapt it to your logo, colours, services, team and content.",
     readyPoints: ["Faster visual setup", "Proven mobile layouts", "Your logo, palette and content", "Selected modules and menu"],
@@ -61,9 +61,9 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     templateReadyLabel: "READY TEMPLATE",
     templateVariantLine: "Your logo · colours · imagery · content",
     templateLibraryNote: "Below are selected examples. Each template can be adapted with a different palette, typography, photos and background graphics.",
-    showcaseEyebrow: "THE ACTUAL PRODUCT",
-    showcaseTitle: "Not a concept. This is the real Timzy client app.",
-    showcaseBody: "From login and booking to the shop and vouchers, the client stays inside one consistent branded experience.",
+    showcaseEyebrow: "SEE THE APP IN ACTION",
+    showcaseTitle: "One consistent journey from the first tap to the next visit.",
+    showcaseBody: "These are real Timzy screens. From login and booking to the shop and vouchers, the client stays inside one branded experience.",
     screens: [
       { src: "/assets/mockups/client-login.webp", label: "Login", body: "Account access and language selection" },
       { src: "/assets/mockups/client-home.webp", label: "Branded home", body: "Brand, message and primary action" },
@@ -90,8 +90,8 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     audienceLabel: "Timzy sprawdza się wszędzie tam, gdzie klient rezerwuje czas specjalisty",
     audiences: ["Trenerzy i eksperci", "Salony beauty", "Kliniki i gabinety", "SPA i wellness", "Kluby sportowe", "Każdy biznes usługowy"],
     templateEyebrow: "TWÓJ STYL, TWÓJ WYBÓR",
-    templateTitle: "Wybierz sprawdzony szablon albo zamów projekt stworzony tylko dla Twojej marki.",
-    templateBody: "Technologia pozostaje ta sama. Zmieniamy kierunek wizualny, moduły i ścieżkę klienta tak, aby pasowały do Twojego biznesu.",
+    templateTitle: "Aplikacja nie ma wyglądać jak Timzy. Ma wyglądać jak Twoja marka.",
+    templateBody: "Wybierz sprawdzony punkt wyjścia albo w pełni indywidualny projekt. Kierunek wizualny, moduły i ścieżkę klienta dopasowujemy do Twojego biznesu.",
     readyTitle: "Gotowy szablon",
     readyBody: "Wybierasz sprawdzony kierunek Timzy, a my dopasowujemy go do Twojego logo, kolorów, usług, zespołu i treści.",
     readyPoints: ["Szybsza konfiguracja wizualna", "Sprawdzone układy mobilne", "Twoje logo, kolory i treści", "Wybrane moduły i menu"],
@@ -99,13 +99,13 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     customBody: "Tworzymy odrębny system wizualny wokół charakteru marki, jej pozycjonowania i doświadczenia klienta.",
     customPoints: ["Indywidualny kierunek artystyczny", "Dedykowane grafiki i ikony", "Unikalny ekran główny", "Rozszerzony zakres wyceniany osobno"],
     templateCta: "Zobacz moją markę w Timzy",
-    templateExamples: "Wybierz z biblioteki gotowych template’ów aplikacji",
-    templateReadyLabel: "GOTOWY TEMPLATE",
+    templateExamples: "Wybierz z biblioteki gotowych szablonów aplikacji",
+    templateReadyLabel: "GOTOWY SZABLON",
     templateVariantLine: "Twoje logo · kolory · grafiki · treści",
-    templateLibraryNote: "Poniżej pokazujemy wybrane przykłady. Każdy template może otrzymać inną paletę, typografię, zdjęcia i grafiki tła.",
-    showcaseEyebrow: "PRAWDZIWY PRODUKT",
-    showcaseTitle: "To nie jest koncepcja. Tak wygląda aktualna aplikacja Timzy.",
-    showcaseBody: "Od logowania i rezerwacji po sklep oraz vouchery klient porusza się w jednym, spójnym doświadczeniu pod marką firmy.",
+    templateLibraryNote: "Poniżej pokazujemy wybrane przykłady. Każdy szablon może otrzymać inną paletę, typografię, zdjęcia i grafiki tła.",
+    showcaseEyebrow: "ZOBACZ APLIKACJĘ W DZIAŁANIU",
+    showcaseTitle: "Jeden spójny proces od pierwszego kliknięcia do kolejnej wizyty.",
+    showcaseBody: "Poniżej pokazujemy prawdziwe ekrany Timzy. Od logowania i rezerwacji po sklep oraz vouchery klient pozostaje w doświadczeniu Twojej marki.",
     screens: [
       { src: "/assets/mockups/client-login.webp", label: "Logowanie", body: "Dostęp do konta i wybór języka" },
       { src: "/assets/mockups/client-home.webp", label: "Ekran marki", body: "Marka, komunikat i główne CTA" },
@@ -132,8 +132,8 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     audienceLabel: "Timzy funciona donde el cliente reserva el tiempo de un especialista",
     audiences: ["Entrenadores y expertos", "Salones de belleza", "Clínicas y consultas", "SPA y bienestar", "Clubes deportivos", "Cualquier negocio de servicios"],
     templateEyebrow: "TU ESTILO, TU ELECCIÓN",
-    templateTitle: "Empieza con una plantilla probada o encarga un diseño totalmente personalizado.",
-    templateBody: "La tecnología es la misma. Cambian la dirección visual, los módulos y el recorrido elegidos para tu negocio.",
+    templateTitle: "La app no debe parecer Timzy. Debe parecer tu marca.",
+    templateBody: "Elige un punto de partida probado o un diseño totalmente personalizado. Adaptamos la dirección visual, los módulos y el recorrido a tu negocio.",
     readyTitle: "Plantilla preparada",
     readyBody: "Elige una dirección Timzy probada y la adaptamos a tu logo, colores, servicios, equipo y contenido.",
     readyPoints: ["Configuración visual más rápida", "Diseños móviles probados", "Tu logo, paleta y contenido", "Módulos y menú seleccionados"],
@@ -145,9 +145,9 @@ const customerValueCopy: Record<CustomerValueLocale, CustomerValueCopy> = {
     templateReadyLabel: "PLANTILLA LISTA",
     templateVariantLine: "Tu logo · colores · imágenes · contenido",
     templateLibraryNote: "Mostramos algunos ejemplos. Cada plantilla puede adaptarse con otra paleta, tipografía, fotos y gráficos de fondo.",
-    showcaseEyebrow: "EL PRODUCTO REAL",
-    showcaseTitle: "No es un concepto. Esta es la app Timzy actual.",
-    showcaseBody: "Desde el acceso y la reserva hasta la tienda y los vales, el cliente permanece en una experiencia coherente con tu marca.",
+    showcaseEyebrow: "DESCUBRE LA APP EN ACCIÓN",
+    showcaseTitle: "Un recorrido coherente desde el primer toque hasta la siguiente visita.",
+    showcaseBody: "Estas son pantallas reales de Timzy. Desde el acceso y la reserva hasta la tienda y los vales, el cliente permanece en la experiencia de tu marca.",
     screens: [
       { src: "/assets/mockups/client-login.webp", label: "Acceso", body: "Cuenta y selección de idioma" },
       { src: "/assets/mockups/client-home.webp", label: "Inicio de marca", body: "Marca, mensaje y acción principal" },
@@ -193,7 +193,7 @@ export function TemplateChoiceSection({ locale, ctaHref }: { locale: CustomerVal
       <article className="template-option template-option--custom"><span>02</span><h3>{copy.customTitle}</h3><p>{copy.customBody}</p><ul>{copy.customPoints.map((point) => <li key={point}><i>✓</i>{point}</li>)}</ul></article>
     </div>
     <div className="template-gallery"><div className="template-gallery-heading"><p>{copy.templateExamples}</p><span>{copy.templateLibraryNote}</span></div><div className="ready-template-grid">{readyTemplateVisuals.map((visual) => <article className="ready-template-card" key={visual.name}><div className="ready-template-preview"><img src={visual.src} alt={`${visual.name} ready Timzy app template`} loading="lazy" /></div><div className="ready-template-meta"><div><span>{copy.templateReadyLabel}</span><b>{visual.name}</b><small>{copy.templateVariantLine}</small></div><div className="ready-template-colours">{visual.colours.map((colour) => <i key={colour} style={{ backgroundColor: colour }} />)}</div></div></article>)}</div></div>
-    <a className="button" href={ctaHref} target="_blank" rel="noreferrer">{copy.templateCta}<span>→</span></a>
+    <a className="button" href={ctaHref}>{copy.templateCta}<span>→</span></a>
   </section>;
 }
 

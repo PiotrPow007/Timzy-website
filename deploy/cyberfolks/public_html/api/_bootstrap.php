@@ -127,7 +127,7 @@ function timzy_send_contact_email(array $config, array $details): void
             'Telefon: ' . ($details['phone'] ?: 'nie podano'),
             'Branża: ' . $details['industry'],
             'Język strony: ' . $details['locale'], '',
-            'Wiadomość:', $details['message'], '',
+            'Wiadomość:', $details['message'] !== '' ? $details['message'] : 'nie podano', '',
             'Otrzymano: ' . gmdate('c'),
         ]);
         $headers = [

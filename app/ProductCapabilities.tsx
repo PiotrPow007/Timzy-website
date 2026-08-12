@@ -27,8 +27,8 @@ type CapabilityCopy = {
 const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
   en: {
     eyebrow: "THE COMPLETE TIMZY ECOSYSTEM",
-    title: "Everything you need to book, manage, sell and build loyalty.",
-    body: "Start with the modules your business needs today and expand the app as your workflow grows. Optional modules are activated for the selected configuration.",
+    title: "A simple booking journey in front. Control, sales and loyalty behind it.",
+    body: "Choose the modules that solve today's priorities and expand the app as your business grows. We activate optional elements only when they fit your operating model.",
     groups: [
       { icon: "24", title: "Bookings and daily operations", body: "Give clients a clear self-service journey and your team one current schedule.", items: ["Online booking 24/7", "Services, duration and availability", "Employee calendars, working hours and days off", "Services assigned to selected staff", "Up to 3 employees included at no extra charge", "Post-visit notes and complete client history", "Visit and activity reports"] },
       { icon: "♡", title: "Clients and loyalty", body: "Stay useful after the first booking and create reasons to return.", items: ["Booking confirmations and reminders", "Push news, promotions and updates", "Client profiles and visit history", "Vouchers and welcome offers", "Configurable loyalty rewards", "English, Polish and Spanish support"] },
@@ -71,8 +71,8 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
   },
   pl: {
     eyebrow: "PEŁNY EKOSYSTEM TIMZY",
-    title: "Wszystko, czego potrzebujesz do rezerwacji, zarządzania, sprzedaży i lojalności.",
-    body: "Zacznij od modułów potrzebnych dzisiaj i rozwijaj aplikację razem z firmą. Moduły opcjonalne włączamy zgodnie z wybraną konfiguracją.",
+    title: "Prosta rezerwacja z przodu. Kontrola, sprzedaż i lojalność na zapleczu.",
+    body: "Wybierasz moduły, które rozwiązują dzisiejsze potrzeby, a aplikacja rośnie razem z firmą. Elementy opcjonalne włączamy tylko wtedy, gdy pasują do Twojego modelu pracy.",
     groups: [
       { icon: "24", title: "Rezerwacje i codzienna organizacja", body: "Klient sam przechodzi przez prosty proces, a zespół pracuje na jednym aktualnym grafiku.", items: ["Rezerwacje online 24/7", "Usługi, czas trwania i dostępność", "Grafiki pracowników, godziny pracy i dni wolne", "Przypisywanie usług do pracowników", "Do 3 pracowników bez dodatkowej opłaty", "Notatki po wizycie i pełna historia klienta", "Raporty wizyt i aktywności"] },
       { icon: "♡", title: "Klienci i lojalność", body: "Pozostań blisko klienta po pierwszej rezerwacji i daj mu powód do powrotu.", items: ["Potwierdzenia i przypomnienia o rezerwacji", "Powiadomienia PUSH o nowościach i promocjach", "Profile klientów i historia wizyt", "Vouchery i oferty powitalne", "Konfigurowalne nagrody lojalnościowe", "Obsługa języka polskiego, angielskiego i hiszpańskiego"] },
@@ -115,8 +115,8 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
   },
   es: {
     eyebrow: "EL ECOSISTEMA TIMZY COMPLETO",
-    title: "Todo para reservar, gestionar, vender y crear fidelidad.",
-    body: "Empieza con los módulos que necesitas hoy y amplía la app a medida que crece tu negocio. Los módulos opcionales se activan según la configuración elegida.",
+    title: "Una reserva sencilla por delante. Control, ventas y fidelización por detrás.",
+    body: "Elige los módulos que resuelven las prioridades actuales y amplía la app con tu negocio. Activamos los elementos opcionales solo cuando encajan con tu forma de trabajar.",
     groups: [
       { icon: "24", title: "Reservas y trabajo diario", body: "El cliente reserva por sí mismo y el equipo trabaja con una agenda actualizada.", items: ["Reservas online 24/7", "Servicios, duración y disponibilidad", "Agendas, horarios y días libres del equipo", "Servicios asignados a empleados", "Hasta 3 empleados sin coste adicional", "Notas después de la visita e historial completo", "Informes de visitas y actividad"] },
       { icon: "♡", title: "Clientes y fidelización", body: "Sigue siendo útil tras la primera reserva y crea motivos para volver.", items: ["Confirmaciones y recordatorios", "Avisos PUSH de noticias y promociones", "Perfiles e historial de clientes", "Vales y ofertas de bienvenida", "Recompensas de fidelidad configurables", "Soporte en español, inglés y polaco"] },
@@ -159,15 +159,14 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
   },
 };
 
-export function ProductCapabilities({ locale, includeArchitecture = true }: { locale: CapabilityLocale; includeArchitecture?: boolean }) {
+export function ProductCapabilities({ locale, includeArchitecture = true, includeExtras = true }: { locale: CapabilityLocale; includeArchitecture?: boolean; includeExtras?: boolean }) {
   const copy = capabilityCopy[locale];
-  const customFunctionHref = `https://wa.me/34600659705?text=${encodeURIComponent(locale === "pl" ? "Dzień dobry, chcę omówić dedykowaną funkcję lub integrację w Timzy." : locale === "es" ? "Hola, quiero hablar de una función o integración a medida en Timzy." : "Hi, I would like to discuss a custom Timzy function or integration.")}`;
   return <>
     <section className="capability-catalog" id="capabilities"><div className="section-intro section-intro--wide"><p className="eyebrow">{copy.eyebrow}</p><h2>{copy.title}</h2><p>{copy.body}</p></div><div className="capability-grid">{copy.groups.map((group) => <article key={group.title}><span className="capability-icon">{group.icon}</span><h3>{group.title}</h3><p>{group.body}</p><ul>{group.items.map((item) => <li key={item}><i>✓</i>{item}</li>)}</ul></article>)}</div><p className="capability-note">{copy.optionalLabel}</p></section>
 
-    <section className="custom-development"><div className="custom-development-copy"><p className="eyebrow">{copy.flexibilityEyebrow}</p><h2>{copy.flexibilityTitle}</h2><p>{copy.flexibilityBody}</p><a className="button" href={customFunctionHref} target="_blank" rel="noreferrer">{copy.flexibilityCta}<span>→</span></a><small>{copy.flexibilityNote}</small></div><div className="custom-development-grid">{copy.flexibilityPoints.map((point, index) => <article key={point.title}><span>0{index + 1}</span><h3>{point.title}</h3><p>{point.body}</p></article>)}</div></section>
+    <section className="custom-development"><div className="custom-development-copy"><p className="eyebrow">{copy.flexibilityEyebrow}</p><h2>{copy.flexibilityTitle}</h2><p>{copy.flexibilityBody}</p><a className="button" href="#kontakt">{copy.flexibilityCta}<span>→</span></a><small>{copy.flexibilityNote}</small></div><div className="custom-development-grid">{copy.flexibilityPoints.map((point, index) => <article key={point.title}><span>0{index + 1}</span><h3>{point.title}</h3><p>{point.body}</p></article>)}</div></section>
 
-    <section className="implementation-extras"><div className="implementation-heading"><p className="eyebrow">{copy.extrasEyebrow}</p><h2>{copy.extrasTitle}</h2><p>{copy.extrasBody}</p></div><div className="extras-grid">{copy.extras.map((extra, index) => <article key={extra.title}><span>0{index + 1}</span><h3>{extra.title}</h3><p>{extra.body}</p></article>)}</div></section>
+    {includeExtras ? <section className="implementation-extras"><div className="implementation-heading"><p className="eyebrow">{copy.extrasEyebrow}</p><h2>{copy.extrasTitle}</h2><p>{copy.extrasBody}</p></div><div className="extras-grid">{copy.extras.map((extra, index) => <article key={extra.title}><span>0{index + 1}</span><h3>{extra.title}</h3><p>{extra.body}</p></article>)}</div></section> : null}
 
     {includeArchitecture ? <section className="data-architecture"><div className="data-architecture-copy"><p className="eyebrow">{copy.architectureEyebrow}</p><h2>{copy.architectureTitle}</h2><p>{copy.architectureBody}</p><small>{copy.legalNote}<a href="https://podatki.gov.pl/podatkowa-wspolpraca-miedzynarodowa/dpi-digital-platform-information" target="_blank" rel="noreferrer">{copy.legalSource} →</a></small></div><div className="data-architecture-grid">{copy.architecturePoints.map((point, index) => <article key={point.title}><span>0{index + 1}</span><h3>{point.title}</h3><p>{point.body}</p></article>)}</div></section> : null}
   </>;

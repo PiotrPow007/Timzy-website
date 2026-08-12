@@ -26,7 +26,7 @@ $startedAt = is_numeric($payload['startedAt'] ?? null) ? (int) $payload['started
 if (timzy_clean($payload['website'] ?? null, 200) !== '') {
     timzy_json(['ok' => true]);
 }
-if ($name === '' || $company === '' || $industry === '' || $message === '' || ($payload['privacyAccepted'] ?? false) !== true || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
+if ($name === '' || $company === '' || $industry === '' || ($payload['privacyAccepted'] ?? false) !== true || filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
     timzy_json(['ok' => false, 'code' => 'validation'], 400);
 }
 $now = (int) floor(microtime(true) * 1000);

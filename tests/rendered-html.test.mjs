@@ -16,20 +16,17 @@ test("renders the English Timzy landing page", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /More bookings\. Less admin/);
-  assert.match(html, /All under your brand/);
+  assert.match(html, /More bookings\. More returning clients/);
+  assert.match(html, /In an app under your brand/);
   assert.match(html, /assets\/timzy-logo-official-purple\.png/);
   assert.doesNotMatch(html, /class="brand-symbol"/);
-  assert.match(html, /Book a free demo/);
-  assert.match(html, /Request a free demo/);
+  assert.match(html, /See a demo for my industry/);
   assert.match(html, /privacy information/);
-  assert.match(html, /TRUE WHITE-LABEL/);
   assert.match(html, /Your clients remain your clients/);
-  assert.match(html, /Start from a proven template or commission a fully custom design/);
+  assert.match(html, /The app should not look like Timzy\. It should look like your brand/);
   assert.match(html, /Choose from a library of ready-made app templates/);
-  for (const template of ["natural-sage", "noir-prestige", "sunset-energy", "fuchsia-pop"]) {
-    assert.match(html, new RegExp(`assets/templates/${template}\\.webp`));
-  }
+  for (const template of ["noir-prestige", "sunset-energy", "fuchsia-pop"]) assert.match(html, new RegExp(`assets/templates/${template}\\.webp`));
+  assert.match(html, /assets\/templates\/natural-sage-phone-transparent\.png/);
   assert.doesNotMatch(html, /assets\/templates\/ready-template-library\.webp/);
   assert.match(html, /Natural Sage/);
   assert.match(html, /Noir Prestige/);
@@ -37,18 +34,15 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /Fuchsia Pop/);
   assert.doesNotMatch(html, /SPA Light|SPA Luxury|Sport Club/);
   assert.match(html, /assets\/mockups\/client-home\.webp/);
-  for (const screen of ["client-login", "client-home", "client-services", "client-calendar", "client-shop", "client-vouchers"]) {
-    assert.match(html, new RegExp(`assets/mockups/${screen}\\.webp`));
-  }
+  for (const screen of ["client-login", "client-home", "client-services", "client-shop", "client-vouchers"]) assert.match(html, new RegExp(`assets/mockups/${screen}\\.webp`));
+  assert.match(html, /assets\/mockups\/client-calendar-mockup-transparent\.png/);
   const offerSection = html.match(/<section class="offer">([\s\S]*?)<\/section>/)?.[1] ?? "";
-  assert.match(offerSection, /assets\/templates\/natural-sage\.webp/);
+  assert.match(offerSection, /assets\/templates\/natural-sage-phone-transparent\.png/);
   assert.doesNotMatch(offerSection, /assets\/mockups\/client-vouchers\.webp/);
-  assert.match(html, /Not a concept\. This is the real Timzy client app/);
+  assert.match(html, /One consistent journey from the first tap to the next visit/);
   assert.doesNotMatch(html, /Welcome voucher|Booking confirmed|Technology in the background|YOUR LOGO|#7C58F7/);
   assert.match(html, /THE COMPLETE TIMZY ECOSYSTEM/);
   assert.match(html, /Need a function outside the standard modules/);
-  assert.match(html, /Complete website or online store/);
-  assert.match(html, /Dedicated features and integrations/);
   assert.match(html, /A separate data environment for each client/);
   assert.match(html, /Typical marketplace/);
   assert.match(html, /SPA &amp; BEAUTY|SPA & BEAUTY/);
@@ -69,9 +63,8 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.equal(pl.status, 200);
   assert.equal(es.status, 200);
   const plHtml = await pl.text();
-  assert.match(plHtml, /Więcej rezerwacji\. Mniej obsługi/);
-  assert.match(plHtml, /Umów bezpłatne demo/);
-  assert.match(plHtml, /Poproś o bezpłatne demo/);
+  assert.match(plHtml, /Więcej rezerwacji\. Więcej powrotów/);
+  assert.match(plHtml, /Zobacz demo dla swojej branży/);
   assert.match(plHtml, /informacją o przetwarzaniu danych/);
   assert.match(plHtml, /SPA I BEAUTY/);
   assert.match(plHtml, /INNE BRANŻE/);
@@ -83,23 +76,19 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /Każdy biznes usługowy/);
   assert.match(plHtml, /Nie wykorzystujemy Twojej bazy klientów do promowania konkurencyjnych firm/);
   assert.match(plHtml, /Gotowy szablon/);
-  assert.match(plHtml, /Wybierz z biblioteki gotowych template’ów aplikacji/);
+  assert.match(plHtml, /Wybierz z biblioteki gotowych szablonów aplikacji/);
   assert.match(plHtml, /Projekt indywidualny/);
-  assert.match(plHtml, /Tak wygląda aktualna aplikacja Timzy/);
+  assert.match(plHtml, /Jeden spójny proces od pierwszego kliknięcia do kolejnej wizyty/);
   assert.doesNotMatch(plHtml, /Aktualna aplikacja|Prawdziwe ekrany Timzy|Welcome voucher|Booking confirmed|YOUR LOGO|#7C58F7/);
-  assert.match(plHtml, /Osobne środowisko klienta zamiast jednej centralnej bazy/);
   assert.match(plHtml, /Potrzebujesz funkcji, której nie ma na liście/);
-  assert.match(plHtml, /Kompletna strona WWW lub sklep internetowy/);
-  assert.match(plHtml, /Dedykowane funkcje i integracje/);
   assert.match(plHtml, /Do 3 pracowników bez dodatkowej opłaty/);
   assert.match(plHtml, /Notatki po wizycie i pełna historia klienta/);
   assert.match(plHtml, /Płatność całości lub części kwoty przy rezerwacji/);
   assert.match(plHtml, /Brak prowizji Timzy od płatności za rezerwację/);
   assert.match(plHtml, /standardowe opłaty operatora Stripe/);
   assert.match(plHtml, /Funkcje dedykowane wyceniamy osobno/);
-  assert.match(plHtml, /Nie stanowi automatycznej gwarancji zwolnienia prawnego/);
-  assert.match(plHtml, /45% netto wartości usług/);
-  assert.match(await es.text(), /Más reservas\. Menos gestión/);
+  assert.match(plHtml, /Nie można obiecać ogólnego zwolnienia/);
+  assert.match(await es.text(), /Más reservas\. Más clientes que vuelven/);
 });
 
 test("renders privacy pages and a signed contact challenge", async () => {

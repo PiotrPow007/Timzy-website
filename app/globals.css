@@ -211,6 +211,12 @@ img { display: block; max-width: 100%; }
 .section-intro h2, .white-copy h2, .process-heading h2, .offer-copy h2, .final-cta h2 { margin: 0; font-size: clamp(40px, 4.5vw, 64px); line-height: 1.05; letter-spacing: -.052em; font-weight: 690; }
 .section-intro > p:last-child, .white-copy > p, .offer-copy > p, .final-cta > p { max-width: 680px; margin: 24px auto 0; color: var(--muted); font-size: 17px; line-height: 1.7; }
 .section-intro--wide { max-width: 900px; }
+.problem-section { background: #f7f5fa; }
+.problem-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
+.problem-grid article { min-height: 300px; padding: 34px; border: 1px solid var(--line); border-radius: 29px; background: white; box-shadow: 0 20px 52px rgba(57,41,86,.055); }
+.problem-grid article > span { width: 48px; height: 48px; display: grid; place-items: center; margin-bottom: 54px; border-radius: 16px; color: var(--violet); background: var(--soft); font-size: 11px; font-weight: 850; letter-spacing: .08em; }
+.problem-grid h3 { margin: 0; font-size: 22px; line-height: 1.2; letter-spacing: -.035em; }
+.problem-grid p { margin: 15px 0 0; color: var(--muted); font-size: 13px; line-height: 1.68; }
 .industry-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 22px; }
 .industry-card { min-height: 480px; overflow: hidden; display: grid; grid-template-columns: .86fr 1.14fr; border: 1px solid var(--line); border-radius: 34px; background: white; box-shadow: 0 22px 55px rgba(57,41,86,.06); transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
 .industry-card:hover { transform: translateY(-5px); border-color: rgba(111,69,234,.28); box-shadow: 0 30px 70px rgba(57,41,86,.12); }
@@ -324,6 +330,14 @@ img { display: block; max-width: 100%; }
 .actual-screen-card figcaption b { font-size: 13px; letter-spacing: -.02em; }
 .actual-screen-card figcaption span { color: var(--muted); font-size: 10px; line-height: 1.5; }
 
+.conversion-band { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 70px; padding: 62px max(32px, calc((100vw - 1280px) / 2)); color: white; background: linear-gradient(118deg, #6f45ea 0%, #5130c4 62%, #2d2243 100%); }
+.conversion-band > div { max-width: 870px; }
+.conversion-band p { margin: 0 0 15px; color: #d9ccff; font-size: 9px; font-weight: 850; letter-spacing: .17em; }
+.conversion-band h2 { margin: 0; font-family: "DM Serif Display", Georgia, serif; font-size: clamp(35px, 3.7vw, 52px); line-height: 1.03; font-weight: 400; letter-spacing: -.037em; text-wrap: balance; }
+.conversion-band span { display: block; max-width: 720px; margin-top: 16px; color: #d5cce3; font-size: 13px; line-height: 1.65; }
+.conversion-band .button { min-width: 270px; }
+.conversion-band .button b { font-size: 17px; font-weight: 500; }
+
 .features { background: #f7f5fa; }
 .feature-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 18px; }
 .feature-card { min-height: 300px; padding: 34px; border: 1px solid var(--line); border-radius: 28px; background: white; }
@@ -380,6 +394,18 @@ img { display: block; max-width: 100%; }
 .offer-visual--template { display: grid; place-items: center; }
 .offer-visual--template::before { width: 470px; height: 470px; top: 55px; background: radial-gradient(circle, rgba(217,255,114,.15), transparent 67%); box-shadow: 0 0 0 65px rgba(255,255,255,.035); }
 .offer-template-mockup { position: relative; z-index: 2; width: min(440px, 86%); height: auto; object-fit: contain; filter: drop-shadow(0 34px 42px rgba(33,19,67,.3)); }
+
+.faq-section { display: grid; grid-template-columns: .72fr 1.28fr; gap: 90px; padding: 125px max(32px, calc((100vw - 1280px) / 2)); background: #fbfafc; }
+.faq-heading { position: sticky; top: 52px; align-self: start; }
+.faq-heading h2 { max-width: 470px; margin: 0; font-family: "DM Serif Display", Georgia, serif; font-size: clamp(44px, 4.5vw, 66px); line-height: 1.03; font-weight: 400; letter-spacing: -.035em; text-wrap: balance; }
+.faq-list { border-top: 1px solid var(--line); }
+.faq-list details { border-bottom: 1px solid var(--line); }
+.faq-list summary { min-height: 90px; display: grid; grid-template-columns: 1fr 34px; align-items: center; gap: 24px; padding: 22px 0; cursor: pointer; list-style: none; font-size: 17px; line-height: 1.35; font-weight: 740; letter-spacing: -.022em; }
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary span { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; color: var(--violet); background: var(--soft); font-size: 19px; transition: transform .2s ease; }
+.faq-list details[open] summary span { transform: rotate(45deg); }
+.faq-list details > p { max-width: 760px; margin: -3px 58px 28px 0; color: var(--muted); font-size: 13px; line-height: 1.75; }
+.faq-list details > p a { display: block; width: fit-content; margin-top: 10px; color: var(--violet); font-size: 11px; font-weight: 780; text-decoration: underline; text-underline-offset: 3px; }
 
 .final-cta { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; padding: 140px 24px; text-align: center; background: #faf9fc; }
 .final-cta > *:not(.final-ring) { position: relative; z-index: 2; }
@@ -632,6 +658,10 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 }
 
 @media (max-width: 900px) {
+  .problem-grid { grid-template-columns: 1fr; }
+  .problem-grid article { min-height: 0; }
+  .faq-section { grid-template-columns: 1fr; gap: 55px; }
+  .faq-heading { position: static; }
   .customer-ownership { grid-template-columns: 1fr; gap: 55px; }
   .ownership-copy { max-width: 760px; }
   .template-gallery-heading { align-items: flex-start; flex-direction: column; }
@@ -722,6 +752,8 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .hero-body { margin-inline: auto; }
   .hero-actions, .proof-row { justify-content: center; }
   .hero-visual { height: 590px; transform: scale(.9); }
+  .conversion-band { grid-template-columns: 1fr; gap: 30px; }
+  .conversion-band .button { width: fit-content; }
   .industry-grid { grid-template-columns: 1fr; }
   .industry-card { grid-template-columns: .8fr 1.2fr; grid-template-rows: 1fr; min-height: 420px; }
   .industry-visual { height: 100%; min-height: 100%; }
@@ -749,6 +781,9 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .hero-actions .button { width: 100%; max-width: 360px; }
   .proof-row { gap: 9px 14px; }
   .hero-visual { width: calc(100% + 40px); height: 430px; margin-left: -20px; transform: none; }
+  .conversion-band { padding: 55px 18px; }
+  .conversion-band h2 { font-size: 36px; }
+  .conversion-band .button { width: 100%; min-width: 0; }
   .phone--centre { width: 210px; top: 0; }
   .phone--left { width: 160px; left: -5%; top: 83px; }
   .phone--right { width: 160px; right: -5%; top: 80px; }
@@ -757,6 +792,8 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .section-intro { margin-bottom: 42px; }
   .section-intro h2, .white-copy h2, .process-heading h2, .offer-copy h2, .final-cta h2 { font-size: 40px; }
   .section-intro > p:last-child, .white-copy > p, .offer-copy > p, .final-cta > p { font-size: 15px; }
+  .problem-grid article { padding: 28px 24px; }
+  .problem-grid article > span { margin-bottom: 38px; }
   .industry-card { grid-template-columns: 1fr; grid-template-rows: 260px auto; min-height: 0; }
   .industry-visual { height: 260px; min-height: 0; }
   .industry-copy { padding: 30px 24px 36px; }
@@ -774,6 +811,10 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .comparison-head, .comparison-row { min-width: 720px; }
   .offer { gap: 25px; padding: 90px 18px 30px; }
   .offer-visual { min-height: 540px; transform: scale(.9); margin-inline: -18px; }
+  .faq-section { gap: 38px; padding: 88px 18px; }
+  .faq-heading h2 { font-size: 40px; }
+  .faq-list summary { min-height: 82px; font-size: 15px; }
+  .faq-list details > p { margin-right: 0; font-size: 12px; }
   .final-cta { padding: 100px 18px; }
   footer { padding: 58px 22px 26px; }
   .footer-contact { align-items: flex-start; margin-top: 34px; }

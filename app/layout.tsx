@@ -3,12 +3,13 @@ import { CookieNotice } from "./CookieNotice";
 import "./globals.css";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://timzy.app"),
   title: {
-    default: "Timzy | More bookings, less admin — under your brand",
+    default: "Timzy | A booking app under your brand",
     template: "%s | Timzy",
   },
   description:
-    "Branded booking apps for sport clubs, golf, tennis, car wash, detailing and service businesses.",
+    "Bookings, schedules, payments, loyalty and sales in a separate iOS and Android app under your brand.",
   icons: {
     icon: "/favicon.png",
     shortcut: "/favicon.png",
@@ -17,11 +18,11 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Timzy",
-    images: [{ url: "/og.png", width: 1536, height: 1024, alt: "Timzy — more bookings, less admin, under your brand" }],
+    images: [{ url: "/og-sales.png", width: 1536, height: 1024, alt: "Timzy — more bookings and returning clients under your brand" }],
   },
   twitter: {
     card: "summary_large_image",
-    images: ["/og.png"],
+    images: ["/og-sales.png"],
   },
 };
 

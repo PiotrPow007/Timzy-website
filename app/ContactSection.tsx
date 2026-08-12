@@ -33,10 +33,10 @@ type ContactCopy = {
 
 const copy: Record<Locale, ContactCopy> = {
   en: {
-    eyebrow: "FREE, NO-OBLIGATION DEMO",
-    title: "See what Timzy could look like under your brand.",
-    body: "Tell us briefly how your business works. We will come back with relevant questions and a presentation tailored to your industry.",
-    benefits: ["A demo focused on your real workflow", "A clear implementation scope", "No obligation and no marketplace commission"],
+    eyebrow: "A DEMO FOR YOUR INDUSTRY",
+    title: "See your booking journey under your brand.",
+    body: "Tell us how your business works. We will show you the relevant Timzy modules and a booking journey shaped around your industry.",
+    benefits: ["See the client and team journey", "Select the modules your business needs", "Get a clear next step and implementation scope"],
     name: "Name and surname",
     company: "Company / brand",
     email: "Business email",
@@ -44,14 +44,14 @@ const copy: Record<Locale, ContactCopy> = {
     industry: "Industry",
     industryPlaceholder: "Choose your industry",
     industries: [["spa-beauty", "SPA, beauty or hair salon"], ["sport", "Sport club, golf or tennis"], ["car", "Car wash or detailing"], ["clinic", "Clinic or specialist practice"], ["expert", "Coach, trainer or consultant"], ["other", "Other service business"]],
-    message: "What should Timzy help you improve?",
-    messagePlaceholder: "For example: online bookings, deposits, calendars for 3 employees, vouchers…",
+    message: "What should Timzy help you improve? (optional)",
+    messagePlaceholder: "For example: online bookings, deposits, calendars for 3 employees, vouchers… You can also leave this blank.",
     privacyStart: "I have read the ",
     privacyLink: "privacy information",
     privacyEnd: " and understand how Timzy will use my data to answer this enquiry.",
     captcha: "Security check",
     refreshCaptcha: "New question",
-    submit: "Request a free demo",
+    submit: "See a demo for my industry",
     submitting: "Sending…",
     success: "Thank you. Your message has been sent to the Timzy team. We will reply by email.",
     error: "The message could not be sent. Please try again or email hello@timzy.app.",
@@ -59,10 +59,10 @@ const copy: Record<Locale, ContactCopy> = {
     direct: "Prefer email? Write directly to hello@timzy.app",
   },
   pl: {
-    eyebrow: "BEZPŁATNE DEMO, BEZ ZOBOWIĄZAŃ",
-    title: "Zobacz, jak Timzy może wyglądać pod Twoją marką.",
-    body: "Napisz krótko, jak działa Twoja firma. Wrócimy z konkretnymi pytaniami i prezentacją dopasowaną do Twojej branży.",
-    benefits: ["Demo oparte na Twoim sposobie pracy", "Czytelny zakres wdrożenia", "Bez zobowiązań i bez prowizji marketplace’u"],
+    eyebrow: "DEMO DLA TWOJEJ BRANŻY",
+    title: "Zobacz proces rezerwacji pod własną marką.",
+    body: "Napisz krótko, jak działa Twoja firma. Pokażemy odpowiednie moduły Timzy i proces rezerwacji dopasowany do Twojej branży.",
+    benefits: ["Zobaczysz proces klienta i zespołu", "Dobierzesz moduły do swojej firmy", "Poznasz jasny kolejny krok i zakres wdrożenia"],
     name: "Imię i nazwisko",
     company: "Firma / marka",
     email: "E-mail firmowy",
@@ -70,14 +70,14 @@ const copy: Record<Locale, ContactCopy> = {
     industry: "Branża",
     industryPlaceholder: "Wybierz branżę",
     industries: [["spa-beauty", "SPA, beauty lub salon fryzjerski"], ["sport", "Klub sportowy, golf lub tenis"], ["car", "Myjnia lub detailing"], ["clinic", "Klinika lub gabinet specjalistyczny"], ["expert", "Trener, coach lub konsultant"], ["other", "Inna firma usługowa"]],
-    message: "Co Timzy ma usprawnić w Twojej firmie?",
-    messagePlaceholder: "Np. rezerwacje online, zaliczki, grafiki 3 pracowników, vouchery…",
+    message: "Co Timzy ma usprawnić w Twojej firmie? (opcjonalnie)",
+    messagePlaceholder: "Np. rezerwacje online, zaliczki, grafiki 3 pracowników, vouchery… Możesz też zostawić to pole puste.",
     privacyStart: "Zapoznałem/am się z ",
     privacyLink: "informacją o przetwarzaniu danych",
     privacyEnd: " i rozumiem, jak Timzy wykorzysta moje dane, aby odpowiedzieć na zapytanie.",
     captcha: "Zabezpieczenie antyspamowe",
     refreshCaptcha: "Nowe pytanie",
-    submit: "Poproś o bezpłatne demo",
+    submit: "Zobacz demo dla swojej branży",
     submitting: "Wysyłanie…",
     success: "Dziękujemy. Wiadomość została wysłana do zespołu Timzy. Odpowiemy e-mailem.",
     error: "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz na hello@timzy.app.",
@@ -85,10 +85,10 @@ const copy: Record<Locale, ContactCopy> = {
     direct: "Wolisz e-mail? Napisz bezpośrednio na hello@timzy.app",
   },
   es: {
-    eyebrow: "DEMO GRATUITA Y SIN COMPROMISO",
-    title: "Descubre cómo puede verse Timzy con tu marca.",
-    body: "Cuéntanos brevemente cómo funciona tu negocio. Te responderemos con preguntas concretas y una presentación adaptada a tu sector.",
-    benefits: ["Una demo basada en tu forma real de trabajar", "Un alcance de implantación claro", "Sin compromiso ni comisión de marketplace"],
+    eyebrow: "DEMO PARA TU SECTOR",
+    title: "Descubre el proceso de reserva con tu marca.",
+    body: "Cuéntanos cómo funciona tu negocio. Te mostraremos los módulos y el proceso de reserva adecuados para tu sector.",
+    benefits: ["Verás el recorrido del cliente y del equipo", "Elegirás los módulos adecuados", "Conocerás el siguiente paso y el alcance de implantación"],
     name: "Nombre y apellidos",
     company: "Empresa / marca",
     email: "Email profesional",
@@ -96,14 +96,14 @@ const copy: Record<Locale, ContactCopy> = {
     industry: "Sector",
     industryPlaceholder: "Elige tu sector",
     industries: [["spa-beauty", "SPA, beauty o peluquería"], ["sport", "Club deportivo, golf o tenis"], ["car", "Lavado o detailing"], ["clinic", "Clínica o consulta profesional"], ["expert", "Entrenador, coach o consultor"], ["other", "Otro negocio de servicios"]],
-    message: "¿Qué debería mejorar Timzy en tu negocio?",
-    messagePlaceholder: "Por ejemplo: reservas online, depósitos, agendas para 3 empleados, vales…",
+    message: "¿Qué debería mejorar Timzy en tu negocio? (opcional)",
+    messagePlaceholder: "Por ejemplo: reservas online, depósitos, agendas para 3 empleados, vales… También puedes dejarlo en blanco.",
     privacyStart: "He leído la ",
     privacyLink: "información de privacidad",
     privacyEnd: " y entiendo cómo Timzy usará mis datos para responder a esta consulta.",
     captcha: "Comprobación de seguridad",
     refreshCaptcha: "Nueva pregunta",
-    submit: "Solicitar una demo gratuita",
+    submit: "Ver demo para mi sector",
     submitting: "Enviando…",
     success: "Gracias. El mensaje se ha enviado al equipo de Timzy. Te responderemos por email.",
     error: "No se pudo enviar el mensaje. Inténtalo de nuevo o escribe a hello@timzy.app.",
@@ -122,7 +122,7 @@ type Challenge = { question: string; token: string };
 
 export function ContactSection({ locale, initialIndustry = "" }: { locale: Locale; initialIndustry?: string }) {
   const t = copy[locale];
-  const startedAt = useRef(Date.now());
+  const startedAt = useRef(0);
   const formRef = useRef<HTMLFormElement>(null);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error" | "captcha">("idle");
@@ -138,7 +138,11 @@ export function ContactSection({ locale, initialIndustry = "" }: { locale: Local
     }
   }, []);
 
-  useEffect(() => { void loadChallenge(); }, [loadChallenge]);
+  useEffect(() => {
+    startedAt.current = Date.now();
+    const timeout = window.setTimeout(() => { void loadChallenge(); }, 0);
+    return () => window.clearTimeout(timeout);
+  }, [loadChallenge]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -188,12 +192,12 @@ export function ContactSection({ locale, initialIndustry = "" }: { locale: Local
         <label><span>{t.phone}</span><input name="phone" type="tel" autoComplete="tel" maxLength={40} /></label>
       </div>
       <label><span>{t.industry} *</span><select name="industry" defaultValue={initialIndustry} required><option value="" disabled>{t.industryPlaceholder}</option>{t.industries.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
-      <label><span>{t.message} *</span><textarea name="message" rows={5} maxLength={2500} placeholder={t.messagePlaceholder} required /></label>
+      <label><span>{t.message}</span><textarea name="message" rows={4} maxLength={2500} placeholder={t.messagePlaceholder} /></label>
       <div className="captcha-row">
         <label><span>{t.captcha}: {challenge?.question ?? "…"} *</span><input name="captcha" inputMode="numeric" autoComplete="off" pattern="[0-9]+" maxLength={3} required disabled={!challenge} /></label>
         <button type="button" className="captcha-refresh" onClick={() => void loadChallenge()}>{t.refreshCaptcha}</button>
       </div>
-      <label className="privacy-check"><input name="privacy" type="checkbox" required /><span>{t.privacyStart}<a href={privacyPaths[locale]} target="_blank">{t.privacyLink}</a>{t.privacyEnd} *</span></label>
+      <label className="privacy-check"><input name="privacy" type="checkbox" required /><span>{t.privacyStart}<a href={privacyPaths[locale]} target="_blank" rel="noreferrer">{t.privacyLink}</a>{t.privacyEnd} *</span></label>
       <div className="form-honeypot" aria-hidden="true"><label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label></div>
       <button className="button contact-submit" type="submit" disabled={!challenge || status === "sending"}>{status === "sending" ? t.submitting : t.submit}<span aria-hidden="true">→</span></button>
       <p className={`form-status form-status--${status}`} aria-live="polite">{status === "success" ? t.success : status === "captcha" ? t.captchaError : status === "error" ? t.error : ""}</p>
