@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { trackEvent } from "./Analytics";
 
 type Locale = "en" | "pl" | "es";
 
@@ -13,6 +14,11 @@ type ContactCopy = {
   company: string;
   email: string;
   phone: string;
+  country: string;
+  teamSize: string;
+  teamSizePlaceholder: string;
+  teamSizes: Array<[string, string]>;
+  contactTime: string;
   industry: string;
   industryPlaceholder: string;
   industries: Array<[string, string]>;
@@ -41,6 +47,11 @@ const copy: Record<Locale, ContactCopy> = {
     company: "Company / brand",
     email: "Business email",
     phone: "Phone (optional)",
+    country: "Country",
+    teamSize: "Team size",
+    teamSizePlaceholder: "Choose team size",
+    teamSizes: [["1", "1 person"], ["2-3", "2–3 people"], ["4-10", "4–10 people"], ["11-25", "11–25 people"], ["26+", "26+ people"]],
+    contactTime: "Preferred contact time (optional)",
     industry: "Industry",
     industryPlaceholder: "Choose your industry",
     industries: [["spa-beauty", "SPA, beauty or hair salon"], ["sport", "Sport club, golf or tennis"], ["car", "Car wash or detailing"], ["clinic", "Clinic or specialist practice"], ["expert", "Coach, trainer or consultant"], ["other", "Other service business"]],
@@ -67,6 +78,11 @@ const copy: Record<Locale, ContactCopy> = {
     company: "Firma / marka",
     email: "E-mail firmowy",
     phone: "Telefon (opcjonalnie)",
+    country: "Kraj",
+    teamSize: "Liczba pracowników lub trenerów",
+    teamSizePlaceholder: "Wybierz wielkość zespołu",
+    teamSizes: [["1", "1 osoba"], ["2-3", "2–3 osoby"], ["4-10", "4–10 osób"], ["11-25", "11–25 osób"], ["26+", "26+ osób"]],
+    contactTime: "Preferowany termin kontaktu (opcjonalnie)",
     industry: "Branża",
     industryPlaceholder: "Wybierz branżę",
     industries: [["spa-beauty", "SPA, beauty lub salon fryzjerski"], ["sport", "Klub sportowy, golf lub tenis"], ["car", "Myjnia lub detailing"], ["clinic", "Klinika lub gabinet specjalistyczny"], ["expert", "Trener, coach lub konsultant"], ["other", "Inna firma usługowa"]],
@@ -93,6 +109,11 @@ const copy: Record<Locale, ContactCopy> = {
     company: "Empresa / marca",
     email: "Email profesional",
     phone: "Teléfono (opcional)",
+    country: "País",
+    teamSize: "Número de empleados o entrenadores",
+    teamSizePlaceholder: "Elige el tamaño del equipo",
+    teamSizes: [["1", "1 persona"], ["2-3", "2–3 personas"], ["4-10", "4–10 personas"], ["11-25", "11–25 personas"], ["26+", "26+ personas"]],
+    contactTime: "Horario de contacto preferido (opcional)",
     industry: "Sector",
     industryPlaceholder: "Elige tu sector",
     industries: [["spa-beauty", "SPA, beauty o peluquería"], ["sport", "Club deportivo, golf o tenis"], ["car", "Lavado o detailing"], ["clinic", "Clínica o consulta profesional"], ["expert", "Entrenador, coach o consultor"], ["other", "Otro negocio de servicios"]],
@@ -124,12 +145,14 @@ export function ContactSection({ locale, initialIndustry = "" }: { locale: Local
   const t = copy[locale];
   const startedAt = useRef(0);
   const formRef = useRef<HTMLFormElement>(null);
+  const trackedStart = useRef(false);
   const [challenge, setChallenge] = useState<Challenge | null>(null);
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error" | "captcha">("idle");
+  const [formActivated, setFormActivated] = useState(false);
 
   const loadChallenge = useCallback(async () => {
     try {
-      const response = await fetch("/api/contact-challenge", { cache: "no-store" });
+      const response = await fetch("/api/contact-challenge/", { cache: "no-store" });
       if (!response.ok) throw new Error("challenge");
       setChallenge((await response.json()) as Challenge);
     } catch {
@@ -140,9 +163,18 @@ export function ContactSection({ locale, initialIndustry = "" }: { locale: Local
 
   useEffect(() => {
     startedAt.current = Date.now();
-    const timeout = window.setTimeout(() => { void loadChallenge(); }, 0);
-    return () => window.clearTimeout(timeout);
-  }, [loadChallenge]);
+  }, []);
+
+  function activateForm() {
+    if (!trackedStart.current) {
+      trackedStart.current = true;
+      trackEvent("form_start", { form_name: "demo_request" });
+    }
+    if (!formActivated) {
+      setFormActivated(true);
+      void loadChallenge();
+    }
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -150,11 +182,12 @@ export function ContactSection({ locale, initialIndustry = "" }: { locale: Local
     const form = new FormData(event.currentTarget);
     setStatus("sending");
     try {
-      const response = await fetch("/api/contact", {
+      const response = await fetch("/api/contact/", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           name: form.get("name"), company: form.get("company"), email: form.get("email"), phone: form.get("phone"),
+          country: form.get("country"), teamSize: form.get("teamSize"), contactTime: form.get("contactTime"),
           industry: form.get("industry"), message: form.get("message"), privacyAccepted: form.get("privacy") === "on",
           website: form.get("website"), captchaAnswer: form.get("captcha"), captchaToken: challenge.token,
           startedAt: startedAt.current, locale,
@@ -169,6 +202,8 @@ export function ContactSection({ locale, initialIndustry = "" }: { locale: Local
       formRef.current?.reset();
       startedAt.current = Date.now();
       setStatus("success");
+      trackEvent("form_complete", { form_name: "demo_request", form_industry: String(form.get("industry") || "") });
+      trackEvent("generate_lead", { form_name: "demo_request", form_industry: String(form.get("industry") || "") });
       await loadChallenge();
     } catch {
       setStatus("error");
@@ -184,18 +219,21 @@ export function ContactSection({ locale, initialIndustry = "" }: { locale: Local
       <ul>{t.benefits.map((benefit) => <li key={benefit}><span>✓</span>{benefit}</li>)}</ul>
       <a href="mailto:hello@timzy.app">{t.direct}</a>
     </div>
-    <form className="contact-form" ref={formRef} onSubmit={submit}>
+    <form className="contact-form" ref={formRef} onSubmit={submit} onFocusCapture={activateForm}>
       <div className="contact-form-grid">
         <label><span>{t.name} *</span><input name="name" autoComplete="name" maxLength={100} required /></label>
         <label><span>{t.company} *</span><input name="company" autoComplete="organization" maxLength={140} required /></label>
         <label><span>{t.email} *</span><input name="email" type="email" autoComplete="email" maxLength={180} required /></label>
         <label><span>{t.phone}</span><input name="phone" type="tel" autoComplete="tel" maxLength={40} /></label>
+        <label><span>{t.country} *</span><input name="country" autoComplete="country-name" maxLength={80} required /></label>
+        <label><span>{t.teamSize} *</span><select name="teamSize" defaultValue="" required><option value="" disabled>{t.teamSizePlaceholder}</option>{t.teamSizes.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
+        <label><span>{t.contactTime}</span><input name="contactTime" maxLength={120} /></label>
       </div>
       <label><span>{t.industry} *</span><select name="industry" defaultValue={initialIndustry} required><option value="" disabled>{t.industryPlaceholder}</option>{t.industries.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label>
       <label><span>{t.message}</span><textarea name="message" rows={4} maxLength={2500} placeholder={t.messagePlaceholder} /></label>
       <div className="captcha-row">
-        <label><span>{t.captcha}: {challenge?.question ?? "…"} *</span><input name="captcha" inputMode="numeric" autoComplete="off" pattern="[0-9]+" maxLength={3} required disabled={!challenge} /></label>
-        <button type="button" className="captcha-refresh" onClick={() => void loadChallenge()}>{t.refreshCaptcha}</button>
+        <label><span>{t.captcha}: {challenge?.question ?? (formActivated ? "…" : "")} *</span><input name="captcha" inputMode="numeric" autoComplete="off" pattern="[0-9]+" maxLength={3} required disabled={!challenge} /></label>
+        <button type="button" className="captcha-refresh" onClick={() => { if (!formActivated) activateForm(); else void loadChallenge(); }}>{t.refreshCaptcha}</button>
       </div>
       <label className="privacy-check"><input name="privacy" type="checkbox" required /><span>{t.privacyStart}<a href={privacyPaths[locale]} target="_blank" rel="noreferrer">{t.privacyLink}</a>{t.privacyEnd} *</span></label>
       <div className="form-honeypot" aria-hidden="true"><label>Website<input name="website" tabIndex={-1} autoComplete="off" /></label></div>

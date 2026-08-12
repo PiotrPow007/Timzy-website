@@ -3,10 +3,34 @@ Options -Indexes
 AddDefaultCharset UTF-8
 ErrorDocument 404 /404.html
 
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+  <FilesMatch "\.(css|js|mjs|woff2|png|webp|jpg|jpeg|svg|ico)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|xml|txt)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/plain text/css text/javascript application/javascript application/json application/xml image/svg+xml
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteCond %{HTTPS} !=on
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+  # Preserve the established industry URL while supporting the shorter SEO aliases.
+  RewriteRule ^automotive/?$ /car-wash-detailing/ [R=301,L]
+  RewriteRule ^pl/automotive/?$ /pl/car-wash-detailing/ [R=301,L]
+  RewriteRule ^es/automotive/?$ /es/car-wash-detailing/ [R=301,L]
+  RewriteRule ^blog/?$ /insights/ [R=301,L]
+  RewriteRule ^pl/blog/?$ /pl/baza-wiedzy/ [R=301,L]
+  RewriteRule ^es/blog/?$ /es/recursos/ [R=301,L]
 
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d

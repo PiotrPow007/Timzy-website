@@ -35,7 +35,8 @@ test("renders the English Timzy landing page", async () => {
   assert.doesNotMatch(html, /SPA Light|SPA Luxury|Sport Club/);
   assert.match(html, /assets\/mockups\/client-home\.webp/);
   for (const screen of ["client-login", "client-home", "client-services", "client-shop", "client-vouchers"]) assert.match(html, new RegExp(`assets/mockups/${screen}\\.webp`));
-  assert.match(html, /assets\/mockups\/client-calendar-mockup-transparent\.png/);
+  assert.match(html, /assets\/mockups\/client-calendar\.webp/);
+  assert.doesNotMatch(html, /assets\/mockups\/client-calendar-mockup-transparent\.png/);
   const offerSection = html.match(/<section class="offer">([\s\S]*?)<\/section>/)?.[1] ?? "";
   assert.match(offerSection, /assets\/templates\/natural-sage-phone-transparent\.png/);
   assert.doesNotMatch(offerSection, /assets\/mockups\/client-vouchers\.webp/);
@@ -44,6 +45,11 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /THE COMPLETE TIMZY ECOSYSTEM/);
   assert.match(html, /Need a function outside the standard modules/);
   assert.match(html, /A separate data environment for each client/);
+  assert.match(html, /application\/ld\+json/);
+  assert.match(html, /SoftwareApplication/);
+  assert.match(html, /FAQPage/);
+  assert.match(html, /hrefLang="x-default"/);
+  assert.doesNotMatch(html, /googletagmanager\.com/);
   assert.match(html, /Typical marketplace/);
   assert.match(html, /SPA &amp; BEAUTY|SPA & BEAUTY/);
   assert.match(html, /CAR WASH &amp; DETAILING|CAR WASH & DETAILING/);
@@ -85,6 +91,7 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /Notatki po wizycie i pełna historia klienta/);
   assert.match(plHtml, /Płatność całości lub części kwoty przy rezerwacji/);
   assert.match(plHtml, /Brak prowizji Timzy od płatności za rezerwację/);
+  assert.match(plHtml, /Aplikacja do rezerwacji pod Twoją marką/);
   assert.match(plHtml, /standardowe opłaty operatora Stripe/);
   assert.match(plHtml, /Funkcje dedykowane wyceniamy osobno/);
   assert.match(plHtml, /Nie można obiecać ogólnego zwolnienia/);
@@ -103,6 +110,7 @@ test("renders privacy pages and a signed contact challenge", async () => {
   assert.match(privacyHtml, /12878269/);
   assert.match(privacyHtml, /7 Bell Yard/);
   assert.match(privacyHtml, /Cookies i podobne technologie/);
+  assert.match(privacyHtml, /Google Analytics 4/);
   assert.equal(challenge.status, 200);
   const payload = await challenge.json();
   assert.match(payload.question, /^\d+ \+ \d+ =$/);
@@ -123,4 +131,21 @@ test("renders all industry landing pages in every language", async () => {
   assert.match(golf, /Ball dispenser access from the app/);
   assert.match(tennis, /Fill more courts/);
   assert.match(car, /Turn enquiries into booked visits/);
+  for (const html of [sport, golf, tennis, car]) {
+    assert.match(html, /BreadcrumbList/);
+    assert.match(html, /WebApplication/);
+  }
+});
+
+test("renders the sales-focused SEO architecture", async () => {
+  const paths = ["/features", "/pricing", "/demo", "/insights", "/beauty-spa", "/pl/funkcje", "/pl/cennik", "/pl/demo", "/pl/baza-wiedzy", "/pl/beauty-spa", "/es/funciones", "/es/precios", "/es/demo", "/es/recursos", "/es/beauty-spa"];
+  const responses = await Promise.all(paths.map((path) => render(path)));
+  responses.forEach((response, index) => assert.equal(response.status, 200, paths[index]));
+  for (const response of responses) {
+    const html = await response.text();
+    assert.match(html, /<h1>/);
+    assert.match(html, /rel="canonical"/);
+    assert.match(html, /hrefLang="x-default"/);
+    assert.match(html, /demo_request|Zobacz demo|Book a free demo|Reservar una demo/);
+  }
 });

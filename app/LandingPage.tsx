@@ -1,6 +1,7 @@
 import { ProductCapabilities } from "./ProductCapabilities";
 import { ActualProductShowcase, CustomerOwnershipSection, TemplateChoiceSection } from "./CustomerValueSections";
 import { ContactSection } from "./ContactSection";
+import { PlatformJsonLd } from "./SeoJsonLd";
 
 type Locale = "en" | "pl" | "es";
 
@@ -297,15 +298,15 @@ export const landingCopy: Record<Locale, Copy> = {
 
 function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
-    <span className={`brand-mark${compact ? " brand-mark--compact" : ""}`} aria-label="Timzy">
-      <img className="brand-logo--purple" src="/assets/timzy-logo-official-purple.png" alt="" aria-hidden="true" />
-      <img className="brand-logo--white" src="/assets/timzy-logo-official-white.png" alt="" aria-hidden="true" />
+    <span className={`brand-mark${compact ? " brand-mark--compact" : ""}`} role="img" aria-label="Timzy">
+      <img className="brand-logo--purple" src="/assets/timzy-logo-official-purple.png" width="307" height="158" alt="" aria-hidden="true" />
+      <img className="brand-logo--white" src="/assets/timzy-logo-official-white.png" width="307" height="158" alt="" aria-hidden="true" />
     </span>
   );
 }
 
 function ActualAppScreen({ src, alt, className = "", eager = false }: { src: string; alt: string; className?: string; eager?: boolean }) {
-  return <figure className={`real-phone ${className}`}><div className="real-phone-shell"><img src={src} alt={alt} loading={eager ? "eager" : "lazy"} /></div></figure>;
+  return <figure className={`real-phone ${className}`}><div className="real-phone-shell"><img src={src} alt={alt} width="720" height="1566" loading={eager ? "eager" : "lazy"} fetchPriority={eager ? "high" : "auto"} /></div></figure>;
 }
 
 function LanguageNav({ locale }: { locale: Locale }) {
@@ -314,7 +315,8 @@ function LanguageNav({ locale }: { locale: Locale }) {
 }
 
 function industryHref(locale: Locale, slug: Copy["industries"][number]["slug"]) {
-  if (slug === "spa-beauty" || slug === "other") return "#kontakt";
+  if (slug === "spa-beauty") return `${locale === "en" ? "" : `/${locale}`}/beauty-spa/`;
+  if (slug === "other") return "#kontakt";
   return `${locale === "en" ? "" : `/${locale}`}/${slug}/`;
 }
 
@@ -341,16 +343,17 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
     es: { label: "DESCUBRE TIMZY EN TU NEGOCIO", title: "La forma más rápida de valorar Timzy es ver tu propio proceso de reserva.", body: "En una presentación gratuita nos centraremos en los módulos, el recorrido y la configuración adecuados para tu sector.", cta: "Ver demo para mi sector" },
   }[locale];
   const legalLinks = {
-    en: { privacy: "Privacy and cookies", privacyHref: "/privacy-policy/", terms: "Terms", faq: "FAQ", back: "Back to top ↑" },
-    pl: { privacy: "Prywatność i cookies", privacyHref: "/pl/polityka-prywatnosci/", terms: "Regulamin", faq: "FAQ", back: "Wróć na górę ↑" },
-    es: { privacy: "Privacidad y cookies", privacyHref: "/es/politica-privacidad/", terms: "Condiciones", faq: "FAQ", back: "Volver arriba ↑" },
+    en: { privacy: "Privacy and cookies", privacyHref: "/privacy-policy/", features: "Features", featuresHref: "/features/", pricing: "Pricing", pricingHref: "/pricing/", knowledge: "Insights", knowledgeHref: "/insights/", back: "Back to top ↑" },
+    pl: { privacy: "Prywatność i cookies", privacyHref: "/pl/polityka-prywatnosci/", features: "Funkcje", featuresHref: "/pl/funkcje/", pricing: "Cennik", pricingHref: "/pl/cennik/", knowledge: "Baza wiedzy", knowledgeHref: "/pl/baza-wiedzy/", back: "Wróć na górę ↑" },
+    es: { privacy: "Privacidad y cookies", privacyHref: "/es/politica-privacidad/", features: "Funciones", featuresHref: "/es/funciones/", pricing: "Precios", pricingHref: "/es/precios/", knowledge: "Recursos", knowledgeHref: "/es/recursos/", back: "Volver arriba ↑" },
   }[locale];
   return (
     <main id="top" lang={locale === "pl" ? "pl" : locale === "es" ? "es" : "en-GB"}>
+      <PlatformJsonLd locale={locale} faqs={copy.faqs.map(({ question, answer }) => ({ question, answer }))} />
       <a className="skip-link" href="#content">{copy.skip}</a>
       <header className="site-header"><a href={locale === "en" ? "/" : `/${locale}/`} className="logo-link"><BrandMark /></a><nav aria-label="Main navigation"><a href="#clients">{copy.nav[0]}</a><a href="#capabilities">{copy.nav[1]}</a><a href="#industries">{copy.nav[2]}</a><a href="#process">{copy.nav[3]}</a></nav><div className="header-actions"><LanguageNav locale={locale} /><a href="#kontakt" className="button button--small">{copy.navCta}</a></div></header>
 
-      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href="#kontakt">{copy.heroCta}<span aria-hidden="true">→</span></a><a className="text-link" href="#capabilities">{copy.heroCta2}<span aria-hidden="true">↘</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><ActualAppScreen src="/assets/mockups/client-services.webp" alt="Actual Timzy services screen" className="phone--left" /><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual Timzy home screen" className="phone--centre" eager /><ActualAppScreen src="/assets/mockups/client-shop.webp" alt="Actual Timzy shop screen" className="phone--right" /></div></section>
+      <section className="hero" id="content"><div className="hero-glow hero-glow--one" /><div className="hero-glow hero-glow--two" /><div className="hero-copy"><p className="eyebrow">{copy.eyebrow}</p><h1>{copy.heroTitle}<span>{copy.heroAccent}</span></h1><p className="hero-body">{copy.heroBody}</p><div className="hero-actions"><a className="button" href="#kontakt">{copy.heroCta}<span aria-hidden="true">→</span></a><a className="text-link" href="#capabilities">{copy.heroCta2}<span aria-hidden="true">↘</span></a></div><div className="proof-row">{copy.proof.map((item) => <span key={item}><i>✓</i>{item}</span>)}</div></div><div className="hero-visual"><div className="visual-orbit visual-orbit--one" /><div className="visual-orbit visual-orbit--two" /><ActualAppScreen src="/assets/mockups/client-services.webp" alt="Actual Timzy services screen" className="phone--left" eager /><ActualAppScreen src="/assets/mockups/client-home.webp" alt="Actual Timzy home screen" className="phone--centre" eager /><ActualAppScreen src="/assets/mockups/client-shop.webp" alt="Actual Timzy shop screen" className="phone--right" eager /></div></section>
 
       <div className="signal-strip">{signalItems.map((item, index) => <span key={item}>{item}{index < signalItems.length - 1 ? <i /> : null}</span>)}</div>
 
@@ -360,7 +363,7 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <section className="section features"><div className="section-intro section-intro--wide"><p className="eyebrow">{copy.featuresEyebrow}</p><h2>{copy.featuresTitle}</h2><p>{copy.featuresBody}</p></div><div className="feature-grid">{copy.features.map((feature, index) => <article className={index === 1 ? "feature-card feature-card--highlight" : "feature-card"} key={feature.title}><span className="feature-icon">{feature.icon}</span><h3>{feature.title}</h3><p>{feature.body}</p></article>)}</div></section>
 
-      <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className={`industry-visual industry-visual--${industry.slug}`}>{industry.slug === "other" ? <div className="industry-collage">{industryImages.other.map((image, tileIndex) => <img src={image.src} alt={image.alt} loading="lazy" key={image.src} className={`industry-collage-tile industry-collage-tile--${tileIndex + 1}`} />)}</div> : <img className="industry-photo" src={industryImages[industry.slug][0].src} alt={industryImages[industry.slug][0].alt} loading="lazy" />}<span className="industry-photo-tag">{industry.tag}</span></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
+      <section className="section industries" id="industries"><div className="section-intro"><p className="eyebrow">{copy.industriesEyebrow}</p><h2>{copy.industriesTitle}</h2><p>{copy.industriesBody}</p></div><div className="industry-grid">{copy.industries.map((industry, index) => <a className={`industry-card industry-card--${index}`} href={industryHref(locale, industry.slug)} key={industry.tag}><div className={`industry-visual industry-visual--${industry.slug}`}>{industry.slug === "other" ? <div className="industry-collage">{industryImages.other.map((image, tileIndex) => <img src={image.src} alt={image.alt} width="1448" height="1086" loading="lazy" key={image.src} className={`industry-collage-tile industry-collage-tile--${tileIndex + 1}`} />)}</div> : <img className="industry-photo" src={industryImages[industry.slug][0].src} alt={industryImages[industry.slug][0].alt} width="1448" height="1086" loading="lazy" />}<span className="industry-photo-tag">{industry.tag}</span></div><div className="industry-copy"><p className="card-tag">{industry.tag}</p><h3>{industry.title}</h3><p>{industry.body}</p><ul>{industry.points.map(point => <li key={point}>{point}</li>)}</ul><span className="industry-link">{copy.industryLink}<b aria-hidden="true">→</b></span></div></a>)}</div></section>
 
       <ActualProductShowcase locale={locale} />
 
@@ -374,13 +377,13 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <section className="section comparison" id="compare"><div className="section-intro"><p className="eyebrow">{copy.compareEyebrow}</p><h2>{copy.compareTitle}</h2><p>{copy.compareBody}</p></div><div className="comparison-table" role="table" aria-label={copy.compareTitle}><div className="comparison-head" role="row">{copy.compareLabels.map((label, index) => <span className={index === 2 ? "timzy-col" : ""} role="columnheader" key={label}>{index === 2 ? <BrandMark compact /> : label}</span>)}</div>{copy.compareRows.map(row => <div className="comparison-row" role="row" key={row[0]}><b role="cell">{row[0]}</b><span role="cell"><i>−</i>{row[1]}</span><span className="timzy-col" role="cell"><i>✓</i>{row[2]}</span></div>)}</div>{locale === "pl" ? <p className="comparison-evidence"><b>Konkretny przykład: Booksy Boost.</b> Booksy podaje, że opcjonalna usługa Boost pobiera 45% netto wartości wszystkich usług wykonanych podczas pierwszej, zakończonej wizyty nowego klienta Boost. Rezerwacje pochodzące z bezprowizyjnego linku do profilu lub integracji nie podlegają tej prowizji, dlatego nie każda rezerwacja Booksy jest prowizyjna. Timzy nie pobiera własnej prowizji ani od rezerwacji, ani od płatności za rezerwację. Przy płatnościach online nadal obowiązują standardowe opłaty operatora Stripe. <a href="https://biz.booksy.com/pl-pl/funkcje/boost" target="_blank" rel="noreferrer">Sprawdź oficjalne zasady Booksy Boost →</a><small>Stan informacji sprawdzony 12 sierpnia 2026 r.</small></p> : null}</section>
 
-      <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href="#kontakt">{copy.offerCta}<span>→</span></a></div><div className="offer-visual offer-visual--template"><img className="offer-template-mockup" src="/assets/templates/natural-sage-phone-transparent.png" alt="Branded app login mockup in the Natural Sage style" loading="lazy" /></div></section>
+      <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href="#kontakt">{copy.offerCta}<span>→</span></a></div><div className="offer-visual offer-visual--template"><img className="offer-template-mockup" src="/assets/templates/natural-sage-phone-transparent.png" alt="Branded app login mockup in the Natural Sage style" width="1024" height="1535" loading="lazy" /></div></section>
 
       <section className="faq-section" id="faq"><div className="faq-heading"><p className="eyebrow">{copy.faqEyebrow}</p><h2>{copy.faqTitle}</h2></div><div className="faq-list">{copy.faqs.map((faq, index) => <details key={faq.question} open={index === 0}><summary>{faq.question}<span aria-hidden="true">+</span></summary><p>{faq.answer}{faq.source && faq.sourceLabel ? <a href={faq.source} target="_blank" rel="noreferrer">{faq.sourceLabel} →</a> : null}</p></details>)}</div></section>
 
       <ContactSection locale={locale} />
 
-      <footer><div className="footer-brand"><BrandMark /><p>{copy.footerLine}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href={legalLinks.privacyHref}>{legalLinks.privacy}</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><LanguageNav locale={locale} /><a href="#top">{legalLinks.back}</a></div></footer>
+      <footer><div className="footer-brand"><BrandMark /><p>{copy.footerLine}</p></div><div className="footer-contact"><a href="mailto:hello@timzy.app">hello@timzy.app</a><a href="tel:+34600659705">+34 600 659 705</a><a href="tel:+48507702007">+48 507 702 007</a></div><div className="footer-links"><a href={legalLinks.featuresHref}>{legalLinks.features}</a><a href={legalLinks.pricingHref}>{legalLinks.pricing}</a><a href={legalLinks.knowledgeHref}>{legalLinks.knowledge}</a><a href={legalLinks.privacyHref}>{legalLinks.privacy}</a></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Timzy</span><LanguageNav locale={locale} /><a href="#top">{legalLinks.back}</a></div></footer>
     </main>
   );
 }

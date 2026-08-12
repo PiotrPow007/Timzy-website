@@ -26,6 +26,16 @@ def copy_prerendered_pages() -> None:
         shutil.copy2(source, target)
 
 
+def localize_document_languages() -> None:
+    for target in OUTPUT.rglob("*.html"):
+        relative = target.relative_to(OUTPUT)
+        locale = "pl" if relative.parts and relative.parts[0] == "pl" else "es" if relative.parts and relative.parts[0] == "es" else "en"
+        html = target.read_text(encoding="utf-8")
+        localized = html.replace('<html lang="en">', f'<html lang="{locale}">', 1)
+        if localized != html:
+            target.write_text(localized, encoding="utf-8")
+
+
 def main() -> None:
     if not CLIENT.is_dir() or not PRERENDERED.is_dir():
         raise SystemExit("Run the prerender build before assembling the CyberFolks release")
@@ -33,6 +43,7 @@ def main() -> None:
     shutil.copytree(CLIENT, OUTPUT)
     copy_prerendered_pages()
     shutil.copytree(OVERLAY, OUTPUT, dirs_exist_ok=True)
+    localize_document_languages()
     files = sum(1 for path in OUTPUT.rglob("*") if path.is_file())
     print(f"CyberFolks release ready: {files} files in {OUTPUT}")
 

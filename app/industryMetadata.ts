@@ -14,9 +14,15 @@ export function getIndustryMetadata(locale: SiteLocale, industry: IndustryKey): 
       canonical: path(locale, industry),
       languages: {
         "en-GB": path("en", industry),
-        pl: path("pl", industry),
-        es: path("es", industry),
+        "pl-PL": path("pl", industry),
+        "es-ES": path("es", industry),
+        "x-default": path("en", industry),
       },
+    },
+    openGraph: {
+      url: path(locale, industry),
+      title: `${content.title} ${content.accent} | Timzy`,
+      description: content.body,
     },
   };
 }

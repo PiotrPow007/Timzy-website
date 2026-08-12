@@ -1,5 +1,6 @@
 import { ProductCapabilities } from "./ProductCapabilities";
 import { ContactSection } from "./ContactSection";
+import { IndustryJsonLd } from "./SeoJsonLd";
 
 export type SiteLocale = "en" | "pl" | "es";
 export type IndustryKey = "sport" | "golf" | "tennis" | "car-wash-detailing";
@@ -381,7 +382,7 @@ const golfAutomationCopy: Record<SiteLocale, { eyebrow: string; title: string; b
 };
 
 function BrandMark({ compact = false }: { compact?: boolean }) {
-  return <span className={`brand-mark${compact ? " brand-mark--compact" : ""}`} aria-label="Timzy"><img className="brand-logo--purple" src="/assets/timzy-logo-official-purple.png" alt="" aria-hidden="true" /><img className="brand-logo--white" src="/assets/timzy-logo-official-white.png" alt="" aria-hidden="true" /></span>;
+  return <span className={`brand-mark${compact ? " brand-mark--compact" : ""}`} role="img" aria-label="Timzy"><img className="brand-logo--purple" src="/assets/timzy-logo-official-purple.png" width="307" height="158" alt="" aria-hidden="true" /><img className="brand-logo--white" src="/assets/timzy-logo-official-white.png" width="307" height="158" alt="" aria-hidden="true" /></span>;
 }
 
 function localeRoot(locale: SiteLocale) {
@@ -423,6 +424,7 @@ export function IndustryLandingPage({ locale, industry }: { locale: SiteLocale; 
   const contactIndustry = industry === "car-wash-detailing" ? "car" : "sport";
 
   return <main id="top" lang={language} className={`industry-page industry-page--${industry}`}>
+    <IndustryJsonLd locale={locale} industry={industry} title={`${content.title} ${content.accent}`} description={content.body} />
     <a className="skip-link" href="#content">Skip to content</a>
     <header className="site-header industry-header"><a href={localeRoot(locale)} className="logo-link"><BrandMark /></a><nav aria-label="Main navigation"><a href={`${localeRoot(locale)}#why`}>{shared.navPlatform}</a><a href={`${localeRoot(locale)}#industries`}>{shared.navIndustries}</a><a href="#process">{shared.navProcess}</a></nav><div className="header-actions"><IndustryLanguageNav locale={locale} industry={industry} /><WhatsAppLink locale={locale} label={shared.navCta} industry={content.tag} className="button button--small" /></div></header>
 
