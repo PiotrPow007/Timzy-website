@@ -539,6 +539,16 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .extras-grid article > span { color: var(--industry-accent, var(--violet)); font-size: 9px; font-weight: 850; letter-spacing: .13em; }
 .extras-grid h3 { margin: 45px 0 0; font-size: 20px; line-height: 1.18; letter-spacing: -.03em; }
 .extras-grid p { margin: 13px 0 0; color: var(--muted); font-size: 12px; line-height: 1.62; }
+.nfc-showcase { display: grid; grid-template-columns: .86fr 1.14fr; align-items: center; gap: 72px; padding: 110px max(32px, calc((100vw - 1280px) / 2)); background: #fbfafc; }
+.nfc-showcase-copy { max-width: 530px; }
+.nfc-showcase-copy h2 { margin: 0; font-family: "DM Serif Display", Georgia, serif; font-size: clamp(42px, 4.2vw, 62px); line-height: 1.03; font-weight: 400; letter-spacing: -.035em; text-wrap: balance; }
+.nfc-showcase-copy > p:not(.eyebrow) { margin: 24px 0 0; color: var(--muted); font-size: 15px; line-height: 1.72; }
+.nfc-showcase-copy ul { margin: 30px 0 34px; padding: 0; list-style: none; }
+.nfc-showcase-copy li { display: flex; align-items: center; gap: 11px; margin: 12px 0; color: #514a5a; font-size: 12px; font-weight: 680; }
+.nfc-showcase-copy li span { width: 22px; height: 22px; display: grid; place-items: center; flex: 0 0 22px; border-radius: 50%; color: #392c5e; background: var(--lime); font-size: 10px; }
+.nfc-showcase figure { overflow: hidden; margin: 0; border-radius: 34px; background: #ede8f4; box-shadow: 0 28px 65px rgba(55,39,80,.13); }
+.nfc-showcase img { width: 100%; aspect-ratio: 3 / 2; display: block; object-fit: cover; }
+.nfc-showcase figcaption { padding: 14px 22px 17px; color: #766e80; background: white; font-size: 10px; line-height: 1.5; }
 .data-architecture { display: grid; grid-template-columns: 1.02fr .98fr; align-items: center; gap: 80px; padding: 120px max(32px, calc((100vw - 1280px) / 2)); color: white; background: #17202a; }
 .data-architecture .eyebrow { color: #9ee8dc; }
 .data-architecture-copy > p { max-width: 690px; margin: 24px 0 0; color: #b5c1cb; font-size: 16px; line-height: 1.72; }
@@ -689,6 +699,8 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .capability-grid article { min-height: 0; }
   .custom-development { grid-template-columns: 1fr; gap: 55px; }
   .extras-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .nfc-showcase { grid-template-columns: 1fr; gap: 48px; }
+  .nfc-showcase-copy { max-width: 760px; }
   .data-architecture { grid-template-columns: 1fr; gap: 55px; }
   .golf-automation { grid-template-columns: 1fr; gap: 45px; }
   .industry-hero { min-height: auto; grid-template-columns: 1fr; padding: 125px 24px 55px; text-align: center; }
@@ -721,6 +733,7 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .actual-screen-grid { width: calc(100% + 18px); grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(230px, 72vw); gap: 14px; overflow-x: auto; padding: 0 18px 24px 0; scroll-snap-type: x mandatory; }
   .actual-screen-card { scroll-snap-align: start; }
   .capability-catalog, .custom-development, .implementation-extras, .data-architecture { padding: 90px 18px; }
+  .nfc-showcase { padding: 90px 18px; }
   .capability-grid article { padding: 29px 24px; }
   .capability-icon { margin-bottom: 32px; }
   .custom-development-copy h2 { font-size: 40px; }
@@ -728,6 +741,8 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
   .custom-development-grid article { min-height: 0; }
   .extras-grid { grid-template-columns: 1fr; }
   .implementation-heading h2, .data-architecture-copy h2 { font-size: 40px; }
+  .nfc-showcase-copy h2 { font-size: 40px; }
+  .nfc-showcase figure { border-radius: 24px; }
   .golf-automation { padding: 85px 18px; }
   .golf-automation h2 { font-size: 38px; }
   .industry-header { width: calc(100% - 36px); }

@@ -16,6 +16,10 @@ type CapabilityCopy = {
   extrasTitle: string;
   extrasBody: string;
   extras: Array<{ title: string; body: string }>;
+  nfcEyebrow: string;
+  nfcTitle: string;
+  nfcBody: string;
+  nfcPoints: string[];
   architectureEyebrow: string;
   architectureTitle: string;
   architectureBody: string;
@@ -58,6 +62,10 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
       { title: "Partner screen", body: "An optional launch screen for a sponsor, partner or campaign." },
       { title: "Dedicated features and integrations", body: "When your process needs more than standard modules, we can scope custom functions, automation and integrations separately." },
     ],
+    nfcEyebrow: "FROM THE PHYSICAL LOCATION TO A BOOKING",
+    nfcTitle: "One tap can take a client straight to your app or booking journey.",
+    nfcBody: "We can prepare branded NFC and QR stands, cards, stickers and posters for reception desks, treatment rooms, clubhouses, events or printed materials.",
+    nfcPoints: ["Direct access to your app or booking link", "Design consistent with your brand", "Formats adapted to the place and customer journey"],
     architectureEyebrow: "A DIFFERENT DATA MODEL",
     architectureTitle: "A separate client environment instead of one central marketplace database.",
     architectureBody: "Each branded Timzy app points to its own data project. Timzy does not operate a shared seller catalogue where competing businesses and their bookings are combined.",
@@ -102,6 +110,10 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
       { title: "Ekran partnera", body: "Opcjonalny ekran startowy dla sponsora, partnera biznesowego lub kampanii." },
       { title: "Dedykowane funkcje i integracje", body: "Jeżeli Twój proces wymaga czegoś więcej niż standardowe moduły, możemy osobno zaprojektować i wycenić funkcje, automatyzacje oraz integracje." },
     ],
+    nfcEyebrow: "Z FIZYCZNEGO MIEJSCA PROSTO DO REZERWACJI",
+    nfcTitle: "Jedno zbliżenie telefonu może otworzyć aplikację lub proces rezerwacji.",
+    nfcBody: "Możemy przygotować standy, karty, naklejki i plakaty NFC lub QR pod Twoją marką. Sprawdzą się w recepcji, gabinecie, klubie, podczas wydarzeń oraz na materiałach drukowanych.",
+    nfcPoints: ["Bezpośrednie przejście do aplikacji lub rezerwacji", "Projekt spójny z identyfikacją Twojej marki", "Format dopasowany do miejsca i ścieżki klienta"],
     architectureEyebrow: "INNY MODEL DANYCH",
     architectureTitle: "Osobne środowisko klienta zamiast jednej centralnej bazy marketplace'u.",
     architectureBody: "Każda aplikacja Timzy wskazuje własny projekt danych. Timzy nie prowadzi wspólnego katalogu sprzedawców, w którym łączone są oferty konkurencyjnych firm i ich rezerwacje.",
@@ -146,6 +158,10 @@ const capabilityCopy: Record<CapabilityLocale, CapabilityCopy> = {
       { title: "Pantalla de colaborador", body: "Pantalla inicial opcional para patrocinador, colaborador o campaña." },
       { title: "Funciones e integraciones dedicadas", body: "Si tu proceso necesita más que los módulos estándar, podemos diseñar y presupuestar funciones, automatizaciones e integraciones." },
     ],
+    nfcEyebrow: "DEL ESPACIO FÍSICO DIRECTO A LA RESERVA",
+    nfcTitle: "Un toque puede abrir tu app o el proceso de reserva.",
+    nfcBody: "Podemos preparar expositores, tarjetas, pegatinas y carteles NFC o QR con tu marca para recepción, consultas, clubes, eventos y materiales impresos.",
+    nfcPoints: ["Acceso directo a la app o reserva", "Diseño coherente con tu marca", "Formato adaptado al espacio y recorrido"],
     architectureEyebrow: "UN MODELO DE DATOS DIFERENTE",
     architectureTitle: "Un entorno separado por cliente, no una base central de marketplace.",
     architectureBody: "Cada app Timzy apunta a su propio proyecto de datos. Timzy no opera un catálogo compartido que combine negocios competidores y sus reservas.",
@@ -166,7 +182,7 @@ export function ProductCapabilities({ locale, includeArchitecture = true, includ
 
     <section className="custom-development"><div className="custom-development-copy"><p className="eyebrow">{copy.flexibilityEyebrow}</p><h2>{copy.flexibilityTitle}</h2><p>{copy.flexibilityBody}</p><a className="button" href="#kontakt">{copy.flexibilityCta}<span>→</span></a><small>{copy.flexibilityNote}</small></div><div className="custom-development-grid">{copy.flexibilityPoints.map((point, index) => <article key={point.title}><span>0{index + 1}</span><h3>{point.title}</h3><p>{point.body}</p></article>)}</div></section>
 
-    {includeExtras ? <section className="implementation-extras"><div className="implementation-heading"><p className="eyebrow">{copy.extrasEyebrow}</p><h2>{copy.extrasTitle}</h2><p>{copy.extrasBody}</p></div><div className="extras-grid">{copy.extras.map((extra, index) => <article key={extra.title}><span>0{index + 1}</span><h3>{extra.title}</h3><p>{extra.body}</p></article>)}</div></section> : null}
+    {includeExtras ? <><section className="implementation-extras"><div className="implementation-heading"><p className="eyebrow">{copy.extrasEyebrow}</p><h2>{copy.extrasTitle}</h2><p>{copy.extrasBody}</p></div><div className="extras-grid">{copy.extras.map((extra, index) => <article key={extra.title}><span>0{index + 1}</span><h3>{extra.title}</h3><p>{extra.body}</p></article>)}</div></section><section className="nfc-showcase"><div className="nfc-showcase-copy"><p className="eyebrow">{copy.nfcEyebrow}</p><h2>{copy.nfcTitle}</h2><p>{copy.nfcBody}</p><ul>{copy.nfcPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button" href="#kontakt">{locale === "pl" ? "Zapytaj o materiały NFC / QR" : locale === "es" ? "Consultar materiales NFC / QR" : "Ask about NFC / QR materials"}<span aria-hidden="true">→</span></a></div><figure><img src="/assets/nfc-booking-display.png" alt={locale === "pl" ? "Wizualizacja standu i karty NFC prowadzących do rezerwacji Timzy" : locale === "es" ? "Visualización de expositor y tarjeta NFC para reservas Timzy" : "Visualisation of a Timzy NFC booking stand and card"} loading="lazy" /><figcaption>{locale === "pl" ? "Przykładowy kierunek materiałów NFC i QR pod marką klienta." : locale === "es" ? "Ejemplo de materiales NFC y QR con la marca del cliente." : "Example direction for client-branded NFC and QR materials."}</figcaption></figure></section></> : null}
 
     {includeArchitecture ? <section className="data-architecture"><div className="data-architecture-copy"><p className="eyebrow">{copy.architectureEyebrow}</p><h2>{copy.architectureTitle}</h2><p>{copy.architectureBody}</p><small>{copy.legalNote}<a href="https://podatki.gov.pl/podatkowa-wspolpraca-miedzynarodowa/dpi-digital-platform-information" target="_blank" rel="noreferrer">{copy.legalSource} →</a></small></div><div className="data-architecture-grid">{copy.architecturePoints.map((point, index) => <article key={point.title}><span>0{index + 1}</span><h3>{point.title}</h3><p>{point.body}</p></article>)}</div></section> : null}
   </>;

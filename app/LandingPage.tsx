@@ -106,9 +106,13 @@ export const landingCopy: Record<Locale, Copy> = {
       ["Brand on the home screen", "Marketplace brand", "Your brand"],
       ["Competitors next to your offer", "Often visible", "Never"],
       ["App in iOS and Android stores", "One shared marketplace app", "A separate app under your brand"],
+      ["Look and customer journey", "Standardised", "Configured for you"],
       ["Direct client relationship", "Platform-led", "Business-led"],
       ["Commission on bookings", "May apply to promotional acquisition", "No Timzy commission per booking"],
+      ["Payment when booking", "Depends on platform features and plan", "Full payment or deposit; 0% Timzy commission"],
       ["Reservation data environment", "Shared platform environment", "Separate client instance"],
+      ["Shop, loyalty and content", "Platform dependent", "Part of your ecosystem"],
+      ["Complete website, ecommerce, branding and QR/NFC", "Usually outside the platform", "Available in one implementation"],
     ],
     offerEyebrow: "A PROPOSAL THAT FITS",
     offerTitle: "Start with the essentials. Expand Timzy as your business grows.",
@@ -184,9 +188,13 @@ export const landingCopy: Record<Locale, Copy> = {
       ["Marka na ekranie głównym", "Marka platformy", "Twoja marka"],
       ["Konkurencja obok oferty", "Często widoczna", "Nigdy"],
       ["Aplikacja w sklepach iOS i Android", "Jedna wspólna aplikacja marketplace'u", "Osobna aplikacja pod Twoją marką"],
+      ["Wygląd i ścieżka klienta", "Ustandaryzowane", "Dopasowane do Ciebie"],
       ["Bezpośrednia relacja", "Prowadzona przez platformę", "Prowadzona przez firmę"],
       ["Prowizja od rezerwacji", "Możliwa przy płatnym pozyskiwaniu klientów", "Brak prowizji Timzy od rezerwacji"],
+      ["Płatność przy rezerwacji", "Zależna od funkcji i planu platformy", "Całość lub część kwoty; 0% prowizji Timzy"],
       ["Środowisko danych rezerwacji", "Wspólne środowisko platformy", "Osobna instancja klienta"],
+      ["Sklep, lojalność i treści", "Zależne od platformy", "Część Twojego ekosystemu"],
+      ["Kompletna strona WWW, sklep, branding i QR/NFC", "Zwykle poza platformą", "Dostępne w jednym wdrożeniu"],
     ],
     offerEyebrow: "OFERTA DOPASOWANA DO FIRMY",
     offerTitle: "Zacznij od najważniejszych modułów. Rozwijaj Timzy razem z firmą.",
@@ -261,9 +269,13 @@ export const landingCopy: Record<Locale, Copy> = {
       ["Marca en la pantalla inicial", "La plataforma", "Tu marca"],
       ["Competidores junto a tu oferta", "A menudo", "Nunca"],
       ["App en las tiendas iOS y Android", "Una app compartida de marketplace", "Una app separada con tu marca"],
+      ["Diseño y recorrido", "Estandarizado", "Configurado para ti"],
       ["Relación directa", "Dirigida por la plataforma", "Dirigida por tu negocio"],
       ["Comisión por reserva", "Puede aplicarse a captación promocionada", "Sin comisión Timzy por reserva"],
+      ["Pago al reservar", "Depende de las funciones y del plan", "Pago total o parcial; 0% de comisión Timzy"],
       ["Entorno de datos de reservas", "Entorno compartido de la plataforma", "Instancia separada del cliente"],
+      ["Tienda, fidelización y contenido", "Depende de la plataforma", "Parte de tu ecosistema"],
+      ["Web completa, ecommerce, branding y QR/NFC", "Normalmente fuera de la plataforma", "Disponible en una implantación"],
     ],
     offerEyebrow: "UNA PROPUESTA A TU MEDIDA",
     offerTitle: "Empieza con lo esencial. Amplía Timzy a medida que crece tu negocio.",
@@ -319,9 +331,9 @@ const industryImages = {
 
 export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
   const signalItems = {
-    en: ["YOUR APP", "BOOKINGS 24/7", "LIVE CALENDARS", "PAYMENTS", "LOYALTY", "SHOP"],
-    pl: ["TWOJA APLIKACJA", "REZERWACJE 24/7", "AKTUALNE GRAFIKI", "PŁATNOŚCI", "LOJALNOŚĆ", "SKLEP"],
-    es: ["TU APP", "RESERVAS 24/7", "AGENDAS", "PAGOS", "FIDELIZACIÓN", "TIENDA"],
+    en: ["YOUR APP", "BOOKINGS 24/7", "COMPLETE WEBSITE", "ONLINE STORE", "CUSTOM FEATURES", "QR / NFC"],
+    pl: ["TWOJA APLIKACJA", "REZERWACJE 24/7", "KOMPLETNA STRONA WWW", "SKLEP INTERNETOWY", "FUNKCJE NA ZAMÓWIENIE", "QR / NFC"],
+    es: ["TU APP", "RESERVAS 24/7", "WEB COMPLETA", "TIENDA ONLINE", "FUNCIONES A MEDIDA", "QR / NFC"],
   }[locale];
   const conversionBand = {
     en: { label: "SEE TIMZY IN YOUR BUSINESS", title: "The fastest way to decide is to see your own booking journey.", body: "During a free presentation, we will focus on the modules, customer flow and configuration relevant to your industry.", cta: "See a demo for my industry" },
@@ -354,13 +366,13 @@ export function LandingPage({ copy, locale }: { copy: Copy; locale: Locale }) {
 
       <section className="conversion-band"><div><p>{conversionBand.label}</p><h2>{conversionBand.title}</h2><span>{conversionBand.body}</span></div><a className="button button--light" href="#kontakt">{conversionBand.cta}<b aria-hidden="true">→</b></a></section>
 
-      <ProductCapabilities locale={locale} includeArchitecture={false} includeExtras={false} />
+      <ProductCapabilities locale={locale} />
 
       <TemplateChoiceSection locale={locale} ctaHref="#kontakt" />
 
       <section className="process" id="process"><div className="process-heading"><p className="eyebrow">{copy.processEyebrow}</p><h2>{copy.processTitle}</h2></div><div className="process-grid">{copy.process.map((step, index) => <article key={step.title}><span>0{index + 1}</span><div className="process-line"><i /></div><h3>{step.title}</h3><p>{step.body}</p></article>)}</div></section>
 
-      <section className="section comparison" id="compare"><div className="section-intro"><p className="eyebrow">{copy.compareEyebrow}</p><h2>{copy.compareTitle}</h2><p>{copy.compareBody}</p></div><div className="comparison-table" role="table" aria-label={copy.compareTitle}><div className="comparison-head" role="row">{copy.compareLabels.map((label, index) => <span className={index === 2 ? "timzy-col" : ""} role="columnheader" key={label}>{index === 2 ? <BrandMark compact /> : label}</span>)}</div>{copy.compareRows.map(row => <div className="comparison-row" role="row" key={row[0]}><b role="cell">{row[0]}</b><span role="cell"><i>−</i>{row[1]}</span><span className="timzy-col" role="cell"><i>✓</i>{row[2]}</span></div>)}</div></section>
+      <section className="section comparison" id="compare"><div className="section-intro"><p className="eyebrow">{copy.compareEyebrow}</p><h2>{copy.compareTitle}</h2><p>{copy.compareBody}</p></div><div className="comparison-table" role="table" aria-label={copy.compareTitle}><div className="comparison-head" role="row">{copy.compareLabels.map((label, index) => <span className={index === 2 ? "timzy-col" : ""} role="columnheader" key={label}>{index === 2 ? <BrandMark compact /> : label}</span>)}</div>{copy.compareRows.map(row => <div className="comparison-row" role="row" key={row[0]}><b role="cell">{row[0]}</b><span role="cell"><i>−</i>{row[1]}</span><span className="timzy-col" role="cell"><i>✓</i>{row[2]}</span></div>)}</div>{locale === "pl" ? <p className="comparison-evidence"><b>Konkretny przykład: Booksy Boost.</b> Booksy podaje, że opcjonalna usługa Boost pobiera 45% netto wartości wszystkich usług wykonanych podczas pierwszej, zakończonej wizyty nowego klienta Boost. Rezerwacje pochodzące z bezprowizyjnego linku do profilu lub integracji nie podlegają tej prowizji, dlatego nie każda rezerwacja Booksy jest prowizyjna. Timzy nie pobiera własnej prowizji ani od rezerwacji, ani od płatności za rezerwację. Przy płatnościach online nadal obowiązują standardowe opłaty operatora Stripe. <a href="https://biz.booksy.com/pl-pl/funkcje/boost" target="_blank" rel="noreferrer">Sprawdź oficjalne zasady Booksy Boost →</a><small>Stan informacji sprawdzony 12 sierpnia 2026 r.</small></p> : null}</section>
 
       <section className="offer"><div className="offer-copy"><p className="eyebrow">{copy.offerEyebrow}</p><h2>{copy.offerTitle}</h2><p>{copy.offerBody}</p><ul>{copy.offerPoints.map(point => <li key={point}><span>✓</span>{point}</li>)}</ul><a className="button button--light" href="#kontakt">{copy.offerCta}<span>→</span></a></div><div className="offer-visual offer-visual--template"><img className="offer-template-mockup" src="/assets/templates/natural-sage-phone-transparent.png" alt="Branded app login mockup in the Natural Sage style" loading="lazy" /></div></section>
 
