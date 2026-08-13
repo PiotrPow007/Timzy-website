@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect } from "react";
+import { CONSENT_KEY } from "./GoogleTagManager";
 
-export const GTM_ID = "GTM-MVQN5NX8";
-export const CONSENT_KEY = "timzy-cookie-consent-v2";
 const ATTRIBUTION_KEY = "timzy-attribution-v1";
 export type AnalyticsConsent = "accepted" | "rejected";
 
 declare global {
   interface Window {
     dataLayer?: Array<Record<string, unknown> | IArguments>;
+    gtag?: (...args: unknown[]) => void;
   }
 }
 
@@ -51,27 +51,24 @@ export function trackEvent(event: string, details: Record<string, unknown> = {})
   window.dataLayer.push({ event, ...analyticsContext(), ...details });
 }
 
-export function enableAnalytics() {
-  if (typeof window === "undefined" || document.getElementById("timzy-gtm")) return;
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    "gtm.start": Date.now(),
-    event: "gtm.js",
-    ...analyticsContext(),
+function updateConsentMode(consent: AnalyticsConsent) {
+  if (typeof window === "undefined" || typeof window.gtag !== "function") return;
+  window.gtag("consent", "update", {
+    analytics_storage: consent === "accepted" ? "granted" : "denied",
+    ad_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied",
   });
-  const script = document.createElement("script");
-  script.id = "timzy-gtm";
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
-  document.head.appendChild(script);
 }
 
 export function Analytics() {
   useEffect(() => {
-    if (hasAnalyticsConsent()) enableAnalytics();
+    let storedConsent: string | null = null;
+    try { storedConsent = window.localStorage.getItem(CONSENT_KEY); } catch { /* Denied defaults remain in force. */ }
+    if (storedConsent === "accepted" || storedConsent === "rejected") updateConsentMode(storedConsent);
     const onConsent = (event: Event) => {
       const detail = (event as CustomEvent<AnalyticsConsent>).detail;
-      if (detail === "accepted") enableAnalytics();
+      updateConsentMode(detail);
     };
     const onClick = (event: MouseEvent) => {
       const anchor = (event.target as Element | null)?.closest("a");

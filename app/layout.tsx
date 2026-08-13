@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "./Analytics";
 import { CookieNotice } from "./CookieNotice";
+import { GoogleTagManagerHead, GoogleTagManagerNoScript } from "./GoogleTagManager";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -37,7 +38,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}<Analytics /><CookieNotice /></body>
+      <head><GoogleTagManagerHead /></head>
+      <body><GoogleTagManagerNoScript />{children}<Analytics /><CookieNotice /></body>
     </html>
   );
 }

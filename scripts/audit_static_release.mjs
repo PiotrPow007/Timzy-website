@@ -48,7 +48,21 @@ for (const file of pages) {
   for (const [, json] of jsonBlocks) {
     try { JSON.parse(json); } catch { failures.push(`${route}: malformed JSON-LD`); }
   }
-  if (html.includes("googletagmanager.com/gtm.js")) failures.push(`${route}: GTM must not load before consent`);
+  const documentHtml = html.split('<script>((self[Symbol.for("vinext.navigationRuntime")]')[0];
+  const gtmScriptCount = occurrenceCount(documentHtml, /googletagmanager\.com\/gtm\.js\?id=/g);
+  const gtmNoScriptCount = occurrenceCount(documentHtml, /googletagmanager\.com\/ns\.html\?id=GTM-MVQN5NX8/g);
+  const gtmLoader = documentHtml.indexOf("googletagmanager.com/gtm.js?id=");
+  const consentDefault = documentHtml.indexOf("gtag('consent', 'default'");
+  const headEnd = documentHtml.indexOf("</head>");
+  const bodyStart = documentHtml.indexOf("<body>");
+  const noScript = documentHtml.indexOf("<noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=GTM-MVQN5NX8\"");
+  if (gtmScriptCount !== 1) failures.push(`${route}: expected exactly one GTM loader, found ${gtmScriptCount}`);
+  if (gtmNoScriptCount !== 1) failures.push(`${route}: expected exactly one GTM noscript fallback, found ${gtmNoScriptCount}`);
+  if (consentDefault < 0 || consentDefault > gtmLoader) failures.push(`${route}: Consent Mode defaults must precede GTM`);
+  if (gtmLoader < 0 || gtmLoader > headEnd) failures.push(`${route}: GTM loader must be in head`);
+  if (noScript < bodyStart || noScript - (bodyStart + "<body>".length) > 16) failures.push(`${route}: GTM noscript must immediately follow body`);
+  if (!documentHtml.includes("'analytics_storage': 'denied'") || !documentHtml.includes("'ad_user_data': 'denied'") || !documentHtml.includes("'ad_personalization': 'denied'")) failures.push(`${route}: incomplete Consent Mode v2 denied defaults`);
+  if (/googletagmanager\.com\/gtag\/js\?id=|google-analytics\.com\/analytics\.js/.test(documentHtml)) failures.push(`${route}: direct Google analytics loader found outside GTM`);
   if (title) titles.set(title, [...(titles.get(title) || []), route]);
   if (description) descriptions.set(description, [...(descriptions.get(description) || []), route]);
 

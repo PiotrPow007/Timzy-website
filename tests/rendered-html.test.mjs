@@ -12,6 +12,20 @@ async function render(pathname = "/", env = {}) {
   );
 }
 
+function assertGtmInstalled(html) {
+  const documentHtml = html.split('<script>((self[Symbol.for("vinext.navigationRuntime")]')[0];
+  assert.equal((documentHtml.match(/googletagmanager\.com\/gtm\.js\?id=/g) || []).length, 1);
+  assert.equal((documentHtml.match(/googletagmanager\.com\/ns\.html\?id=GTM-MVQN5NX8/g) || []).length, 1);
+  assert.match(html, /gtag\('consent', 'default'/);
+  assert.match(html, /'analytics_storage': 'denied'/);
+  assert.match(html, /'ad_storage': 'denied'/);
+  assert.match(html, /'ad_user_data': 'denied'/);
+  assert.match(html, /'ad_personalization': 'denied'/);
+  assert.doesNotMatch(documentHtml, /googletagmanager\.com\/gtag\/js\?id=|google-analytics\.com\/analytics\.js/);
+  assert.ok(html.indexOf("gtag('consent', 'default'") < html.indexOf("googletagmanager.com/gtm.js?id="));
+  assert.match(html, /<body><noscript><iframe src="https:\/\/www\.googletagmanager\.com\/ns\.html\?id=GTM-MVQN5NX8"/);
+}
+
 test("renders the English Timzy landing page", async () => {
   const response = await render();
   assert.equal(response.status, 200);
@@ -49,7 +63,7 @@ test("renders the English Timzy landing page", async () => {
   assert.match(html, /SoftwareApplication/);
   assert.match(html, /FAQPage/);
   assert.match(html, /hrefLang="x-default"/);
-  assert.doesNotMatch(html, /googletagmanager\.com/);
+  assertGtmInstalled(html);
   assert.match(html, /Typical marketplace/);
   assert.match(html, /SPA &amp; BEAUTY|SPA & BEAUTY/);
   assert.match(html, /CAR WASH &amp; DETAILING|CAR WASH & DETAILING/);
@@ -69,6 +83,9 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.equal(pl.status, 200);
   assert.equal(es.status, 200);
   const plHtml = await pl.text();
+  const esHtml = await es.text();
+  assertGtmInstalled(plHtml);
+  assertGtmInstalled(esHtml);
   assert.match(plHtml, /Więcej rezerwacji\. Więcej powrotów/);
   assert.match(plHtml, /Zobacz demo dla swojej branży/);
   assert.match(plHtml, /informacją o przetwarzaniu danych/);
@@ -95,7 +112,7 @@ test("renders localized Polish and Spanish landing pages", async () => {
   assert.match(plHtml, /standardowe opłaty operatora Stripe/);
   assert.match(plHtml, /Funkcje dedykowane wyceniamy osobno/);
   assert.match(plHtml, /Nie można obiecać ogólnego zwolnienia/);
-  assert.match(await es.text(), /Más reservas\. Más clientes que vuelven/);
+  assert.match(esHtml, /Más reservas\. Más clientes que vuelven/);
 });
 
 test("renders privacy pages and a signed contact challenge", async () => {
@@ -110,7 +127,7 @@ test("renders privacy pages and a signed contact challenge", async () => {
   assert.match(privacyHtml, /12878269/);
   assert.match(privacyHtml, /7 Bell Yard/);
   assert.match(privacyHtml, /Cookies i podobne technologie/);
-  assert.match(privacyHtml, /Google Analytics 4/);
+  assert.match(privacyHtml, /Consent Mode v2/);
   assert.equal(challenge.status, 200);
   const payload = await challenge.json();
   assert.match(payload.question, /^\d+ \+ \d+ =$/);
