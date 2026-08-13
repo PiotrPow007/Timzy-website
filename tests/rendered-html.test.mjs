@@ -22,7 +22,7 @@ function assertGtmInstalled(html) {
   assert.match(html, /'ad_user_data': 'denied'/);
   assert.match(html, /'ad_personalization': 'denied'/);
   assert.doesNotMatch(documentHtml, /googletagmanager\.com\/gtag\/js\?id=|google-analytics\.com\/analytics\.js/);
-  assert.ok(html.indexOf("gtag('consent', 'default'") < html.indexOf("googletagmanager.com/gtm.js?id="));
+  assert.ok(html.indexOf("gtag('consent', 'default'") < html.indexOf("'gtm.start'"));
   assert.match(html, /<body><noscript><iframe src="https:\/\/www\.googletagmanager\.com\/ns\.html\?id=GTM-MVQN5NX8"/);
 }
 
