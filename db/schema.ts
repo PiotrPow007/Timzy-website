@@ -13,8 +13,8 @@ export const legalEntities = sqliteTable("legal_entities", {
 });
 
 export const markets = sqliteTable("markets", {
-  id: text("id").primaryKey(), code: text("code", { enum: ["PL", "INTERNATIONAL"] }).notNull().unique(),
-  currency: text("currency", { enum: ["PLN", "EUR"] }).notNull(), sellerId: text("seller_id").notNull().references(() => legalEntities.id),
+  id: text("id").primaryKey(), code: text("code", { enum: ["PL", "UK", "INTERNATIONAL"] }).notNull().unique(),
+  currency: text("currency", { enum: ["PLN", "GBP", "EUR"] }).notNull(), sellerId: text("seller_id").notNull().references(() => legalEntities.id),
   technologyProviderId: text("technology_provider_id").notNull().references(() => legalEntities.id),
   activationFeeOpenMinor: integer("activation_fee_open_minor").notNull(), activationFeeAnnualMinor: integer("activation_fee_annual_minor").notNull().default(0),
   activationStripeProductId: text("activation_stripe_product_id"), activationStripePriceId: text("activation_stripe_price_id"),
@@ -37,7 +37,7 @@ export const planTranslations = sqliteTable("plan_translations", {
 
 export const planPrices = sqliteTable("plan_prices", {
   id: text("id").primaryKey(), planId: text("plan_id").notNull().references(() => plans.id), marketId: text("market_id").notNull().references(() => markets.id),
-  currency: text("currency", { enum: ["PLN", "EUR"] }).notNull(), paymentType: text("payment_type", { enum: ["MONTHLY", "ONE_TIME"] }).notNull(),
+  currency: text("currency", { enum: ["PLN", "GBP", "EUR"] }).notNull(), paymentType: text("payment_type", { enum: ["MONTHLY", "ONE_TIME"] }).notNull(),
   amountMinor: integer("amount_minor").notNull(), stripeProductId: text("stripe_product_id"), stripePriceId: text("stripe_price_id"), version: integer("version").notNull(),
   effectiveFrom: text("effective_from").notNull(), archivedAt: text("archived_at"), status: text("status", { enum: ["DRAFT", "ACTIVE", "ARCHIVED"] }).notNull().default("DRAFT"), createdAt: createdAt(),
 }, (table) => [uniqueIndex("uq_plan_price_version").on(table.planId, table.marketId, table.paymentType, table.version), index("idx_plan_prices_catalog").on(table.planId, table.marketId, table.status, table.effectiveFrom)]);
@@ -56,7 +56,7 @@ export const addonTranslations = sqliteTable("addon_translations", {
 
 export const addonPrices = sqliteTable("addon_prices", {
   id: text("id").primaryKey(), addonId: text("addon_id").notNull().references(() => addons.id), marketId: text("market_id").notNull().references(() => markets.id),
-  currency: text("currency", { enum: ["PLN", "EUR"] }).notNull(), amountMinor: integer("amount_minor").notNull(), stripeProductId: text("stripe_product_id"), stripePriceId: text("stripe_price_id"),
+  currency: text("currency", { enum: ["PLN", "GBP", "EUR"] }).notNull(), amountMinor: integer("amount_minor").notNull(), stripeProductId: text("stripe_product_id"), stripePriceId: text("stripe_price_id"),
   version: integer("version").notNull(), effectiveFrom: text("effective_from").notNull(), archivedAt: text("archived_at"),
   status: text("status", { enum: ["DRAFT", "ACTIVE", "ARCHIVED"] }).notNull().default("DRAFT"), createdAt: createdAt(),
 }, (table) => [uniqueIndex("uq_addon_price_version").on(table.addonId, table.marketId, table.version), index("idx_addon_prices_catalog").on(table.addonId, table.marketId, table.status, table.effectiveFrom)]);
@@ -85,7 +85,7 @@ export const contractVersions = sqliteTable("contract_versions", {
 export const orders = sqliteTable("orders", {
   id: text("id").primaryKey(), orderNumber: text("order_number").notNull().unique(), publicTokenHash: text("public_token_hash").notNull(),
   status: text("status", { enum: ["DRAFT", "AWAITING_ACCEPTANCE", "PENDING_PAYMENT", "PAID", "PROVISIONING", "ACTIVE", "PAYMENT_FAILED", "CANCELLED", "EXPIRED"] }).notNull().default("DRAFT"),
-  marketCode: text("market_code", { enum: ["PL", "INTERNATIONAL"] }), language: text("language", { enum: ["pl", "en", "es"] }), currency: text("currency", { enum: ["PLN", "EUR"] }),
+  marketCode: text("market_code", { enum: ["PL", "UK", "INTERNATIONAL"] }), language: text("language", { enum: ["pl", "en", "es"] }), currency: text("currency", { enum: ["PLN", "GBP", "EUR"] }),
   contractTerm: text("contract_term", { enum: ["ANNUAL_12", "OPEN_ENDED"] }), registrationCountry: text("registration_country"), billingCountry: text("billing_country"),
   selectionJson: text("selection_json").notNull().default("{}"), clientDataEncrypted: text("client_data_encrypted"), clientDataHash: text("client_data_hash"),
   immutableSnapshotJson: text("immutable_snapshot_json"), quoteFingerprint: text("quote_fingerprint"), monthlyNetMinor: integer("monthly_net_minor"),

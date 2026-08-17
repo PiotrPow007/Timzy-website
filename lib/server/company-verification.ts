@@ -1,5 +1,6 @@
 import { canonicalJson, decryptJson, encryptBytes, encryptJson, hmacSha256, ipEvidence, randomToken, sha256, timingSafeEqual } from "../commerce/security";
 import type { ClientLegalData, CompanyEntityType, CompanyVerificationView, MarketCode, VerificationStatus } from "../commerce/types";
+import { marketForBillingCountry } from "../commerce/validation";
 import type { TimzyEnv } from "./env";
 import type { SendSystemEmail } from "./notifications";
 import type { DraftContext, OrderRow } from "./orders";
@@ -185,7 +186,7 @@ async function fetchCompaniesHouse(env: TimzyEnv, number: string, fetcher: typeo
 function adapterFor(input: VerifyInput, market: MarketCode): string {
   if (market === "PL" && input.country === "PL" && input.entityType === "PL_KRS") return "KRS";
   if (market === "PL" && input.country === "PL" && input.entityType === "PL_CEIDG") return "CEIDG";
-  if (market === "INTERNATIONAL" && input.country === "GB") return "COMPANIES_HOUSE";
+  if (market === "UK" && input.country === "GB") return "COMPANIES_HOUSE";
   return "MANUAL";
 }
 
@@ -240,7 +241,7 @@ export async function verifyCompany(env: TimzyEnv, context: DraftContext, rawInp
   if (!["PL_KRS", "PL_CEIDG", "OTHER_PL", "FOREIGN"].includes(input.entityType) || !/^[A-Z]{2}$/.test(input.country)) throw new Error("Invalid company verification scope");
   const selection = JSON.parse(context.order.selection_json) as { market?: MarketCode };
   const market = context.order.market_code ?? selection.market; if (!market) throw new Error("Select the billing market before company verification");
-  if ((market === "PL") !== (input.country === "PL")) throw new Error("Company country does not match the selected Poland/international market");
+  if (marketForBillingCountry(input.country) !== market) throw new Error("Company country does not match the selected billing market");
   if (input.entityType === "PL_KRS") input.registrationNumber = normalizeKrs(input.registrationNumber);
   if (input.entityType === "PL_CEIDG") input.taxNumber = normalizeNip(input.taxNumber);
   if (input.entityType === "FOREIGN" && (!input.registrationNumber || !input.registryName)) throw new Error("Foreign registry name and registration number are required");
@@ -397,7 +398,7 @@ export async function signingScopeHash(db: D1Database, order: OrderRow): Promise
   const versions = await db.prepare(`SELECT ct.kind,cv.id,cv.version,cv.content_hash FROM contract_templates ct JOIN contract_versions cv ON cv.template_id=ct.id
     WHERE ct.market_code=? AND ct.language=? AND cv.status='ACTIVE' AND cv.effective_from<=?
     AND cv.version=(SELECT MAX(v2.version) FROM contract_versions v2 WHERE v2.template_id=ct.id AND v2.status='ACTIVE' AND v2.effective_from<=?) ORDER BY ct.kind`)
-    .bind(order.market_code, order.language, now, now).all<Record<string, unknown>>();
+    .bind(order.market_code === "UK" ? "INTERNATIONAL" : order.market_code, order.language, now, now).all<Record<string, unknown>>();
   if (versions.results.length !== 4) throw new Error("Published legal documents are unavailable");
   const verification = await db.prepare("SELECT raw_snapshot_hash FROM company_verifications WHERE order_id=?").bind(order.id).first<{ raw_snapshot_hash: string | null }>();
   if (!verification?.raw_snapshot_hash) throw new Error("Registry snapshot is unavailable");

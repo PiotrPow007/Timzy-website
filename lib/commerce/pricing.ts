@@ -1,4 +1,5 @@
 import type { AddonCatalogItem, CommerceCatalog, CommerceQuote, OrderSelection, QuoteLine } from "./types";
+import { marketForBillingCountry } from "./validation";
 import { canonicalJson, sha256 } from "./security";
 
 export class QuoteError extends Error {
@@ -18,7 +19,7 @@ function assertQuantity(addon: AddonCatalogItem, quantity: number) {
 
 export async function calculateQuote(catalog: CommerceCatalog, selection: OrderSelection): Promise<CommerceQuote> {
   if (selection.market !== catalog.market.code || selection.language !== catalog.language) throw new QuoteError("CATALOG_MISMATCH", "Catalog scope does not match selection");
-  const expectedMarket = selection.billingCountry.toUpperCase() === "PL" ? "PL" : "INTERNATIONAL";
+  const expectedMarket = marketForBillingCountry(selection.billingCountry);
   if (expectedMarket !== selection.market) throw new QuoteError("MARKET_COUNTRY_MISMATCH", "Billing country requires a different market");
   if (!catalog.market.legalConfigurationComplete) throw new QuoteError("LEGAL_CONFIGURATION_INCOMPLETE", "Seller legal data is incomplete");
 

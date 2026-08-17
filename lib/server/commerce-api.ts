@@ -51,7 +51,7 @@ async function draftOrUnauthorized(env: TimzyEnv, request: Request): Promise<Dra
 
 function marketLocale(url: URL): { market: MarketCode; language: Locale } {
   const market = url.searchParams.get("market") as MarketCode; const language = url.searchParams.get("language") as Locale;
-  if (!['PL', 'INTERNATIONAL'].includes(market) || !['pl', 'en', 'es'].includes(language)) throw new Error("Invalid catalogue scope"); return { market, language };
+  if (!['PL', 'UK', 'INTERNATIONAL'].includes(market) || !['pl', 'en', 'es'].includes(language)) throw new Error("Invalid catalogue scope"); return { market, language };
 }
 
 async function previewDocument(env: TimzyEnv, request: Request, format: string, requestedKind: string | null) {

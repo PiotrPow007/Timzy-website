@@ -70,12 +70,13 @@ export function stripeEventReplayDecision(existing: { processingStatus: string; 
 async function processEvent(env: TimzyEnv, event: StripeEvent, market: MarketCode, ctx: TimzyExecutionContext, sendEmail: SendSystemEmail) {
   if (!handledStripeEvents.has(event.type)) return "IGNORED";
   const order = await findOrder(env, event); if (!order) throw new Error("Stripe event cannot be reconciled to an order");
-  if (order.market_code !== market) throw new Error("Stripe account market does not match the accepted order market");
+  const orderMarket = order.market_code;
+  if (!orderMarket || (market === "PL" ? orderMarket !== "PL" : orderMarket === "PL")) throw new Error("Stripe account market does not match the accepted order market");
   const object = event.data.object;
   if (event.type === "checkout.session.completed") {
-    if (objectString(object, "payment_status") === "paid") await markPaid(env, event, order, market, ctx, sendEmail);
+    if (objectString(object, "payment_status") === "paid") await markPaid(env, event, order, orderMarket, ctx, sendEmail);
   } else if (event.type === "checkout.session.async_payment_succeeded" || event.type === "invoice.paid") {
-    await markPaid(env, event, order, market, ctx, sendEmail);
+    await markPaid(env, event, order, orderMarket, ctx, sendEmail);
   } else if (event.type === "checkout.session.async_payment_failed" || event.type === "invoice.payment_failed") {
     await env.DB.prepare("UPDATE orders SET status='PAYMENT_FAILED', updated_at=CURRENT_TIMESTAMP WHERE id=? AND status NOT IN ('CANCELLED','EXPIRED')").bind(order.id).run();
   } else if (event.type === "customer.subscription.updated") {
@@ -120,6 +121,6 @@ export async function handleStripeTestWebhook(env: TimzyEnv, request: Request, c
   const rawBody = await request.text(); const event = await verifyStripeEvent(rawBody, request.headers.get("stripe-signature"), env.STRIPE_TEST_WEBHOOK_SECRET);
   if (!handledStripeEvents.has(event.type)) return Response.json({ received: true, ignored: true }, { headers: { "cache-control": "no-store" } });
   const order = await findOrder(env, event); const market = order?.market_code;
-  if (market !== "PL" && market !== "INTERNATIONAL") throw new Error("Stripe test event cannot be reconciled to a market");
+  if (market !== "PL" && market !== "UK" && market !== "INTERNATIONAL") throw new Error("Stripe test event cannot be reconciled to a market");
   return persistAndProcessWebhook(env, rawBody, event, market, ctx, sendEmail);
 }

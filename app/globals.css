@@ -919,7 +919,7 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .contract-header img, .admin-login-logo img { width: 102px; height: auto; }
 .contract-header > span { color: #766e7e; font-size: 11px; font-weight: 750; letter-spacing: .08em; }
 .contract-shell { width: min(1440px, 100%); margin: 0 auto; }
-.contract-progress { display: grid; grid-template-columns: repeat(12, minmax(68px,1fr)); overflow-x: auto; padding: 24px 30px 20px; border-bottom: 1px solid #ebe6f0; background: white; }
+.contract-progress { display: grid; grid-template-columns: repeat(11, minmax(68px,1fr)); overflow-x: auto; padding: 24px 30px 20px; border-bottom: 1px solid #ebe6f0; background: white; }
 .contract-progress span { position: relative; display: flex; min-width: 70px; flex-direction: column; align-items: center; gap: 7px; color: #a49dab; font-size: 8px; font-weight: 750; text-transform: uppercase; white-space: nowrap; }
 .contract-progress span::after { position: absolute; top: 12px; right: -50%; left: 50%; height: 1px; background: #ddd7e5; content: ""; }
 .contract-progress span:last-child::after { display: none; }
@@ -929,6 +929,7 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .contract-progress .is-complete i { color: #34411d; border-color: var(--lime); background: var(--lime); }
 .contract-progress .is-complete::after { background: var(--lime); }
 .contract-workspace { display: grid; grid-template-columns: minmax(0,1fr) 370px; gap: 42px; padding: 58px max(30px, calc((100% - 1240px) / 2)) 90px; }
+.contract-workspace--single { grid-template-columns: minmax(0,1fr); }
 .contract-main { min-width: 0; }
 .contract-main > h1 { max-width: 760px; margin: 8px 0 12px; font: 400 clamp(36px,4.5vw,66px)/.98 var(--serif); letter-spacing: -.045em; }
 .contract-intro { max-width: 660px; margin: 0 0 34px; color: var(--muted); font-size: 14px; line-height: 1.7; }
@@ -953,6 +954,7 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .choice-card b, .choice-card span { display: block; }
 .choice-card b { margin-bottom: 8px; font-size: 15px; }
 .choice-card span { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.choice-fee { display: block; margin-top: 8px; color: var(--ink); font-size: 13px; }
 .check-row { display: flex; align-items: flex-start; gap: 12px; margin: 17px 0; padding: 14px; border: 1px solid #e4dfe8; border-radius: 13px; background: white; cursor: pointer; }
 .check-row input { width: 17px; height: 17px; margin-top: 1px; accent-color: var(--violet); }
 .check-row span { flex: 1; font-size: 11px; font-weight: 680; line-height: 1.5; }
@@ -996,6 +998,11 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .summary-lines p { display: flex; justify-content: space-between; gap: 20px; margin: 0; padding: 13px 0; border-bottom: 1px solid #e8e3ec; font-size: 11px; }
 .verification-card { display: grid; gap: 15px; margin: 20px 0; padding: 20px; border: 1px solid #ddd5e7; border-radius: 16px; background: #faf8fd; }
 .verification-card h3 { margin: 0; font-size: 16px; }
+.company-country-lock { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 5px 18px; padding: 14px; border: 1px solid #e1dbe7; border-radius: 11px; background: white; }
+.company-country-lock span { grid-column: 1 / -1; color: #645b6d; font-size: 10px; font-weight: 730; }
+.company-country-lock b { font-size: 13px; }
+.company-country-lock small { color: var(--muted); font-size: 10px; }
+.registry-source { color: var(--muted); font-size: 11px; }
 .verification-action { margin: 18px 0; }
 .verification-result { display: flex; flex-direction: column; gap: 6px; margin: 14px 0 20px; padding: 16px; border: 1px solid #d9cee9; border-radius: 13px; color: #4b3b60; background: #f5f0fc; font-size: 11px; line-height: 1.55; }
 .verification-result b { font-size: 13px; }

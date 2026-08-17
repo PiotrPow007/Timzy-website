@@ -209,14 +209,17 @@ export async function updateMarket(env: TimzyEnv, admin: AdminPrincipal, raw: un
   const before = await env.DB.prepare("SELECT * FROM markets WHERE id=?").bind(id).first<Record<string, unknown>>(); if (!before) throw new Error("Market not found");
   const currency = string(input.currency, 3) || String(before.currency); const status = string(input.status, 20) || String(before.status);
   const sellerId = string(input.sellerId, 80) || String(before.seller_id); const technologyProviderId = string(input.technologyProviderId, 80) || String(before.technology_provider_id);
-  if (!["PLN", "EUR"].includes(currency) || !["DRAFT", "ACTIVE", "ARCHIVED"].includes(status)) throw new Error("Invalid market configuration");
+  if (!["PLN", "GBP", "EUR"].includes(currency) || !["DRAFT", "ACTIVE", "ARCHIVED"].includes(status)) throw new Error("Invalid market configuration");
+  if ((before.code === "PL" && currency !== "PLN") || (before.code === "UK" && currency !== "GBP") || (before.code === "INTERNATIONAL" && currency !== "EUR")) throw new Error("Currency does not match the fixed market");
   const entities = await env.DB.prepare("SELECT id,postal_code,address_line_1,city,country_code FROM legal_entities WHERE id IN (?,?)").bind(sellerId, technologyProviderId).all<Record<string, unknown>>();
   if (entities.results.length < (sellerId === technologyProviderId ? 1 : 2)) throw new Error("Seller or technology provider does not exist");
   const seller = entities.results.find((entity) => entity.id === sellerId); if (status === "ACTIVE" && (!seller?.postal_code || !seller.address_line_1 || !seller.city || !seller.country_code)) throw new Error("Complete seller legal address is required before market activation");
   if (currency !== before.currency) { const used = await env.DB.prepare("SELECT COUNT(*) count FROM plan_prices WHERE market_id=? AND status='ACTIVE'").bind(id).first<{ count: number }>(); if ((used?.count ?? 0) > 0) throw new Error("Archive active prices before changing market currency"); }
   const billingCountries = [...new Set(list(input.billingCountries, 300).map((country) => country.toUpperCase()))];
   if (billingCountries.length === 0 || billingCountries.some((country) => !/^[A-Z]{2}$/.test(country))) throw new Error("Valid billing country codes are required");
-  if ((before.code === "PL" && (billingCountries.length !== 1 || billingCountries[0] !== "PL")) || (before.code === "INTERNATIONAL" && billingCountries.includes("PL"))) throw new Error("Billing countries do not match the fixed market boundary");
+  if ((before.code === "PL" && (billingCountries.length !== 1 || billingCountries[0] !== "PL")) ||
+      (before.code === "UK" && (billingCountries.length !== 1 || billingCountries[0] !== "GB")) ||
+      (before.code === "INTERNATIONAL" && (billingCountries.includes("PL") || billingCountries.includes("GB")))) throw new Error("Billing countries do not match the fixed market boundary");
   await env.DB.prepare(`UPDATE markets SET currency=?, seller_id=?, technology_provider_id=?, activation_fee_open_minor=?, activation_fee_annual_minor=?, activation_stripe_product_id=?, activation_stripe_price_id=?, default_deployment_days=?, billing_countries_json=?, status=?, updated_at=CURRENT_TIMESTAMP WHERE id=?`)
     .bind(currency, sellerId, technologyProviderId, integer(input.activationFeeOpenMinor), integer(input.activationFeeAnnualMinor), string(input.activationStripeProductId, 100) || null,
       string(input.activationStripePriceId, 100) || null, integer(input.defaultDeploymentDays, 1, 365), canonicalJson(billingCountries), status, id).run();

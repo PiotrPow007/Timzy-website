@@ -1,6 +1,6 @@
-export type MarketCode = "PL" | "INTERNATIONAL";
+export type MarketCode = "PL" | "UK" | "INTERNATIONAL";
 export type Locale = "pl" | "en" | "es";
-export type Currency = "PLN" | "EUR";
+export type Currency = "PLN" | "GBP" | "EUR";
 export type ContractTerm = "ANNUAL_12" | "OPEN_ENDED";
 export type PaymentType = "MONTHLY" | "ONE_TIME";
 export type CompanyEntityType = "PL_KRS" | "PL_CEIDG" | "OTHER_PL" | "FOREIGN";

@@ -24,7 +24,7 @@ The contract system adds:
 - D1-backed catalogue, drafts, immutable snapshots, clickwrap evidence, Stripe event deduplication, queues and audit data;
 - R2-backed AES-GCM encrypted PDFs with SHA-256 integrity hashes;
 - post-payment document access through the authenticated order session or a short-lived signed customer link, with every download logged;
-- separate Stripe sandbox credentials for the Polish and international seller;
+- separate Stripe sandbox credentials for the Polish and international seller, with isolated EUR and GBP price catalogues on the international account;
 - a hosted Stripe Checkout session created only after clickwrap acceptance;
 - a webhook-authoritative payment state machine;
 - idempotent provisioning and email jobs;
@@ -42,7 +42,7 @@ The Drizzle schema and generated migrations define 28 tables:
 - external processing: `stripe_events`, `provisioning_jobs`, `email_notifications`, `deployment_statuses`;
 - administration and security: `admin_users`, `admin_sessions`, `login_attempts`, `rate_limits`, `audit_logs`.
 
-Prices are append-only versions. Publishing a new version archives the earlier active catalogue price and never updates an existing order or Stripe subscription. Accepted orders contain an encrypted canonical document bundle and immutable price/document hashes. Markets also carry a configurable default implementation time, while plans and add-ons can override or extend it.
+Prices are append-only versions. Publishing a new version archives the earlier active catalogue price and never updates an existing order or Stripe subscription. Accepted orders contain an encrypted canonical document bundle and immutable price/document hashes. Poland uses PLN, the United Kingdom uses GBP, and other international countries use EUR. Markets also carry a configurable default implementation time, while plans and add-ons can override or extend it.
 
 ## Required environment values
 
@@ -119,7 +119,7 @@ The seven-year contract retention period must be confirmed for each seller and a
 
 Business and accounting:
 
-- all plan and add-on prices in PLN and EUR;
+- all plan and add-on prices in PLN, GBP and EUR;
 - Stripe Products, Prices, statement descriptors and seller account ownership;
 - Stripe Tax registrations, product tax codes, tax behaviour and invoice language;
 - treatment of early termination during the 12-month commitment;

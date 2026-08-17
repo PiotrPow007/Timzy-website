@@ -1,7 +1,7 @@
 import type { AddonCatalogItem, CatalogPrice, CommerceCatalog, LegalEntitySnapshot, Locale, MarketCatalog, MarketCode, PlanCatalogItem } from "../commerce/types";
 
 type MarketRow = {
-  id: string; code: MarketCode; currency: "PLN" | "EUR"; activation_fee_open_minor: number; activation_fee_annual_minor: number; default_deployment_days: number;
+  id: string; code: MarketCode; currency: "PLN" | "GBP" | "EUR"; activation_fee_open_minor: number; activation_fee_annual_minor: number; default_deployment_days: number;
   activation_stripe_product_id: string | null; activation_stripe_price_id: string | null;
   seller_code: string; seller_name: string; seller_company_number: string | null; seller_tax_id: string | null; seller_registry_number: string | null;
   seller_regon: string | null; seller_address: string; seller_postal_code: string | null; seller_city: string; seller_country: string;
@@ -11,7 +11,7 @@ type MarketRow = {
 
 type PlanRow = { id: string; internal_key: string; included_features_json: string; recommended: number; display_order: number; deployment_days: number; name: string; description: string; benefits_json: string };
 type AddonRow = { id: string; internal_key: string; payment_type: "MONTHLY" | "ONE_TIME"; standalone: number; min_quantity: number; max_quantity: number; deployment_days_impact: number; display_order: number; name: string; description: string };
-type PriceRow = { id: string; amount_minor: number; currency: "PLN" | "EUR"; payment_type: "MONTHLY" | "ONE_TIME"; version: number; stripe_price_id: string | null; stripe_product_id: string | null; effective_from: string };
+type PriceRow = { id: string; amount_minor: number; currency: "PLN" | "GBP" | "EUR"; payment_type: "MONTHLY" | "ONE_TIME"; version: number; stripe_price_id: string | null; stripe_product_id: string | null; effective_from: string };
 
 function parseArray(value: string): string[] { try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === "string") : []; } catch { return []; } }
 
@@ -72,10 +72,11 @@ export async function loadCatalog(db: D1Database, marketCode: MarketCode, langua
       displayOrder: addon.display_order, compatiblePlanIds: compatible.results.map((item) => item.plan_id), prices: await pricesFor(db, "addon_prices", "addon_id", addon.id, row.id) });
   }
 
+  const legalMarketCode = marketCode === "UK" ? "INTERNATIONAL" : marketCode;
   const versions = await db.prepare(`SELECT ct.kind, cv.id, cv.version, cv.content_hash FROM contract_templates ct JOIN contract_versions cv ON cv.template_id = ct.id
     WHERE ct.market_code = ? AND ct.language = ? AND cv.status = 'ACTIVE' AND cv.effective_from <= ?
     AND cv.version = (SELECT MAX(v2.version) FROM contract_versions v2 WHERE v2.template_id = ct.id AND v2.status = 'ACTIVE' AND v2.effective_from <= ?)`)
-    .bind(marketCode, language, new Date().toISOString(), new Date().toISOString()).all<{ kind: "AGREEMENT" | "TERMS" | "DPA" | "PRIVACY"; id: string; version: number; content_hash: string }>();
+    .bind(legalMarketCode, language, new Date().toISOString(), new Date().toISOString()).all<{ kind: "AGREEMENT" | "TERMS" | "DPA" | "PRIVACY"; id: string; version: number; content_hash: string }>();
   const documentVersions = versions.results.length === 4 ? Object.fromEntries(versions.results.map((version) => [version.kind, { id: version.id, version: version.version, contentHash: version.content_hash }])) as CommerceCatalog["documentVersions"] : null;
   const blockers: string[] = [];
   if (!legalConfigurationComplete) blockers.push("SELLER_LEGAL_DATA_INCOMPLETE");

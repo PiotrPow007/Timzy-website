@@ -92,3 +92,17 @@ test("one-time catalogue price does not add recurring parameters", async () => {
     assert.equal(bodies[1].has("recurring[interval]"), false);
   } finally { globalThis.fetch = originalFetch; }
 });
+
+test("UK catalogue creates a GBP Price on the international Stripe test account", async () => {
+  const calls: Array<{ init: RequestInit; body: URLSearchParams }> = []; const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (_input: string | URL | Request, init?: RequestInit) => {
+    const body = new URLSearchParams(String(init?.body ?? "")); calls.push({ init: init ?? {}, body });
+    return Response.json(calls.length === 1 ? { id: "prod_uk" } : { id: "price_uk" });
+  }) as typeof fetch;
+  try {
+    await createStripeCatalogPrice({ env: { STRIPE_INTERNATIONAL_SECRET_KEY: "sk_test_international" } as TimzyEnv, market: "UK", itemId: "plan-core", itemKind: "plan", name: "Timzy · Basic", currency: "GBP", paymentType: "MONTHLY", amountMinor: 3_900, version: 1 });
+    assert.equal((calls[0].init.headers as Record<string, string>).authorization, "Bearer sk_test_international");
+    assert.equal(calls[1].body.get("currency"), "gbp");
+    assert.equal(calls[1].body.get("recurring[interval]"), "month");
+  } finally { globalThis.fetch = originalFetch; }
+});

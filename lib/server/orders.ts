@@ -9,8 +9,8 @@ import { assertClientMatchesVerification } from "./company-verification";
 export const DRAFT_COOKIE = "timzy_contract_draft";
 
 export type OrderRow = {
-  id: string; order_number: string; public_token_hash: string; status: string; market_code: "PL" | "INTERNATIONAL" | null; language: "pl" | "en" | "es" | null;
-  currency: "PLN" | "EUR" | null; contract_term: "ANNUAL_12" | "OPEN_ENDED" | null; registration_country: string | null; billing_country: string | null;
+  id: string; order_number: string; public_token_hash: string; status: string; market_code: "PL" | "UK" | "INTERNATIONAL" | null; language: "pl" | "en" | "es" | null;
+  currency: "PLN" | "GBP" | "EUR" | null; contract_term: "ANNUAL_12" | "OPEN_ENDED" | null; registration_country: string | null; billing_country: string | null;
   selection_json: string; client_data_encrypted: string | null; client_data_hash: string | null; immutable_snapshot_json: string | null; quote_fingerprint: string | null;
   monthly_net_minor: number | null; one_time_net_minor: number | null; activation_fee_minor: number | null; estimated_tax_minor: number | null;
   final_tax_minor: number | null; final_total_minor: number | null; due_today_minor: number | null; deployment_days: number | null; acceptance_revision: number; stripe_customer_id: string | null;
