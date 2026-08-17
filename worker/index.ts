@@ -2,25 +2,10 @@
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
 import { connect as connectTls, type TLSSocket } from "node:tls";
+import { handleCommerceRequest } from "../lib/server/commerce-api";
+import type { TimzyEnv, TimzyExecutionContext } from "../lib/server/env";
 
-interface Env {
-  ASSETS: Fetcher;
-  DB: D1Database;
-  SMTP_HOST?: string;
-  SMTP_PORT?: string;
-  SMTP_USERNAME?: string;
-  SMTP_PASSWORD?: string;
-  SMTP_FROM?: string;
-  CONTACT_TO?: string;
-  CAPTCHA_SECRET?: string;
-  IMAGES: {
-    input(stream: ReadableStream): {
-      transform(options: Record<string, unknown>): {
-        output(options: { format: string; quality: number }): Promise<{ response(): Response }>;
-      };
-    };
-  };
-}
+type Env = TimzyEnv;
 
 type ContactPayload = {
   name?: unknown;
@@ -161,6 +146,25 @@ async function openSmtp(host: string, port: number) {
   return smtp;
 }
 
+async function sendSystemEmail(env: Env, details: { to: string; subject: string; text: string }) {
+  const host = env.SMTP_HOST; const username = env.SMTP_USERNAME; const password = env.SMTP_PASSWORD; const from = env.SMTP_FROM ?? username;
+  const port = Number(env.SMTP_PORT ?? "465");
+  if (!host || !username || !password || !from || !Number.isInteger(port)) throw new Error("System mail is not configured");
+  const messageId = `<${crypto.randomUUID()}@timzy.app>`;
+  const message = [
+    `From: Timzy <${safeHeader(from)}>`, `To: ${safeHeader(details.to)}`, `Subject: ${encodeHeader(details.subject)}`, `Date: ${new Date().toUTCString()}`,
+    `Message-ID: ${messageId}`, "MIME-Version: 1.0", "Content-Type: text/plain; charset=UTF-8", "Content-Transfer-Encoding: base64", "", wrapBase64(details.text),
+  ].join("\r\n");
+  const smtp = await openSmtp(host, port);
+  try {
+    await smtp.read([220]); await smtp.command("EHLO timzy.app", [250]); await smtp.command("AUTH LOGIN", [334]);
+    await smtp.command(Buffer.from(username, "utf8").toString("base64"), [334]); await smtp.command(Buffer.from(password, "utf8").toString("base64"), [235]);
+    await smtp.command(`MAIL FROM:<${safeHeader(from)}>`, [250]); await smtp.command(`RCPT TO:<${safeHeader(details.to)}>`, [250, 251]); await smtp.command("DATA", [354]);
+    smtp.sendData(`${message.replace(/^\./gm, "..")}\r\n.\r\n`); await smtp.read([250]); await smtp.command("QUIT", [221]);
+    return messageId;
+  } finally { smtp.close(); }
+}
+
 async function sendContactEmail(env: Env, details: { name: string; company: string; email: string; phone: string; industry: string; message: string; locale: string }) {
   const host = env.SMTP_HOST;
   const username = env.SMTP_USERNAME;
@@ -229,20 +233,28 @@ async function handleContact(request: Request, env: Env) {
   }
 }
 
-interface ExecutionContext {
-  waitUntil(promise: Promise<unknown>): void;
-  passThroughOnException(): void;
-}
-
 // Image security config. SVG sources with .svg extension auto-skip the
 // optimization endpoint on the client side (served directly, no proxy).
 // To route SVGs through the optimizer (with security headers), set
 // dangerouslyAllowSVG: true in next.config.js and uncomment below:
 // const imageConfig: ImageConfig = { dangerouslyAllowSVG: true };
 
-const worker = {
-  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+function secureResponse(response: Response, request: Request) {
+  const secured = new Response(response.body, response);
+  const headers = secured.headers;
+  headers.set("x-content-type-options", "nosniff"); headers.set("x-frame-options", "DENY"); headers.set("referrer-policy", "strict-origin-when-cross-origin");
+  headers.set("permissions-policy", "camera=(), microphone=(), geolocation=(), payment=(self \"https://checkout.stripe.com\")");
+  headers.set("cross-origin-opener-policy", "same-origin"); headers.set("cross-origin-resource-policy", "same-origin");
+  headers.set("content-security-policy", "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self' https://checkout.stripe.com; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.googletagmanager.com https://www.google-analytics.com; font-src 'self'; connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com; frame-src https://www.googletagmanager.com https://checkout.stripe.com; upgrade-insecure-requests");
+  if (new URL(request.url).protocol === "https:") headers.set("strict-transport-security", "max-age=31536000; includeSubDomains");
+  return secured;
+}
+
+async function routeRequest(request: Request, env: Env, ctx: TimzyExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    const commerceResponse = await handleCommerceRequest(request, env, ctx, (message) => sendSystemEmail(env, message));
+    if (commerceResponse) return commerceResponse;
 
     if (url.pathname === "/api/contact-challenge" && request.method === "GET") {
       if (!env.CAPTCHA_SECRET) return json({ error: "Contact form is not configured" }, 503);
@@ -263,6 +275,11 @@ const worker = {
     }
 
     return handler.fetch(request, env, ctx);
+}
+
+const worker = {
+  async fetch(request: Request, env: Env, ctx: TimzyExecutionContext): Promise<Response> {
+    return secureResponse(await routeRequest(request, env, ctx), request);
   },
 };
 

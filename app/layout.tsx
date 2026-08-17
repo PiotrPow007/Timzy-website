@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Analytics } from "./Analytics";
 import { CookieNotice } from "./CookieNotice";
 import { GoogleTagManagerHead, GoogleTagManagerNoScript } from "./GoogleTagManager";
+import { AdminLockLink } from "./AdminLockLink";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -39,7 +40,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <head><GoogleTagManagerHead /></head>
-      <body><GoogleTagManagerNoScript />{children}<Analytics /><CookieNotice /></body>
+      <body><GoogleTagManagerNoScript />{children}<AdminLockLink /><Analytics /><CookieNotice /></body>
     </html>
   );
 }

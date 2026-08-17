@@ -166,3 +166,19 @@ test("renders the sales-focused SEO architecture", async () => {
     assert.match(html, /demo_request|Zobacz demo|Book a free demo|Reservar una demo/);
   }
 });
+
+test("renders the local contract flow, secured admin surfaces and global lock link", async () => {
+  const paths = ["/contract", "/pl/umowa", "/es/contrato", "/admin/login", "/admin"];
+  const responses = await Promise.all(paths.map((path) => render(path)));
+  responses.forEach((response, index) => assert.equal(response.status, 200, paths[index]));
+  const html = await Promise.all(responses.map((response) => response.text()));
+  assert.match(html[0], /Configure Timzy and enter into the agreement online/);
+  assert.match(html[1], /Skonfiguruj Timzy i zawrzyj umowę online/);
+  assert.match(html[2], /Configura Timzy y celebra el contrato online/);
+  for (const page of html) assert.match(page, /href="\/admin\/login\/"[^>]*aria-label="Administration panel \/ Panel administracyjny \/ Panel de administración"/);
+  assert.match(html[3], /name="robots" content="noindex, nofollow"/);
+  assert.match(html[4], /name="robots" content="noindex, nofollow"/);
+  assert.match(html[3], /Zaloguj się do Timzy/);
+  assert.match(html[3], /aria-label="Język"/);
+  assert.match(html[4], /Weryfikowanie sesji administratora/);
+});

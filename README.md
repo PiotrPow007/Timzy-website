@@ -23,7 +23,7 @@ This starter does not use `wrangler.jsonc`.
 - edit site code under `app/`
 - `.openai/hosting.json` declares optional Sites D1 and R2 bindings
 - `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
+- `db/schema.ts` contains the versioned Timzy commerce, evidence and administration model
 - `examples/d1/` contains an optional D1 example surface
 - `drizzle.config.ts` supports local migration generation when needed
 
@@ -91,8 +91,15 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 
 - `npm run dev`: start local development
 - `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
+- `npm test`: run unit tests, build the app and verify rendered routes
 - `npm run db:generate`: generate Drizzle migrations after schema changes
+- `npm run test:unit`: run commerce, security, Stripe Checkout/signature and PDF unit tests
+- `npm run test:integration`: apply every migration to an isolated SQLite database and verify constraints
+- `npm run admin:bootstrap`: emit a local SQL statement for the first MFA-enabled administrator
+
+## Contract and billing workflow
+
+The repository now contains a local-only, release-gated Timzy contract and Stripe Checkout workflow backed by D1 and encrypted R2 documents. It is intentionally blocked when business prices, Stripe sandbox IDs, seller data or legally approved documents are missing. See [`docs/commerce-architecture.md`](docs/commerce-architecture.md) for the model, environment values, Stripe setup, retention policy and unresolved legal/accounting decisions.
 
 ## Learn More
 

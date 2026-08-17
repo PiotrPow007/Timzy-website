@@ -1,0 +1,1 @@
+ALTER TABLE `markets` ADD `default_deployment_days` integer DEFAULT 7 NOT NULL;
