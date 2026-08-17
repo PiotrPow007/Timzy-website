@@ -118,6 +118,7 @@ export async function handleStripeTestWebhook(env: TimzyEnv, request: Request, c
   if (env.APP_ENV === "production") throw new Error("The shared Stripe test webhook is disabled in production");
   if (!env.STRIPE_TEST_WEBHOOK_SECRET?.startsWith("whsec_")) throw new Error("Stripe test webhook secret is not configured");
   const rawBody = await request.text(); const event = await verifyStripeEvent(rawBody, request.headers.get("stripe-signature"), env.STRIPE_TEST_WEBHOOK_SECRET);
+  if (!handledStripeEvents.has(event.type)) return Response.json({ received: true, ignored: true }, { headers: { "cache-control": "no-store" } });
   const order = await findOrder(env, event); const market = order?.market_code;
   if (market !== "PL" && market !== "INTERNATIONAL") throw new Error("Stripe test event cannot be reconciled to a market");
   return persistAndProcessWebhook(env, rawBody, event, market, ctx, sendEmail);

@@ -1,4 +1,4 @@
-import type { ClientLegalData, ContractTerm, Locale, MarketCode, OrderSelection } from "./types";
+import type { ClientLegalData, CompanyEntityType, ContractTerm, Locale, MarketCode, OrderSelection } from "./types";
 
 const localeSet = new Set<Locale>(["pl", "en", "es"]);
 const marketSet = new Set<MarketCode>(["PL", "INTERNATIONAL"]);
@@ -27,19 +27,26 @@ export function parseSelection(value: unknown): OrderSelection {
 
 export function parseClientData(value: unknown): ClientLegalData {
   const input = value && typeof value === "object" ? value as Record<string, unknown> : {};
+  const entityType = text(input.entityType, 20) as CompanyEntityType;
+  if (!["PL_KRS", "PL_CEIDG", "OTHER_PL", "FOREIGN"].includes(entityType)) throw new Error("Company entity type is required");
   const result: ClientLegalData = {
     legalName: text(input.legalName, 180), legalForm: text(input.legalForm, 100), registrationCountry: country(input.registrationCountry),
     registeredAddress: text(input.registeredAddress, 240), postalCode: text(input.postalCode, 24), city: text(input.city, 120),
     billingAddressDifferent: bool(input.billingAddressDifferent), billingAddress: text(input.billingAddress, 240), billingPostalCode: text(input.billingPostalCode, 24),
-    billingCity: text(input.billingCity, 120), billingCountry: country(input.billingCountry), taxId: text(input.taxId, 64), companyNumber: text(input.companyNumber, 64),
+    billingCity: text(input.billingCity, 120), billingCountry: country(input.billingCountry), taxId: text(input.taxId, 64), companyNumber: text(input.companyNumber, 64), entityType,
+    registryName: text(input.registryName, 120),
     representativeName: text(input.representativeName, 140), representativePosition: text(input.representativePosition, 120),
+    representativeAuthorityBasis: text(input.representativeAuthorityBasis, 240),
     businessEmail: text(input.businessEmail, 180).toLowerCase(), phone: text(input.phone, 40), brandName: text(input.brandName, 140),
     domain: text(input.domain, 200), appName: text(input.appName, 140), communicationLanguage: text(input.communicationLanguage, 2) as Locale,
-    authorityConfirmed: bool(input.authorityConfirmed),
+    authorityConfirmed: bool(input.authorityConfirmed), companyDataConfirmed: bool(input.companyDataConfirmed),
   };
   const required = [result.legalName, result.legalForm, result.registrationCountry, result.registeredAddress, result.postalCode, result.city, result.billingCountry,
-    result.taxId, result.representativeName, result.representativePosition, result.businessEmail, result.phone, result.brandName, result.appName];
-  if (required.some((entry) => !entry) || !localeSet.has(result.communicationLanguage) || !/^\S+@\S+\.\S+$/.test(result.businessEmail) || !result.authorityConfirmed) throw new Error("Required company data is incomplete");
+    result.taxId, result.representativeName, result.representativePosition, result.representativeAuthorityBasis, result.businessEmail, result.phone, result.brandName, result.appName];
+  if (required.some((entry) => !entry) || !localeSet.has(result.communicationLanguage) || !/^\S+@\S+\.\S+$/.test(result.businessEmail) || !result.authorityConfirmed || !result.companyDataConfirmed) throw new Error("Required company data is incomplete");
+  if (result.registrationCountry === "PL" && result.entityType === "PL_KRS" && !/^\d{10}$/.test(result.companyNumber ?? "")) throw new Error("KRS must contain exactly 10 digits");
+  if (result.registrationCountry === "PL" && result.entityType === "PL_CEIDG" && !/^\d{10}$/.test(result.taxId)) throw new Error("NIP must contain exactly 10 digits");
+  if (result.registrationCountry !== "PL" && (result.entityType !== "FOREIGN" || !result.companyNumber || !result.registryName)) throw new Error("Foreign registry name and registration number are required");
   if (result.billingAddressDifferent && (!result.billingAddress || !result.billingPostalCode || !result.billingCity)) throw new Error("Billing address is incomplete");
   return result;
 }

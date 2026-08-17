@@ -24,6 +24,32 @@ export type ContractBundle = {
   };
   documents: Array<{ kind: DocumentKind; versionId: string; version: number; contentHash: string; title: string; sections: string[] }>;
   mandatoryTerms: string[];
+  acceptanceCertificate?: {
+    title: string;
+    acceptedByName: string;
+    acceptedByPosition: string;
+    authorityBasis: string;
+    companyName: string;
+    registrationNumber: string;
+    confirmedEmail: string;
+    acceptedAt: string;
+    timezone: string;
+    orderNumber: string;
+    documentVersions: Array<{ kind: DocumentKind; version: number; contentHash: string }>;
+    acceptedContentHash: string;
+    verificationSource: string;
+    verificationSnapshotHash: string;
+    verificationRetrievedAt: string | null;
+    method: string;
+    statements: string[];
+    signers: Array<{ name: string; position: string; email: string; acceptedAt: string }>;
+  };
+};
+
+export type AcceptanceEvidence = {
+  acceptedByName: string; acceptedByPosition: string; authorityBasis: string; confirmedEmail: string; acceptedAt: string; timezone: string;
+  verificationSource: string; verificationSnapshotHash: string; verificationRetrievedAt: string | null; statements: string[]; method: string;
+  signers?: Array<{ name: string; position: string; email: string; acceptedAt: string }>;
 };
 
 const rollout: Record<Locale, string> = {
@@ -60,7 +86,7 @@ function mandatoryTerms(language: Locale, quote: CommerceQuote): string[] {
   return [quote.contractTerm === "ANNUAL_12" ? annual : open, recurring, provider, rollout[language]];
 }
 
-export async function buildContractBundle(db: D1Database, input: { orderId: string; orderNumber: string; quote: CommerceQuote; catalog: CommerceCatalog; client: ClientLegalData; generatedAt?: string }): Promise<ContractBundle> {
+export async function buildContractBundle(db: D1Database, input: { orderId: string; orderNumber: string; quote: CommerceQuote; catalog: CommerceCatalog; client: ClientLegalData; generatedAt?: string; acceptanceEvidence?: AcceptanceEvidence }): Promise<ContractBundle> {
   const versions = input.catalog.documentVersions;
   if (!versions) throw new Error("Published legal documents are unavailable");
   const ids = Object.values(versions).map((version) => version.id);
@@ -72,7 +98,7 @@ export async function buildContractBundle(db: D1Database, input: { orderId: stri
     const content = JSON.parse(row.content_json) as VersionContent;
     return { kind: row.kind, versionId: row.id, version: row.version, contentHash: row.content_hash, title: content.title ?? row.kind, sections: Array.isArray(content.sections) ? content.sections : [] };
   }).sort((left, right) => left.kind.localeCompare(right.kind));
-  return {
+  const bundle: ContractBundle = {
     schemaVersion: 1, orderId: input.orderId, orderNumber: input.orderNumber, generatedAt: input.generatedAt ?? new Date().toISOString(), language: input.catalog.language,
     quoteFingerprint: input.quote.fingerprint, seller: input.quote.market.seller, technologyProvider: input.quote.market.technologyProvider, client: input.client,
     commercialSummary: { market: input.quote.market.code, currency: input.quote.currency, contractTerm: input.quote.contractTerm, lines: input.quote.lines,
@@ -80,6 +106,22 @@ export async function buildContractBundle(db: D1Database, input: { orderId: stri
       annualCommitmentNetMinor: input.quote.annualCommitmentNetMinor, deploymentDays: input.quote.deploymentDays },
     documents, mandatoryTerms: mandatoryTerms(input.catalog.language, input.quote),
   };
+  if (input.acceptanceEvidence) {
+    const contentEvidence = { orderId: bundle.orderId, quoteFingerprint: bundle.quoteFingerprint, seller: bundle.seller, client: bundle.client, commercialSummary: bundle.commercialSummary,
+      documents: bundle.documents, mandatoryTerms: bundle.mandatoryTerms, verificationSnapshotHash: input.acceptanceEvidence.verificationSnapshotHash };
+    bundle.acceptanceCertificate = {
+      title: input.catalog.language === "pl" ? "Certyfikat zawarcia umowy elektronicznej" : input.catalog.language === "es" ? "Certificado de celebración electrónica del contrato" : "Electronic agreement certificate",
+      acceptedByName: input.acceptanceEvidence.acceptedByName, acceptedByPosition: input.acceptanceEvidence.acceptedByPosition, authorityBasis: input.acceptanceEvidence.authorityBasis,
+      companyName: input.client.legalName, registrationNumber: input.client.companyNumber || input.client.taxId, confirmedEmail: input.acceptanceEvidence.confirmedEmail,
+      acceptedAt: input.acceptanceEvidence.acceptedAt, timezone: input.acceptanceEvidence.timezone, orderNumber: input.orderNumber,
+      documentVersions: documents.map((document) => ({ kind: document.kind, version: document.version, contentHash: document.contentHash })),
+      acceptedContentHash: await sha256(canonicalJson(contentEvidence)), verificationSource: input.acceptanceEvidence.verificationSource,
+      verificationSnapshotHash: input.acceptanceEvidence.verificationSnapshotHash, verificationRetrievedAt: input.acceptanceEvidence.verificationRetrievedAt,
+      method: input.acceptanceEvidence.method, statements: input.acceptanceEvidence.statements,
+      signers: input.acceptanceEvidence.signers ?? [{ name: input.acceptanceEvidence.acceptedByName, position: input.acceptanceEvidence.acceptedByPosition, email: input.acceptanceEvidence.confirmedEmail, acceptedAt: input.acceptanceEvidence.acceptedAt }],
+    };
+  }
+  return bundle;
 }
 
 function escapeHtml(value: string): string { return value.replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character] ?? character); }
@@ -99,13 +141,14 @@ export function renderContractHtml(bundle: ContractBundle): string {
   const money = (minor: number) => new Intl.NumberFormat(bundle.language, { style: "currency", currency: bundle.commercialSummary.currency }).format(minor / 100);
   const items = bundle.commercialSummary.lines.map((line) => `<tr><td>${escapeHtml(line.name)}</td><td>${line.quantity}</td><td>${line.included ? labels.included : money(line.totalAmountMinor)}</td><td>${line.paymentType}</td></tr>`).join("");
   const docs = bundle.documents.map((document) => `<section><h2>${escapeHtml(document.title)} · v${document.version}</h2>${document.sections.map((section) => `<p>${escapeHtml(section)}</p>`).join("")}</section>`).join("");
-  return `<!doctype html><html lang="${bundle.language}"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>${escapeHtml(bundle.orderNumber)}</title><style>body{font:15px/1.6 Arial,sans-serif;color:#20192b;max-width:850px;margin:40px auto;padding:0 24px}h1,h2{line-height:1.2}table{width:100%;border-collapse:collapse}td,th{padding:8px;border:1px solid #ddd;text-align:left}.meta{color:#665d70}</style></head><body><h1>Timzy · ${escapeHtml(bundle.orderNumber)}</h1><p class="meta">${escapeHtml(bundle.generatedAt)} · ${escapeHtml(bundle.commercialSummary.market)} · ${escapeHtml(bundle.commercialSummary.currency)}</p><h2>${labels.parties}</h2><p><b>${escapeHtml(bundle.seller.legalName)}</b>, ${escapeHtml([bundle.seller.addressLine1,bundle.seller.postalCode,bundle.seller.city].filter(Boolean).join(", "))}</p><p><b>${escapeHtml(bundle.client.legalName)}</b>, ${escapeHtml(`${bundle.client.registeredAddress}, ${bundle.client.postalCode} ${bundle.client.city}`)}</p><h2>${labels.summary}</h2><table><thead><tr><th>${labels.item}</th><th>${labels.quantity}</th><th>${labels.net}</th><th>${labels.type}</th></tr></thead><tbody>${items}</tbody></table><p>${labels.monthly}: <b>${money(bundle.commercialSummary.monthlyNetMinor)}</b><br>${labels.oneTime}: <b>${money(bundle.commercialSummary.oneTimeNetMinor)}</b></p>${bundle.mandatoryTerms.map((term) => `<p>${escapeHtml(term)}</p>`).join("")}${docs}</body></html>`;
+  const certificate = bundle.acceptanceCertificate ? `<section class="certificate"><h2>${escapeHtml(bundle.acceptanceCertificate.title)}</h2>${bundle.acceptanceCertificate.signers.map((signer) => `<p><b>${escapeHtml(signer.name)}</b> · ${escapeHtml(signer.position)}<br>${escapeHtml(signer.email)} · ${escapeHtml(signer.acceptedAt)}</p>`).join("")}<p>${escapeHtml(bundle.acceptanceCertificate.companyName)} · ${escapeHtml(bundle.acceptanceCertificate.registrationNumber)}</p><p>${escapeHtml(bundle.acceptanceCertificate.confirmedEmail)} · ${escapeHtml(bundle.acceptanceCertificate.acceptedAt)} · ${escapeHtml(bundle.acceptanceCertificate.timezone)}</p><p>${escapeHtml(bundle.acceptanceCertificate.method)}</p><p>Content hash: <code>${escapeHtml(bundle.acceptanceCertificate.acceptedContentHash)}</code><br>Registry snapshot hash: <code>${escapeHtml(bundle.acceptanceCertificate.verificationSnapshotHash)}</code></p>${bundle.acceptanceCertificate.statements.map((statement) => `<p>✓ ${escapeHtml(statement)}</p>`).join("")}</section>` : "";
+  return `<!doctype html><html lang="${bundle.language}"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>${escapeHtml(bundle.orderNumber)}</title><style>body{font:15px/1.6 Arial,sans-serif;color:#20192b;max-width:850px;margin:40px auto;padding:0 24px}h1,h2{line-height:1.2}table{width:100%;border-collapse:collapse}td,th{padding:8px;border:1px solid #ddd;text-align:left}.meta{color:#665d70}.certificate{break-before:page;margin-top:50px;padding-top:30px;border-top:3px solid #6f48ec}.certificate code{overflow-wrap:anywhere}</style></head><body><h1>Timzy · ${escapeHtml(bundle.orderNumber)}</h1><p class="meta">${escapeHtml(bundle.generatedAt)} · ${escapeHtml(bundle.commercialSummary.market)} · ${escapeHtml(bundle.commercialSummary.currency)}</p><h2>${labels.parties}</h2><p><b>${escapeHtml(bundle.seller.legalName)}</b>, ${escapeHtml([bundle.seller.addressLine1,bundle.seller.postalCode,bundle.seller.city].filter(Boolean).join(", "))}</p><p><b>${escapeHtml(bundle.client.legalName)}</b>, ${escapeHtml(`${bundle.client.registeredAddress}, ${bundle.client.postalCode} ${bundle.client.city}`)}</p><h2>${labels.summary}</h2><table><thead><tr><th>${labels.item}</th><th>${labels.quantity}</th><th>${labels.net}</th><th>${labels.type}</th></tr></thead><tbody>${items}</tbody></table><p>${labels.monthly}: <b>${money(bundle.commercialSummary.monthlyNetMinor)}</b><br>${labels.oneTime}: <b>${money(bundle.commercialSummary.oneTimeNetMinor)}</b></p>${bundle.mandatoryTerms.map((term) => `<p>${escapeHtml(term)}</p>`).join("")}${docs}${certificate}</body></html>`;
 }
 
 function plainText(bundle: ContractBundle): string[] {
   const labels = documentLabels(bundle.language);
   const money = (minor: number) => `${(minor / 100).toFixed(2)} ${bundle.commercialSummary.currency}`;
-  return [
+  const content = [
     `TIMZY · ${bundle.orderNumber}`, `${bundle.generatedAt} · ${bundle.commercialSummary.market} · ${bundle.commercialSummary.currency}`, "",
     `${labels.seller}: ${bundle.seller.legalName}`, [bundle.seller.addressLine1, bundle.seller.postalCode, bundle.seller.city].filter(Boolean).join(", "),
     `${labels.client}: ${bundle.client.legalName}`, `${bundle.client.registeredAddress}, ${bundle.client.postalCode} ${bundle.client.city}`, "", labels.summary.toUpperCase(),
@@ -114,6 +157,12 @@ function plainText(bundle: ContractBundle): string[] {
     ...bundle.mandatoryTerms.flatMap((term) => [term, ""]),
     ...bundle.documents.flatMap((document) => [`${document.title} · v${document.version}`, ...document.sections, ""]),
   ];
+  if (bundle.acceptanceCertificate) content.push("\f", bundle.acceptanceCertificate.title.toUpperCase(), "", ...bundle.acceptanceCertificate.signers.flatMap((signer) => [`${signer.name} · ${signer.position}`, `${signer.email} · ${signer.acceptedAt}`]),
+    `${bundle.acceptanceCertificate.companyName} · ${bundle.acceptanceCertificate.registrationNumber}`, bundle.acceptanceCertificate.confirmedEmail,
+    `${bundle.acceptanceCertificate.acceptedAt} · ${bundle.acceptanceCertificate.timezone}`, bundle.acceptanceCertificate.method,
+    `Content hash: ${bundle.acceptanceCertificate.acceptedContentHash}`, `Registry snapshot hash: ${bundle.acceptanceCertificate.verificationSnapshotHash}`, "",
+    ...bundle.acceptanceCertificate.statements.map((statement) => `✓ ${statement}`));
+  return content;
 }
 
 function wrapText(text: string, max = 92): string[] {
@@ -130,6 +179,7 @@ export async function generateContractPdf(bundle: ContractBundle, assets: Fetche
   const font = await document.embedFont(await fontResponse.arrayBuffer(), { subset: true });
   let page = document.addPage([595.28, 841.89]); let y = 795;
   for (const paragraph of plainText(bundle)) {
+    if (paragraph === "\f") { page = document.addPage([595.28, 841.89]); y = 795; continue; }
     const lines = wrapText(paragraph);
     for (const line of lines) {
       if (y < 55) { page = document.addPage([595.28, 841.89]); y = 795; }

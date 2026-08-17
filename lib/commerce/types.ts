@@ -3,6 +3,8 @@ export type Locale = "pl" | "en" | "es";
 export type Currency = "PLN" | "EUR";
 export type ContractTerm = "ANNUAL_12" | "OPEN_ENDED";
 export type PaymentType = "MONTHLY" | "ONE_TIME";
+export type CompanyEntityType = "PL_KRS" | "PL_CEIDG" | "OTHER_PL" | "FOREIGN";
+export type VerificationStatus = "NOT_STARTED" | "FETCHING" | "COMPANY_VERIFIED" | "EMAIL_VERIFICATION_REQUIRED" | "EMAIL_VERIFIED" | "REPRESENTATION_CHECK_REQUIRED" | "SECOND_SIGNER_REQUIRED" | "POWER_OF_ATTORNEY_REQUIRED" | "MANUAL_REVIEW_REQUIRED" | "VERIFIED" | "REJECTED" | "REGISTRY_UNAVAILABLE";
 
 export type LegalEntitySnapshot = {
   code: string;
@@ -106,8 +108,11 @@ export type ClientLegalData = {
   billingCountry: string;
   taxId: string;
   companyNumber?: string;
+  entityType: CompanyEntityType;
+  registryName?: string;
   representativeName: string;
   representativePosition: string;
+  representativeAuthorityBasis: string;
   businessEmail: string;
   phone: string;
   brandName: string;
@@ -115,6 +120,35 @@ export type ClientLegalData = {
   appName: string;
   communicationLanguage: Locale;
   authorityConfirmed: boolean;
+  companyDataConfirmed: boolean;
+};
+
+export type CompanyVerificationView = {
+  id: string;
+  status: VerificationStatus;
+  companyResult: string;
+  representativeResult: string;
+  emailResult: string;
+  reasonCode: string | null;
+  reasonDetail: string | null;
+  adapter: string;
+  entityType: CompanyEntityType;
+  legalName: string | null;
+  registrationNumber: string | null;
+  taxNumber: string | null;
+  regon: string | null;
+  registryName: string | null;
+  registryCountry: string;
+  registeredAddress: string | null;
+  postalCode: string | null;
+  city: string | null;
+  entityTypeName: string | null;
+  registryStatus: string | null;
+  representationMethod: string | null;
+  verificationSource: string | null;
+  verifiedAt: string | null;
+  clientConfirmed: boolean;
+  emailVerified: boolean;
 };
 
 export type QuoteLine = {

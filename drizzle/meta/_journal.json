@@ -50,6 +50,13 @@
       "when": 1787007600000,
       "tag": "0006_configure_basic_plan",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1787011200000,
+      "tag": "0007_company_verification",
+      "breakpoints": true
     }
   ]
 }

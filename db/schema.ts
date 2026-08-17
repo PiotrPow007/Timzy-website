@@ -93,6 +93,7 @@ export const orders = sqliteTable("orders", {
   finalTaxMinor: integer("final_tax_minor"), finalTotalMinor: integer("final_total_minor"), dueTodayMinor: integer("due_today_minor"), deploymentDays: integer("deployment_days"), acceptanceRevision: integer("acceptance_revision").notNull().default(0),
   stripeCustomerId: text("stripe_customer_id"), stripeCheckoutSessionId: text("stripe_checkout_session_id").unique(), stripeSubscriptionId: text("stripe_subscription_id"),
   stripeInvoiceId: text("stripe_invoice_id"), stripePaymentIntentId: text("stripe_payment_intent_id"), paidAt: text("paid_at"), expiresAt: text("expires_at"),
+  verificationStatus: text("verification_status").notNull().default("NOT_STARTED"), companyVerificationId: text("company_verification_id"),
   createdAt: createdAt(), updatedAt: updatedAt(),
 }, (table) => [index("idx_orders_status_created").on(table.status, table.createdAt), index("idx_orders_customer_email_hash").on(table.clientDataHash)]);
 
@@ -120,8 +121,55 @@ export const contractAcceptances = sqliteTable("contract_acceptances", {
   annualCommitmentConfirmed: integer("annual_commitment_confirmed", { mode: "boolean" }).notNull().default(false), allDocumentsConfirmed: integer("all_documents_confirmed", { mode: "boolean" }).notNull(),
   ipEvidence: text("ip_evidence").notNull(), userAgent: text("user_agent").notNull(), sessionIdHash: text("session_id_hash").notNull(), language: text("language").notNull(),
   documentVersionsJson: text("document_versions_json").notNull(), documentHash: text("document_hash").notNull(), quoteFingerprint: text("quote_fingerprint").notNull(),
+  companyDataConfirmed: integer("company_data_confirmed", { mode: "boolean" }).notNull().default(false), statementsJson: text("statements_json").notNull().default("{}"),
+  timezone: text("timezone"), verificationSnapshotHash: text("verification_snapshot_hash"), emailVerificationMethod: text("email_verification_method"),
   stripeCheckoutSessionId: text("stripe_checkout_session_id"), invalidatedAt: text("invalidated_at"), invalidationReason: text("invalidation_reason"), acceptedAt: createdAt(),
 }, (table) => [uniqueIndex("uq_contract_acceptance_revision").on(table.orderId, table.revision), index("idx_contract_acceptance_active").on(table.orderId, table.invalidatedAt)]);
+
+export const companyVerifications = sqliteTable("company_verifications", {
+  id: text("id").primaryKey(), orderId: text("order_id").notNull().references(() => orders.id), marketCode: text("market_code").notNull(), adapter: text("adapter").notNull(), entityType: text("entity_type").notNull(),
+  registryCountry: text("registry_country").notNull(), registryName: text("registry_name"), registrationNumber: text("registration_number"), taxNumber: text("tax_number"), regon: text("regon"),
+  legalName: text("legal_name"), registeredAddress: text("registered_address"), postalCode: text("postal_code"), city: text("city"), entityTypeName: text("entity_type_name"),
+  registryStatus: text("registry_status"), representationMethod: text("representation_method"), companyResult: text("company_result").notNull().default("NOT_STARTED"),
+  representativeResult: text("representative_result").notNull().default("NOT_STARTED"), emailResult: text("email_result").notNull().default("NOT_STARTED"),
+  overallStatus: text("overall_status").notNull().default("NOT_STARTED"), reasonCode: text("reason_code"), reasonDetail: text("reason_detail"), verificationSource: text("verification_source"),
+  sourceRetrievedAt: text("source_retrieved_at"), mappedSnapshotJson: text("mapped_snapshot_json"), rawSnapshotEncrypted: text("raw_snapshot_encrypted"), rawSnapshotHash: text("raw_snapshot_hash"),
+  riskFlagsJson: text("risk_flags_json").notNull().default("[]"), clientConfirmedAt: text("client_confirmed_at"), verifiedAt: text("verified_at"), manualReviewedByAdminId: text("manual_reviewed_by_admin_id"),
+  manualReviewReason: text("manual_review_reason"), createdAt: createdAt(), updatedAt: updatedAt(),
+}, (table) => [uniqueIndex("company_verifications_order_id_unique").on(table.orderId), index("idx_company_verifications_status").on(table.overallStatus, table.updatedAt)]);
+
+export const verificationStatusHistory = sqliteTable("verification_status_history", {
+  id: text("id").primaryKey(), verificationId: text("verification_id").notNull().references(() => companyVerifications.id), fromStatus: text("from_status"), toStatus: text("to_status").notNull(),
+  reasonCode: text("reason_code"), reasonDetail: text("reason_detail"), actorType: text("actor_type").notNull(), actorId: text("actor_id"), createdAt: createdAt(),
+}, (table) => [index("idx_verification_history_created").on(table.verificationId, table.createdAt)]);
+
+export const registryVerificationCache = sqliteTable("registry_verification_cache", {
+  cacheKey: text("cache_key").primaryKey(), adapter: text("adapter").notNull(), mappedSnapshotJson: text("mapped_snapshot_json").notNull(), rawSnapshotEncrypted: text("raw_snapshot_encrypted").notNull(),
+  rawSnapshotHash: text("raw_snapshot_hash").notNull(), verificationSource: text("verification_source").notNull(), sourceRetrievedAt: text("source_retrieved_at").notNull(), expiresAt: text("expires_at").notNull(), createdAt: createdAt(),
+}, (table) => [index("idx_registry_cache_expiry").on(table.expiresAt)]);
+
+export const emailVerificationChallenges = sqliteTable("email_verification_challenges", {
+  id: text("id").primaryKey(), orderId: text("order_id").notNull().references(() => orders.id), signerId: text("signer_id"), emailHash: text("email_hash").notNull(), codeHash: text("code_hash").notNull(), expiresAt: text("expires_at").notNull(),
+  attemptCount: integer("attempt_count").notNull().default(0), maxAttempts: integer("max_attempts").notNull().default(5), consumedAt: text("consumed_at"), invalidatedAt: text("invalidated_at"), createdAt: createdAt(),
+}, (table) => [index("idx_email_challenge_order").on(table.orderId, table.createdAt), index("idx_email_challenge_email").on(table.emailHash, table.createdAt)]);
+
+export const verificationSigners = sqliteTable("verification_signers", {
+  id: text("id").primaryKey(), orderId: text("order_id").notNull().references(() => orders.id), signerRole: text("signer_role").notNull(), name: text("name").notNull(), position: text("position").notNull(),
+  authorityBasis: text("authority_basis").notNull(), emailEncrypted: text("email_encrypted").notNull(), emailHash: text("email_hash").notNull(), emailVerifiedAt: text("email_verified_at"), documentHash: text("document_hash"),
+  acceptedAt: text("accepted_at"), ipEvidence: text("ip_evidence"), userAgent: text("user_agent"), status: text("status").notNull().default("PENDING_EMAIL"), createdAt: createdAt(), updatedAt: updatedAt(),
+  statementsJson: text("statements_json"), timezone: text("timezone"),
+}, (table) => [uniqueIndex("uq_verification_signer_role").on(table.orderId, table.signerRole)]);
+
+export const secondSignerInvites = sqliteTable("second_signer_invites", {
+  id: text("id").primaryKey(), signerId: text("signer_id").notNull().references(() => verificationSigners.id), tokenHash: text("token_hash").notNull().unique(), expiresAt: text("expires_at").notNull(),
+  usedAt: text("used_at"), revokedAt: text("revoked_at"), createdAt: createdAt(),
+});
+
+export const verificationDocuments = sqliteTable("verification_documents", {
+  id: text("id").primaryKey(), orderId: text("order_id").notNull().references(() => orders.id), kind: text("kind").notNull(), fileName: text("file_name").notNull(), contentType: text("content_type").notNull(),
+  r2Key: text("r2_key").notNull().unique(), encryptionIv: text("encryption_iv").notNull(), plaintextHash: text("plaintext_hash").notNull(), byteLength: integer("byte_length").notNull(),
+  status: text("status").notNull().default("PENDING_REVIEW"), retentionUntil: text("retention_until").notNull(), reviewedByAdminId: text("reviewed_by_admin_id"), reviewReason: text("review_reason"), createdAt: createdAt(),
+}, (table) => [index("idx_verification_documents_order").on(table.orderId, table.createdAt)]);
 
 export const contractDocuments = sqliteTable("contract_documents", {
   id: text("id").primaryKey(), orderId: text("order_id").notNull().references(() => orders.id),

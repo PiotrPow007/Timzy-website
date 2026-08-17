@@ -14,6 +14,7 @@ import { authenticateDraft, clientData, createDraft, DRAFT_COOKIE, publicOrder, 
 import { processProvisioning } from "./provisioning";
 import { runRetention } from "./retention";
 import { handleStripeTestWebhook, handleStripeWebhook } from "./webhooks";
+import { acceptSecondSigner, confirmCompany, createSecondSignerInvite, manualVerificationDecision, secondSignerDocumentContext, secondSignerSummary, sendEmailVerificationCode, storePowerOfAttorney, verificationForOrder, verifyCompany, verifyEmailCode } from "./company-verification";
 
 const CSRF_COOKIE = "timzy_contract_csrf";
 
@@ -53,12 +54,13 @@ function marketLocale(url: URL): { market: MarketCode; language: Locale } {
   if (!['PL', 'INTERNATIONAL'].includes(market) || !['pl', 'en', 'es'].includes(language)) throw new Error("Invalid catalogue scope"); return { market, language };
 }
 
-async function previewDocument(env: TimzyEnv, request: Request, format: string) {
+async function previewDocument(env: TimzyEnv, request: Request, format: string, requestedKind: string | null) {
   const context = await draftOrUnauthorized(env, request); const { quote, catalog } = await quoteForOrder(env.DB, context.order); const client = await clientData(env, context.order);
   if (!client) throw new Error("Company data is incomplete");
   const bundle = await buildContractBundle(env.DB, { orderId: context.order.id, orderNumber: context.order.order_number, quote, catalog, client, generatedAt: context.order.updated_at });
+  if (requestedKind) { if (!["AGREEMENT","TERMS","DPA","PRIVACY"].includes(requestedKind)) throw new Error("Unknown document type"); bundle.documents = bundle.documents.filter((document) => document.kind === requestedKind); if (bundle.documents.length !== 1) throw new Error("Document version is unavailable"); }
   if (format === "pdf") {
-    const pdf = await generateContractPdf(bundle, env.ASSETS); return new Response(pdf as BodyInit, { headers: { "content-type": "application/pdf", "content-disposition": `attachment; filename="Timzy-${context.order.order_number}.pdf"`, "cache-control": "no-store" } });
+    const pdf = await generateContractPdf(bundle, env.ASSETS); return new Response(pdf as BodyInit, { headers: { "content-type": "application/pdf", "content-disposition": `attachment; filename="Timzy-${context.order.order_number}${requestedKind ? `-${requestedKind}` : ""}.pdf"`, "cache-control": "no-store" } });
   }
   return new Response(renderContractHtml(bundle), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex, nofollow" } });
 }
@@ -90,19 +92,24 @@ async function finalDocument(env: TimzyEnv, request: Request, documentId: string
 }
 
 async function adminOrderDetail(env: TimzyEnv, id: string) {
-  const [order, items, acceptances, documents, deployments, notifications, jobs, audit] = await Promise.all([
-    env.DB.prepare("SELECT id, order_number, status, market_code, language, currency, contract_term, registration_country, billing_country, monthly_net_minor, one_time_net_minor, activation_fee_minor, estimated_tax_minor, final_tax_minor, final_total_minor, due_today_minor, deployment_days, stripe_customer_id, stripe_checkout_session_id, stripe_subscription_id, stripe_invoice_id, stripe_payment_intent_id, paid_at, created_at, updated_at FROM orders WHERE id=?").bind(id).first(),
+  const [order, items, acceptances, documents, deployments, notifications, jobs, audit, verification, verificationHistory, verificationDocuments, signers] = await Promise.all([
+    env.DB.prepare("SELECT id, order_number, status, verification_status, company_verification_id, market_code, language, currency, contract_term, registration_country, billing_country, monthly_net_minor, one_time_net_minor, activation_fee_minor, estimated_tax_minor, final_tax_minor, final_total_minor, due_today_minor, deployment_days, stripe_customer_id, stripe_checkout_session_id, stripe_subscription_id, stripe_invoice_id, stripe_payment_intent_id, paid_at, created_at, updated_at FROM orders WHERE id=?").bind(id).first(),
     env.DB.prepare("SELECT * FROM order_items WHERE order_id=? ORDER BY created_at").bind(id).all(), env.DB.prepare("SELECT * FROM contract_acceptances WHERE order_id=? ORDER BY revision DESC").bind(id).all(),
     env.DB.prepare("SELECT id,kind,content_type,plaintext_hash,byte_length,retention_until,created_at FROM contract_documents WHERE order_id=? ORDER BY created_at DESC").bind(id).all(),
     env.DB.prepare("SELECT * FROM deployment_statuses WHERE order_id=? ORDER BY created_at DESC").bind(id).all(), env.DB.prepare("SELECT * FROM email_notifications WHERE order_id=? ORDER BY created_at DESC").bind(id).all(),
     env.DB.prepare("SELECT * FROM provisioning_jobs WHERE order_id=?").bind(id).first(), env.DB.prepare("SELECT * FROM audit_logs WHERE entity_id=? ORDER BY created_at DESC LIMIT 100").bind(id).all(),
+    env.DB.prepare("SELECT id,market_code,adapter,entity_type,registry_country,registry_name,registration_number,tax_number,regon,legal_name,registered_address,postal_code,city,entity_type_name,registry_status,representation_method,company_result,representative_result,email_result,overall_status,reason_code,reason_detail,verification_source,source_retrieved_at,raw_snapshot_hash,risk_flags_json,client_confirmed_at,verified_at,manual_reviewed_by_admin_id,manual_review_reason,created_at,updated_at FROM company_verifications WHERE order_id=?").bind(id).first(),
+    env.DB.prepare("SELECT * FROM verification_status_history WHERE verification_id=(SELECT id FROM company_verifications WHERE order_id=?) ORDER BY created_at DESC").bind(id).all(),
+    env.DB.prepare("SELECT id,kind,file_name,content_type,plaintext_hash,byte_length,status,retention_until,reviewed_by_admin_id,review_reason,created_at FROM verification_documents WHERE order_id=? ORDER BY created_at DESC").bind(id).all(),
+    env.DB.prepare("SELECT id,signer_role,name,position,authority_basis,email_hash,email_verified_at,document_hash,accepted_at,status,created_at,updated_at FROM verification_signers WHERE order_id=? ORDER BY signer_role").bind(id).all(),
   ]);
-  if (!order) throw new Error("Order not found"); return { order, items: items.results, acceptances: acceptances.results, documents: documents.results, deployments: deployments.results, notifications: notifications.results, provisioning: jobs, audit: audit.results };
+  if (!order) throw new Error("Order not found"); return { order, items: items.results, acceptances: acceptances.results, documents: documents.results, deployments: deployments.results, notifications: notifications.results, provisioning: jobs, audit: audit.results,
+    verification, verificationHistory: verificationHistory.results, verificationDocuments: verificationDocuments.results, signers: signers.results };
 }
 
 export async function handleCommerceRequest(request: Request, env: TimzyEnv, ctx: TimzyExecutionContext, sendEmail: SendSystemEmail): Promise<Response | null> {
   const url = new URL(request.url); const path = url.pathname.replace(/\/+$/, "") || "/";
-  if (!path.startsWith("/api/commerce") && !path.startsWith("/api/admin") && !path.startsWith("/api/stripe")) return null;
+  if (!path.startsWith("/api/commerce") && !path.startsWith("/api/company-verification") && !path.startsWith("/api/admin") && !path.startsWith("/api/stripe")) return null;
   try {
     if (request.method === "POST" && path === "/api/stripe/webhook/pl") return handleStripeWebhook(env, request, "PL", ctx, sendEmail);
     if (request.method === "POST" && path === "/api/stripe/webhook/international") return handleStripeWebhook(env, request, "INTERNATIONAL", ctx, sendEmail);
@@ -115,7 +122,41 @@ export async function handleCommerceRequest(request: Request, env: TimzyEnv, ctx
       return jsonResponse({ ok: true, csrfToken: csrf.token, order: publicOrder(draft.order) }, 200, headers);
     }
     if (request.method === "GET" && path === "/api/commerce/catalog") { const scope = marketLocale(url); return jsonResponse({ ok: true, catalog: await loadCatalog(env.DB, scope.market, scope.language) }); }
-    if (request.method === "GET" && path === "/api/commerce/draft") { const draft = await draftOrUnauthorized(env, request); return jsonResponse({ ok: true, order: publicOrder(draft.order), selection: JSON.parse(draft.order.selection_json), client: await clientData(env, draft.order) }); }
+    if (request.method === "GET" && path === "/api/commerce/draft") { const draft = await draftOrUnauthorized(env, request); return jsonResponse({ ok: true, order: publicOrder(draft.order), selection: JSON.parse(draft.order.selection_json), client: await clientData(env, draft.order), verification: await verificationForOrder(env.DB, draft.order.id) }); }
+    if (request.method === "GET" && path === "/api/company-verification") { const draft = await draftOrUnauthorized(env, request); return jsonResponse({ ok: true, verification: await verificationForOrder(env.DB, draft.order.id) }); }
+    if (request.method === "GET" && path === "/api/company-verification/second-signer") { await rateLimit(env, request, "second-signer-view", 30, 10 * 60_000); return jsonResponse({ ok: true, summary: await secondSignerSummary(env, url.searchParams.get("token")) }); }
+    if (request.method === "GET" && path === "/api/company-verification/second-signer/document") {
+      await rateLimit(env, request, "second-signer-document", 30, 10 * 60_000); const signer = await secondSignerDocumentContext(env, url.searchParams.get("token")); const { quote, catalog } = await quoteForOrder(env.DB, signer.order);
+      const bundle = await buildContractBundle(env.DB, { orderId: signer.order.id, orderNumber: signer.order.order_number, quote, catalog, client: signer.client, generatedAt: signer.order.updated_at });
+      if (url.searchParams.get("format") === "pdf") { const pdf = await generateContractPdf(bundle, env.ASSETS); return new Response(pdf as BodyInit, { headers: { "content-type": "application/pdf", "content-disposition": `attachment; filename="Timzy-${signer.order.order_number}.pdf"`, "cache-control": "private, no-store" } }); }
+      return new Response(renderContractHtml(bundle), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "private, no-store", "x-robots-tag": "noindex, nofollow" } });
+    }
+    if (request.method === "POST" && path === "/api/company-verification/second-signer/accept") { await rateLimit(env, request, "second-signer-accept", 10, 10 * 60_000); return jsonResponse({ ok: true, ...(await acceptSecondSigner(env, request, await readJson(request, 12_000))) }); }
+    if (request.method === "POST" && path === "/api/company-verification/lookup") {
+      requirePublicCsrf(request); await rateLimit(env, request, "company-registry", 12, 10 * 60_000); const draft = await draftOrUnauthorized(env, request);
+      return jsonResponse({ ok: true, verification: await verifyCompany(env, draft, await readJson(request, 16_000)) });
+    }
+    if (request.method === "POST" && path === "/api/company-verification/confirm") {
+      requirePublicCsrf(request); await rateLimit(env, request, "company-confirm", 12, 10 * 60_000); const draft = await draftOrUnauthorized(env, request);
+      return jsonResponse({ ok: true, verification: await confirmCompany(env, draft, await readJson(request, 16_000)) });
+    }
+    if (request.method === "POST" && path === "/api/company-verification/email/send") {
+      requirePublicCsrf(request); await rateLimit(env, request, "company-email-send", 5, 10 * 60_000); const draft = await draftOrUnauthorized(env, request);
+      return jsonResponse({ ok: true, ...(await sendEmailVerificationCode(env, draft.order, sendEmail)) });
+    }
+    if (request.method === "POST" && path === "/api/company-verification/email/verify") {
+      requirePublicCsrf(request); await rateLimit(env, request, "company-email-verify", 10, 10 * 60_000); const draft = await draftOrUnauthorized(env, request); const payload = await readJson(request, 4_000) as Record<string, unknown>;
+      return jsonResponse({ ok: true, verification: await verifyEmailCode(env, draft.order, payload.code) });
+    }
+    if (request.method === "POST" && path === "/api/company-verification/second-signer/invite") {
+      requirePublicCsrf(request); await rateLimit(env, request, "second-signer-invite", 4, 60 * 60_000); const draft = await draftOrUnauthorized(env, request);
+      return jsonResponse({ ok: true, ...(await createSecondSignerInvite(env, draft.order, await readJson(request, 12_000), sendEmail, env.APP_BASE_URL ?? url.origin)) });
+    }
+    if (request.method === "POST" && path === "/api/company-verification/power-of-attorney") {
+      requirePublicCsrf(request); await rateLimit(env, request, "power-of-attorney-upload", 4, 60 * 60_000); const draft = await draftOrUnauthorized(env, request);
+      const contentType = (request.headers.get("content-type") ?? "").split(";")[0].toLowerCase(); const fileName = decodeURIComponent(request.headers.get("x-file-name") ?? "power-of-attorney");
+      return jsonResponse({ ok: true, document: await storePowerOfAttorney(env, draft.order, new Uint8Array(await request.arrayBuffer()), fileName, contentType), verification: await verificationForOrder(env.DB, draft.order.id) });
+    }
     if (request.method === "POST" && path === "/api/commerce/draft") {
       requirePublicCsrf(request); await rateLimit(env, request, "commerce-draft", 30, 60_000); const draft = await draftOrUnauthorized(env, request); const payload = await readJson(request) as Record<string, unknown>;
       const result = await saveDraft(env, draft, payload.selection, payload.client); return jsonResponse({ ok: true, order: publicOrder(result.order), quote: result.quote, catalog: result.catalog, acceptanceInvalidated: result.acceptanceInvalidated });
@@ -128,7 +169,7 @@ export async function handleCommerceRequest(request: Request, env: TimzyEnv, ctx
       requirePublicCsrf(request); await rateLimit(env, request, "commerce-quote", 60, 60_000); const payload = await readJson(request) as Record<string, unknown>; const selection = parseSelection(payload.selection);
       const catalog = await loadCatalog(env.DB, selection.market, selection.language); return jsonResponse({ ok: true, quote: await calculateQuote(catalog, selection), catalog });
     }
-    if (request.method === "GET" && path === "/api/commerce/document-preview") return previewDocument(env, request, url.searchParams.get("format") ?? "html");
+    if (request.method === "GET" && path === "/api/commerce/document-preview") return previewDocument(env, request, url.searchParams.get("format") ?? "html", url.searchParams.get("kind"));
     if (request.method === "POST" && path === "/api/commerce/accept") {
       requirePublicCsrf(request); await rateLimit(env, request, "commerce-accept", 10, 60_000); const draft = await draftOrUnauthorized(env, request); const payload = await readJson(request) as Record<string, unknown>;
       const result = await acceptContract(env, request, draft, payload.acceptance); return jsonResponse({ ok: true, order: publicOrder(result.order), documentHash: result.documentHash });
@@ -172,6 +213,17 @@ export async function handleCommerceRequest(request: Request, env: TimzyEnv, ctx
       if (request.method === "POST" && path === "/api/admin/markets") return jsonResponse({ ok: true, market: await updateMarket(env, admin, await readJson(request)) });
       if (request.method === "POST" && path === "/api/admin/legal-entities") return jsonResponse({ ok: true, legalEntity: await updateLegalEntity(env, admin, await readJson(request)) });
       const orderMatch = path.match(/^\/api\/admin\/orders\/([^/]+)$/); if (request.method === "GET" && orderMatch) return jsonResponse({ ok: true, detail: await adminOrderDetail(env, orderMatch[1]) });
+      const verificationDocument = path.match(/^\/api\/admin\/verification-documents\/([^/]+)$/); if (request.method === "GET" && verificationDocument) {
+        const document = await env.DB.prepare("SELECT * FROM verification_documents WHERE id=?").bind(verificationDocument[1]).first<{ id: string; order_id: string; file_name: string; content_type: string; r2_key: string; encryption_iv: string; plaintext_hash: string }>();
+        if (!document || !env.DATA_ENCRYPTION_KEY) throw new Error("Verification document not found"); const object = await env.DOCUMENTS.get(document.r2_key); if (!object) throw new Error("Verification document object not found");
+        const plaintext = await decryptBytes(new Uint8Array(await object.arrayBuffer()), document.encryption_iv, env.DATA_ENCRYPTION_KEY); if (await sha256(plaintext) !== document.plaintext_hash) throw new Error("Verification document integrity check failed");
+        await auditAdmin(env, admin, "VERIFICATION_DOCUMENT_DOWNLOADED", "Order", document.order_id, null, { documentId: document.id, plaintextHash: document.plaintext_hash });
+        return new Response(plaintext as BodyInit, { headers: { "content-type": document.content_type, "content-disposition": `attachment; filename="${document.file_name.replace(/[\r\n"]/g, "_")}"`, "cache-control": "private, no-store", "x-content-type-options": "nosniff" } });
+      }
+      const verificationDecision = path.match(/^\/api\/admin\/orders\/([^/]+)\/verification-decision$/); if (request.method === "POST" && verificationDecision) {
+        const before = await verificationForOrder(env.DB, verificationDecision[1]); const verification = await manualVerificationDecision(env, admin.id, verificationDecision[1], await readJson(request));
+        await auditAdmin(env, admin, "COMPANY_VERIFICATION_DECIDED", "Order", verificationDecision[1], before, verification); return jsonResponse({ ok: true, verification });
+      }
       const retryProvisioning = path.match(/^\/api\/admin\/orders\/([^/]+)\/retry-provisioning$/); if (request.method === "POST" && retryProvisioning) { const retried = await env.DB.prepare("UPDATE provisioning_jobs SET status='QUEUED', next_attempt_at=NULL, safe_error=NULL WHERE order_id=? AND status IN ('FAILED','WAITING_CONFIGURATION')").bind(retryProvisioning[1]).run(); if ((retried.meta.changes ?? 0) === 0) throw new Error("Provisioning is not eligible for retry"); ctx.waitUntil(processProvisioning(env, retryProvisioning[1])); await auditAdmin(env, admin, "PROVISIONING_RETRIED", "Order", retryProvisioning[1], null, null); return jsonResponse({ ok: true }); }
       const retryEmail = path.match(/^\/api\/admin\/orders\/([^/]+)\/resend-notifications$/); if (request.method === "POST" && retryEmail) { await env.DB.prepare("UPDATE email_notifications SET status='QUEUED', next_attempt_at=NULL WHERE order_id=?").bind(retryEmail[1]).run(); ctx.waitUntil(processOrderNotifications(env, retryEmail[1], sendEmail)); await auditAdmin(env, admin, "NOTIFICATIONS_RETRIED", "Order", retryEmail[1], null, null); return jsonResponse({ ok: true }); }
       const deploymentStatus = path.match(/^\/api\/admin\/orders\/([^/]+)\/deployment-status$/); if (request.method === "POST" && deploymentStatus) return jsonResponse({ ok: true, deployment: await addDeploymentStatus(env, admin, deploymentStatus[1], await readJson(request)) });

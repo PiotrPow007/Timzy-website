@@ -6,6 +6,7 @@ const statusPl: Record<string, string> = {
   AWAITING_PAYMENT: "Oczekiwanie na płatność", AWAITING_CLIENT_DATA: "Oczekiwanie na dane klienta", CLIENT_DATA_COMPLETE: "Dane klienta kompletne", IMPLEMENTATION_STARTED: "Wdrożenie rozpoczęte",
   CONFIGURATION: "Konfiguracja", TESTING: "Testy", AWAITING_CLIENT_APPROVAL: "Oczekiwanie na akceptację klienta", SUBMITTED_GOOGLE_PLAY: "Wysłano do Google Play", SUBMITTED_APPLE_APP_STORE: "Wysłano do Apple App Store",
   AWAITING_STORE_DECISION: "Oczekiwanie na decyzję sklepu", PUBLISHED: "Opublikowane", IMPLEMENTATION_COMPLETED: "Wdrożenie zakończone", IMPLEMENTATION_PAUSED: "Wdrożenie wstrzymane",
+  NOT_STARTED: "Nie rozpoczęto", FETCHING: "Pobieranie danych", COMPANY_VERIFIED: "Firma zweryfikowana", EMAIL_VERIFICATION_REQUIRED: "Wymagane potwierdzenie e-maila", EMAIL_VERIFIED: "E-mail potwierdzony", REPRESENTATION_CHECK_REQUIRED: "Wymagane sprawdzenie reprezentacji", SECOND_SIGNER_REQUIRED: "Wymagany drugi podpisujący", POWER_OF_ATTORNEY_REQUIRED: "Wymagane pełnomocnictwo", MANUAL_REVIEW_REQUIRED: "Wymagana ręczna weryfikacja", VERIFIED: "Zweryfikowano", REJECTED: "Odrzucono", REGISTRY_UNAVAILABLE: "Rejestr niedostępny",
 };
 
 export function adminStatusLabel(value: unknown, locale: AdminLocale): string { const raw = String(value ?? ""); return locale === "pl" ? statusPl[raw] ?? raw : raw; }

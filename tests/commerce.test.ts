@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { calculateQuote, quoteHasStripePrices, quoteRequiresSubscription } from "../lib/commerce/pricing";
-import { parseSelection } from "../lib/commerce/validation";
+import { marketForBillingCountry, parseSelection } from "../lib/commerce/validation";
 import type { CommerceCatalog, Locale, MarketCode, OrderSelection } from "../lib/commerce/types";
 
 function catalog(market: MarketCode, language: Locale, options: { included?: boolean; planPrice?: number; addonPrice?: number } = {}): CommerceCatalog {
@@ -47,6 +47,7 @@ test("included add-on is present even when the browser does not submit it", asyn
 test("monthly add-on increases the recurring amount", async () => { const chosen = selection("PL", "pl"); chosen.addons = [{ addonId: "addon-shop", quantity: 2 }]; const quote = await calculateQuote(catalog("PL", "pl"), chosen); assert.equal(quote.monthlyNetMinor, 14_000); assert.equal(quote.deploymentDays, 11); });
 test("one-time add-on is charged today but not on later invoices", async () => { const chosen = selection("INTERNATIONAL", "es"); chosen.addons = [{ addonId: "addon-brand", quantity: 2 }]; const quote = await calculateQuote(catalog("INTERNATIONAL", "es"), chosen); assert.equal(quote.oneTimeNetMinor, 10_000); assert.equal(quote.dueTodayNetMinor, 20_000); assert.equal(quote.nextMonthlyNetMinor, 10_000); });
 test("language changes do not change price", async () => { const values = await Promise.all((["pl","en","es"] as const).map((language) => calculateQuote(catalog("INTERNATIONAL", language), selection("INTERNATIONAL", language)))); assert.deepEqual(values.map((quote) => quote.monthlyNetMinor), [10_000,10_000,10_000]); });
+test("billing country automatically selects the payment market and currency", () => { assert.equal(marketForBillingCountry("PL"), "PL"); assert.equal(marketForBillingCountry("pl"), "PL"); assert.equal(marketForBillingCountry("DE"), "INTERNATIONAL"); assert.equal(marketForBillingCountry("ES"), "INTERNATIONAL"); });
 test("browser-supplied amount is discarded by parser and backend catalogue wins", async () => { const parsed = parseSelection({ ...selection("PL", "pl"), monthlyNetMinor: 1, price: 1 }); assert.equal("price" in parsed, false); const quote = await calculateQuote(catalog("PL", "pl"), parsed); assert.equal(quote.monthlyNetMinor, 10_000); });
 test("billing-country mismatch blocks a quote before payment", async () => { const wrong = selection("PL", "en"); wrong.billingCountry = "DE"; await assert.rejects(() => calculateQuote(catalog("PL", "en"), wrong), /different market/); });
 test("changing a published price changes the acceptance fingerprint", async () => { const first = await calculateQuote(catalog("PL", "pl", { planPrice: 10_000 }), selection("PL", "pl")); const second = await calculateQuote(catalog("PL", "pl", { planPrice: 11_000 }), selection("PL", "pl")); assert.notEqual(first.fingerprint, second.fingerprint); });
