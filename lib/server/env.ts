@@ -17,6 +17,7 @@ export interface TimzyEnv {
   STRIPE_PL_WEBHOOK_SECRET?: string;
   STRIPE_INTERNATIONAL_SECRET_KEY?: string;
   STRIPE_INTERNATIONAL_WEBHOOK_SECRET?: string;
+  STRIPE_TEST_WEBHOOK_SECRET?: string;
   SMTP_HOST?: string;
   SMTP_PORT?: string;
   SMTP_USERNAME?: string;

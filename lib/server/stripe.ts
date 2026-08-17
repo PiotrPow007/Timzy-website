@@ -30,6 +30,23 @@ async function stripePost(env: TimzyEnv, market: MarketCode, path: string, body:
   return payload;
 }
 
+export async function createStripeCatalogPrice(input: {
+  env: TimzyEnv; market: MarketCode; itemId: string; itemKind: "plan" | "addon" | "activation"; name: string;
+  currency: string; paymentType: "MONTHLY" | "ONE_TIME"; amountMinor: number; version: number;
+}): Promise<{ productId: string; priceId: string }> {
+  if (!Number.isInteger(input.amountMinor) || input.amountMinor <= 0) throw new Error("Stripe amount must be a positive integer in the smallest currency unit");
+  const productParams = new URLSearchParams(); productParams.set("name", input.name.slice(0, 250));
+  productParams.set("metadata[timzy_item_id]", input.itemId); productParams.set("metadata[timzy_item_kind]", input.itemKind); productParams.set("metadata[timzy_market]", input.market);
+  const product = await stripePost(input.env, input.market, "products", productParams, `timzy-product:${input.market}:${input.itemKind}:${input.itemId}`);
+  if (typeof product.id !== "string" || !product.id.startsWith("prod_")) throw new Error("Stripe did not return a Product ID");
+  const priceParams = new URLSearchParams(); priceParams.set("product", product.id); priceParams.set("currency", input.currency.toLowerCase()); priceParams.set("unit_amount", String(input.amountMinor));
+  priceParams.set("nickname", `Timzy ${input.market} v${input.version}`); priceParams.set("metadata[timzy_item_id]", input.itemId); priceParams.set("metadata[timzy_market]", input.market); priceParams.set("metadata[timzy_version]", String(input.version));
+  if (input.paymentType === "MONTHLY") priceParams.set("recurring[interval]", "month");
+  const price = await stripePost(input.env, input.market, "prices", priceParams, `timzy-price:${input.market}:${input.itemKind}:${input.itemId}:${input.currency}:${input.paymentType}:${input.amountMinor}:v${input.version}`);
+  if (typeof price.id !== "string" || !price.id.startsWith("price_")) throw new Error("Stripe did not return a Price ID");
+  return { productId: product.id, priceId: price.id };
+}
+
 function customerAddress(data: ClientLegalData) {
   return data.billingAddressDifferent
     ? { line1: data.billingAddress ?? "", postal_code: data.billingPostalCode ?? "", city: data.billingCity ?? "", country: data.billingCountry }
@@ -80,8 +97,10 @@ export async function createCheckoutSession(input: {
   if (quoteRequiresSubscription(quote)) {
     params.set("subscription_data[metadata][order_id]", orderId);
     params.set("subscription_data[metadata][contract_term]", quote.contractTerm);
+    params.set("subscription_data[metadata][market]", market);
   } else {
     params.set("payment_intent_data[metadata][order_id]", orderId);
+    params.set("payment_intent_data[metadata][market]", market);
   }
   const session = await stripePost(env, market, "checkout/sessions", params, `checkout:${market}:${orderId}:${quote.fingerprint}:${acceptanceRevision}`);
   if (typeof session.url !== "string") throw new Error("Stripe Checkout did not return a redirect URL");

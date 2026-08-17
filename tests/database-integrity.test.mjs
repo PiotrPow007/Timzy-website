@@ -7,14 +7,16 @@ import test from "node:test";
 
 const directory = mkdtempSync(join(tmpdir(), "timzy-db-test-"));
 const database = join(directory, "timzy.sqlite");
-for (const migration of ["0000_clean_miracleman.sql", "0001_timzy_catalog_seed.sql", "0002_naive_turbo.sql", "0003_striped_absorbing_man.sql", "0004_steep_morph.sql"]) {
+for (const migration of ["0000_clean_miracleman.sql", "0001_timzy_catalog_seed.sql", "0002_naive_turbo.sql", "0003_striped_absorbing_man.sql", "0004_steep_morph.sql", "0005_update_pl_activation_fee.sql", "0006_configure_basic_plan.sql"]) {
   execFileSync("sqlite3", [database], { input: readFileSync(new URL(`../drizzle/${migration}`, import.meta.url), "utf8") });
 }
 const sql = (statement) => execFileSync("sqlite3", [database, statement], { encoding: "utf8" }).trim();
 
 test("all migrations apply with valid catalogue seed and database integrity", () => {
   assert.equal(sql("PRAGMA integrity_check;"), "ok"); assert.equal(sql("SELECT COUNT(*) FROM addons;"), "15"); assert.equal(sql("SELECT COUNT(*) FROM contract_versions;"), "24");
-  assert.equal(sql("SELECT default_deployment_days FROM markets WHERE code='PL';"), "7"); assert.equal(sql("SELECT COUNT(*) FROM plan_prices;"), "0");
+  assert.equal(sql("SELECT activation_fee_open_minor FROM markets WHERE code='PL';"), "39900"); assert.equal(sql("SELECT default_deployment_days FROM markets WHERE code='PL';"), "7");
+  assert.equal(sql("SELECT group_concat(currency||':'||amount_minor,',') FROM (SELECT currency,amount_minor FROM plan_prices ORDER BY currency);"), "EUR:3900,PLN:12900");
+  assert.equal(sql("SELECT COUNT(*) FROM plan_prices WHERE status='DRAFT' AND stripe_price_id IS NULL;"), "2"); assert.equal(sql("SELECT COUNT(*) FROM plan_translations WHERE name='Basic';"), "3");
   assert.equal(sql("SELECT COUNT(*) FROM pragma_table_info('orders') WHERE name IN ('final_tax_minor','final_total_minor');"), "2");
 });
 
@@ -31,9 +33,9 @@ test("idempotency constraints prevent duplicate Stripe, notification and provisi
 });
 
 test("historical price versions cannot collide within the same scope", () => {
-  sql("INSERT INTO plan_prices(id,plan_id,market_id,currency,payment_type,amount_minor,version,effective_from,status) VALUES('price-1','plan_timzy_core','market_pl','PLN','MONTHLY',10000,1,'2026-01-01','ARCHIVED');");
-  const collision = spawnSync("sqlite3", [database, "INSERT INTO plan_prices(id,plan_id,market_id,currency,payment_type,amount_minor,version,effective_from,status) VALUES('price-2','plan_timzy_core','market_pl','PLN','MONTHLY',12000,1,'2026-02-01','ACTIVE');"]);
+  sql("INSERT INTO plan_prices(id,plan_id,market_id,currency,payment_type,amount_minor,version,effective_from,status) VALUES('price-1','plan_timzy_core','market_pl','PLN','MONTHLY',10000,2,'2026-01-01','ARCHIVED');");
+  const collision = spawnSync("sqlite3", [database, "INSERT INTO plan_prices(id,plan_id,market_id,currency,payment_type,amount_minor,version,effective_from,status) VALUES('price-2','plan_timzy_core','market_pl','PLN','MONTHLY',12000,2,'2026-02-01','ACTIVE');"]);
   assert.notEqual(collision.status, 0);
-  sql("INSERT INTO plan_prices(id,plan_id,market_id,currency,payment_type,amount_minor,version,effective_from,status) VALUES('price-2','plan_timzy_core','market_pl','PLN','MONTHLY',12000,2,'2026-02-01','ACTIVE');");
-  assert.equal(sql("SELECT group_concat(amount_minor,',') FROM (SELECT amount_minor FROM plan_prices ORDER BY version);"), "10000,12000");
+  sql("INSERT INTO plan_prices(id,plan_id,market_id,currency,payment_type,amount_minor,version,effective_from,status) VALUES('price-2','plan_timzy_core','market_pl','PLN','MONTHLY',12000,3,'2026-02-01','ACTIVE');");
+  assert.equal(sql("SELECT group_concat(amount_minor,',') FROM (SELECT amount_minor FROM plan_prices WHERE market_id='market_pl' ORDER BY version);"), "12900,10000,12000");
 });

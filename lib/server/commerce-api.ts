@@ -13,7 +13,7 @@ import { processOrderNotifications, type SendSystemEmail } from "./notifications
 import { authenticateDraft, clientData, createDraft, DRAFT_COOKIE, publicOrder, quoteForOrder, saveDraft, saveSelectionDraft, type DraftContext } from "./orders";
 import { processProvisioning } from "./provisioning";
 import { runRetention } from "./retention";
-import { handleStripeWebhook } from "./webhooks";
+import { handleStripeTestWebhook, handleStripeWebhook } from "./webhooks";
 
 const CSRF_COOKIE = "timzy_contract_csrf";
 
@@ -106,6 +106,7 @@ export async function handleCommerceRequest(request: Request, env: TimzyEnv, ctx
   try {
     if (request.method === "POST" && path === "/api/stripe/webhook/pl") return handleStripeWebhook(env, request, "PL", ctx, sendEmail);
     if (request.method === "POST" && path === "/api/stripe/webhook/international") return handleStripeWebhook(env, request, "INTERNATIONAL", ctx, sendEmail);
+    if (request.method === "POST" && path === "/api/stripe/webhook/test") return handleStripeTestWebhook(env, request, ctx, sendEmail);
 
     if (request.method === "GET" && path === "/api/commerce/bootstrap") {
       await rateLimit(env, request, "commerce-bootstrap", 60, 60_000); const csrf = await publicCsrf(request); let draft = await authenticateDraft(env.DB, request);

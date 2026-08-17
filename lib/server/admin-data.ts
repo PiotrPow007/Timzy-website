@@ -2,6 +2,7 @@ import { canonicalJson, sha256 } from "../commerce/security";
 import type { Locale, MarketCode, PaymentType } from "../commerce/types";
 import type { TimzyEnv } from "./env";
 import type { AdminPrincipal } from "./admin-auth";
+import { createStripeCatalogPrice } from "./stripe";
 
 function string(value: unknown, max = 500): string { return typeof value === "string" ? value.trim().slice(0, max) : ""; }
 function integer(value: unknown, min = 0, max = 100_000_000): number { const parsed = Number(value); if (!Number.isInteger(parsed) || parsed < min || parsed > max) throw new Error("Invalid numeric value"); return parsed; }
@@ -138,19 +139,33 @@ export async function addDeploymentStatus(env: TimzyEnv, admin: AdminPrincipal, 
 }
 
 export async function createPriceVersion(env: TimzyEnv, admin: AdminPrincipal, raw: unknown) {
-  const input = raw && typeof raw === "object" ? raw as Record<string, unknown> : {}; const kind = string(input.kind, 10);
-  if (!['plan', 'addon'].includes(kind)) throw new Error("Invalid price kind");
+  const input = raw && typeof raw === "object" ? raw as Record<string, unknown> : {}; const rawKind = string(input.kind, 10);
+  if (rawKind !== "plan" && rawKind !== "addon") throw new Error("Invalid price kind");
+  const kind: "plan" | "addon" = rawKind;
   const table = kind === "plan" ? "plan_prices" : "addon_prices"; const foreignKey = kind === "plan" ? "plan_id" : "addon_id";
   const itemId = string(input.itemId, 80); const marketId = string(input.marketId, 80); const paymentType = kind === "plan" ? string(input.paymentType, 20) as PaymentType : null;
   if (!itemId || !marketId || (kind === "plan" && !["MONTHLY", "ONE_TIME"].includes(paymentType ?? ""))) throw new Error("Price scope is incomplete");
   const previous = await env.DB.prepare(`SELECT MAX(version) version FROM ${table} WHERE ${foreignKey} = ? AND market_id = ?${kind === "plan" ? " AND payment_type = ?" : ""}`)
     .bind(...(kind === "plan" ? [itemId, marketId, paymentType] : [itemId, marketId])).first<{ version: number | null }>();
-  const market = await env.DB.prepare("SELECT currency FROM markets WHERE id = ?").bind(marketId).first<{ currency: string }>(); if (!market) throw new Error("Market not found");
+  const market = await env.DB.prepare("SELECT code,currency FROM markets WHERE id = ?").bind(marketId).first<{ code: MarketCode; currency: string }>(); if (!market) throw new Error("Market not found");
   const id = crypto.randomUUID(); const version = (previous?.version ?? 0) + 1; const effectiveFrom = string(input.effectiveFrom, 40) || new Date().toISOString();
+  const item = kind === "plan"
+    ? await env.DB.prepare("SELECT p.internal_key,t.name,NULL payment_type FROM plans p LEFT JOIN plan_translations t ON t.plan_id=p.id AND t.language='en' WHERE p.id=?").bind(itemId).first<{ internal_key: string; name: string | null; payment_type: null }>()
+    : await env.DB.prepare("SELECT a.internal_key,t.name,a.payment_type FROM addons a LEFT JOIN addon_translations t ON t.addon_id=a.id AND t.language='en' WHERE a.id=?").bind(itemId).first<{ internal_key: string; name: string | null; payment_type: PaymentType }>();
+  if (!item) throw new Error("Catalogue item not found");
+  const stripePaymentType: PaymentType | null = kind === "plan" ? paymentType : item.payment_type;
+  if (!stripePaymentType || !["MONTHLY", "ONE_TIME"].includes(stripePaymentType)) throw new Error("Invalid catalogue payment type");
+  const amountMinor = integer(input.amountMinor, 1); let stripeProductId = string(input.stripeProductId, 100); let stripePriceId = string(input.stripePriceId, 100);
+  if (Boolean(stripeProductId) !== Boolean(stripePriceId)) throw new Error("Provide both Stripe Product and Price IDs, or leave both empty for automatic test creation");
+  if (!stripeProductId && !stripePriceId) {
+    const stripe = await createStripeCatalogPrice({ env, market: market.code, itemId, itemKind: kind, name: `Timzy · ${item.name ?? item.internal_key}`, currency: market.currency,
+      paymentType: stripePaymentType, amountMinor, version });
+    stripeProductId = stripe.productId; stripePriceId = stripe.priceId;
+  }
   if (kind === "plan") await env.DB.prepare(`INSERT INTO plan_prices (id, plan_id, market_id, currency, payment_type, amount_minor, stripe_product_id, stripe_price_id, version, effective_from, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'DRAFT')`).bind(id, itemId, marketId, market.currency, paymentType, integer(input.amountMinor), string(input.stripeProductId, 100) || null, string(input.stripePriceId, 100) || null, version, effectiveFrom).run();
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'DRAFT')`).bind(id, itemId, marketId, market.currency, paymentType, amountMinor, stripeProductId, stripePriceId, version, effectiveFrom).run();
   else await env.DB.prepare(`INSERT INTO addon_prices (id, addon_id, market_id, currency, amount_minor, stripe_product_id, stripe_price_id, version, effective_from, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'DRAFT')`).bind(id, itemId, marketId, market.currency, integer(input.amountMinor), string(input.stripeProductId, 100) || null, string(input.stripePriceId, 100) || null, version, effectiveFrom).run();
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'DRAFT')`).bind(id, itemId, marketId, market.currency, amountMinor, stripeProductId, stripePriceId, version, effectiveFrom).run();
   const after = await env.DB.prepare(`SELECT * FROM ${table} WHERE id = ?`).bind(id).first(); await auditAdmin(env, admin, "PRICE_VERSION_CREATED", "Price", id, null, after, { kind }); return after;
 }
 

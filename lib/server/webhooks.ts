@@ -88,8 +88,7 @@ async function processEvent(env: TimzyEnv, event: StripeEvent, market: MarketCod
   return "PROCESSED";
 }
 
-export async function handleStripeWebhook(env: TimzyEnv, request: Request, market: MarketCode, ctx: TimzyExecutionContext, sendEmail: SendSystemEmail): Promise<Response> {
-  const rawBody = await request.text(); const event = await verifyStripeEvent(rawBody, request.headers.get("stripe-signature"), stripeWebhookSecret(env, market));
+async function persistAndProcessWebhook(env: TimzyEnv, rawBody: string, event: StripeEvent, market: MarketCode, ctx: TimzyExecutionContext, sendEmail: SendSystemEmail): Promise<Response> {
   const inserted = await env.DB.prepare(`INSERT OR IGNORE INTO stripe_events (id, market_code, event_type, object_id, payload_hash, processing_status)
     VALUES (?, ?, ?, ?, ?, 'RECEIVED')`).bind(event.id, market, event.type, event.data.object.id, await sha256(rawBody)).run();
   if ((inserted.meta.changes ?? 0) === 0) {
@@ -108,4 +107,18 @@ export async function handleStripeWebhook(env: TimzyEnv, request: Request, marke
       .bind((error instanceof Error ? error.message : "Webhook processing failed").slice(0, 300), new Date().toISOString(), event.id).run();
     throw error;
   }
+}
+
+export async function handleStripeWebhook(env: TimzyEnv, request: Request, market: MarketCode, ctx: TimzyExecutionContext, sendEmail: SendSystemEmail): Promise<Response> {
+  const rawBody = await request.text(); const event = await verifyStripeEvent(rawBody, request.headers.get("stripe-signature"), stripeWebhookSecret(env, market));
+  return persistAndProcessWebhook(env, rawBody, event, market, ctx, sendEmail);
+}
+
+export async function handleStripeTestWebhook(env: TimzyEnv, request: Request, ctx: TimzyExecutionContext, sendEmail: SendSystemEmail): Promise<Response> {
+  if (env.APP_ENV === "production") throw new Error("The shared Stripe test webhook is disabled in production");
+  if (!env.STRIPE_TEST_WEBHOOK_SECRET?.startsWith("whsec_")) throw new Error("Stripe test webhook secret is not configured");
+  const rawBody = await request.text(); const event = await verifyStripeEvent(rawBody, request.headers.get("stripe-signature"), env.STRIPE_TEST_WEBHOOK_SECRET);
+  const order = await findOrder(env, event); const market = order?.market_code;
+  if (market !== "PL" && market !== "INTERNATIONAL") throw new Error("Stripe test event cannot be reconciled to a market");
+  return persistAndProcessWebhook(env, rawBody, event, market, ctx, sendEmail);
 }

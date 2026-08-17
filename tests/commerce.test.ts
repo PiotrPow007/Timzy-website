@@ -8,7 +8,7 @@ function catalog(market: MarketCode, language: Locale, options: { included?: boo
   const currency = market === "PL" ? "PLN" : "EUR";
   return {
     market: {
-      id: `market-${market}`, code: market, currency, activationFeeOpenMinor: market === "PL" ? 35_900 : 9_900, activationFeeAnnualMinor: 0,
+      id: `market-${market}`, code: market, currency, activationFeeOpenMinor: market === "PL" ? 39_900 : 9_900, activationFeeAnnualMinor: 0,
       activationStripeProductId: "prod_activation", activationStripePriceId: "price_activation", defaultDeploymentDays: 7, legalConfigurationComplete: true,
       seller: market === "PL" ? { code: "7SOFTWARE", legalName: "7Software sp. z o.o.", taxId: "5272813760", registryNumber: "0000687703", regon: "367876297", addressLine1: "al. Jana Pawła II 27", postalCode: "00-000", city: "Warszawa", countryCode: "PL" }
         : { code: "INNOVARE", legalName: "INNOVARE GROUP LTD", companyNumber: "12878269", addressLine1: "7 Bell Yard", postalCode: "WC2A 2JR", city: "London", countryCode: "GB" },
@@ -40,7 +40,7 @@ for (const [market, seller, currency] of [["PL", "7Software sp. z o.o.", "PLN"],
 }
 
 test("12-month agreement has no activation fee", async () => { const quote = await calculateQuote(catalog("PL", "pl"), selection("PL", "pl")); assert.equal(quote.activationFeeMinor, 0); assert.equal(quote.dueTodayNetMinor, 10_000); assert.equal(quote.annualCommitmentNetMinor, 120_000); });
-test("open-ended Polish agreement charges configurable 359 PLN activation", async () => { const quote = await calculateQuote(catalog("PL", "pl"), selection("PL", "pl", "OPEN_ENDED")); assert.equal(quote.activationFeeMinor, 35_900); assert.equal(quote.dueTodayNetMinor, 45_900); });
+test("open-ended Polish agreement charges configurable 399 PLN activation", async () => { const quote = await calculateQuote(catalog("PL", "pl"), selection("PL", "pl", "OPEN_ENDED")); assert.equal(quote.activationFeeMinor, 39_900); assert.equal(quote.dueTodayNetMinor, 49_900); });
 test("open-ended international agreement charges configurable 99 EUR activation", async () => { const quote = await calculateQuote(catalog("INTERNATIONAL", "en"), selection("INTERNATIONAL", "en", "OPEN_ENDED")); assert.equal(quote.activationFeeMinor, 9_900); assert.equal(quote.dueTodayNetMinor, 19_900); });
 test("included add-on is displayed but never charged twice", async () => { const chosen = selection("PL", "pl"); chosen.addons = [{ addonId: "addon-shop", quantity: 1 }]; const quote = await calculateQuote(catalog("PL", "pl", { included: true }), chosen); const addOn = quote.lines.find((line) => line.catalogItemId === "addon-shop"); assert.equal(addOn?.included, true); assert.equal(addOn?.totalAmountMinor, 0); assert.equal(quote.monthlyNetMinor, 10_000); });
 test("included add-on is present even when the browser does not submit it", async () => { const quote = await calculateQuote(catalog("PL", "pl", { included: true }), selection("PL", "pl")); const addOn = quote.lines.find((line) => line.catalogItemId === "addon-shop"); assert.equal(addOn?.included, true); assert.equal(addOn?.totalAmountMinor, 0); });

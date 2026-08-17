@@ -36,6 +36,20 @@
       "when": 1786982789943,
       "tag": "0004_steep_morph",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1787004000000,
+      "tag": "0005_update_pl_activation_fee",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1787007600000,
+      "tag": "0006_configure_basic_plan",
+      "breakpoints": true
     }
   ]
 }

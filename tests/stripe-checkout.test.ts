@@ -1,11 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { ClientLegalData, CommerceQuote, MarketCatalog } from "../lib/commerce/types";
-import { createCheckoutSession } from "../lib/server/stripe";
+import { createCheckoutSession, createStripeCatalogPrice } from "../lib/server/stripe";
 import type { TimzyEnv } from "../lib/server/env";
 
 const market: MarketCatalog = {
-  id: "market_pl", code: "PL", currency: "PLN", activationFeeOpenMinor: 35_900, activationFeeAnnualMinor: 0,
+  id: "market_pl", code: "PL", currency: "PLN", activationFeeOpenMinor: 39_900, activationFeeAnnualMinor: 0,
   activationStripeProductId: "prod_activation", activationStripePriceId: "price_activation", defaultDeploymentDays: 7, legalConfigurationComplete: true,
   seller: { code: "7SOFTWARE", legalName: "7Software sp. z o.o.", taxId: "5272813760", addressLine1: "Test", postalCode: "00-001", city: "Warszawa", countryCode: "PL" },
   technologyProvider: { code: "INNOVARE", legalName: "INNOVARE GROUP LTD", companyNumber: "12878269", addressLine1: "7 Bell Yard", postalCode: "WC2A 2JR", city: "London", countryCode: "GB" },
@@ -57,4 +57,38 @@ test("one-time-only Checkout uses payment mode", async () => {
 test("live Stripe keys are rejected before any Checkout request", async () => {
   const env = { STRIPE_PL_SECRET_KEY: "sk_live_forbidden", APP_BASE_URL: "https://timzy.test" } as TimzyEnv;
   await assert.rejects(() => createCheckoutSession({ env, market: "PL", orderId: "order-1", orderNumber: "TZ-1", quote: quote("MONTHLY"), client, acceptanceRevision: 1 }), /Live Stripe keys are blocked/);
+});
+
+test("catalogue price creation creates a reusable Product and a monthly Price", async () => {
+  const calls: Array<{ url: string; init: RequestInit; body: URLSearchParams }> = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+    const url = String(input); const body = new URLSearchParams(String(init?.body ?? "")); calls.push({ url, init: init ?? {}, body });
+    return Response.json(url.endsWith("/products") ? { id: "prod_auto" } : { id: "price_auto" });
+  }) as typeof fetch;
+  try {
+    const result = await createStripeCatalogPrice({
+      env: { STRIPE_PL_SECRET_KEY: "sk_test_local" } as TimzyEnv,
+      market: "PL", itemId: "plan-core", itemKind: "plan", name: "Timzy · Core", currency: "PLN", paymentType: "MONTHLY", amountMinor: 39_900, version: 2,
+    });
+    assert.deepEqual(result, { productId: "prod_auto", priceId: "price_auto" });
+    assert.equal(calls[0].body.get("metadata[timzy_market]"), "PL");
+    assert.equal(calls[1].body.get("product"), "prod_auto");
+    assert.equal(calls[1].body.get("currency"), "pln");
+    assert.equal(calls[1].body.get("unit_amount"), "39900");
+    assert.equal(calls[1].body.get("recurring[interval]"), "month");
+    assert.equal((calls[0].init.headers as Record<string, string>)["idempotency-key"], "timzy-product:PL:plan:plan-core");
+  } finally { globalThis.fetch = originalFetch; }
+});
+
+test("one-time catalogue price does not add recurring parameters", async () => {
+  const bodies: URLSearchParams[] = []; const originalFetch = globalThis.fetch;
+  globalThis.fetch = (async (input: string | URL | Request, init?: RequestInit) => {
+    bodies.push(new URLSearchParams(String(init?.body ?? "")));
+    return Response.json(String(input).endsWith("/products") ? { id: "prod_once" } : { id: "price_once" });
+  }) as typeof fetch;
+  try {
+    await createStripeCatalogPrice({ env: { STRIPE_INTERNATIONAL_SECRET_KEY: "sk_test_local" } as TimzyEnv, market: "INTERNATIONAL", itemId: "activation", itemKind: "activation", name: "Timzy · Activation", currency: "EUR", paymentType: "ONE_TIME", amountMinor: 9_900, version: 1 });
+    assert.equal(bodies[1].has("recurring[interval]"), false);
+  } finally { globalThis.fetch = originalFetch; }
 });
