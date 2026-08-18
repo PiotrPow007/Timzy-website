@@ -118,7 +118,7 @@ export async function freezeOrder(env: TimzyEnv, order: OrderRow, quote: Commerc
   if (!env.DATA_ENCRYPTION_KEY) throw new Error("DATA_ENCRYPTION_KEY is not configured");
   const now = new Date().toISOString();
   const encryptedDocumentBundle = await encryptJson(documentBundle, env.DATA_ENCRYPTION_KEY);
-  const snapshot = canonicalJson({ schemaVersion: 1, capturedAt: now, market: quote.market, language: quote.language, currency: quote.currency, contractTerm: quote.contractTerm,
+  const snapshot = canonicalJson({ schemaVersion: 2, capturedAt: now, market: quote.market, language: quote.language, currency: quote.currency, contractTerm: quote.contractTerm,
     quote, documentVersions: catalog.documentVersions, documentHash, encryptedDocumentBundle });
   const snapshotHash = await sha256(snapshot);
   const verificationRetention = new Date(now); verificationRetention.setUTCFullYear(verificationRetention.getUTCFullYear() + 7);
@@ -128,6 +128,7 @@ export async function freezeOrder(env: TimzyEnv, order: OrderRow, quote: Commerc
     env.DB.prepare("INSERT INTO order_price_snapshots (id, order_id, snapshot_json, snapshot_hash) VALUES (?, ?, ?, ?)").bind(crypto.randomUUID(), order.id, snapshot, snapshotHash),
     env.DB.prepare("UPDATE orders SET immutable_snapshot_json = ?, status = 'PENDING_PAYMENT', updated_at = ? WHERE id = ?").bind(snapshot, now, order.id),
     env.DB.prepare("UPDATE verification_documents SET retention_until=? WHERE order_id=? AND status='APPROVED'").bind(verificationRetention.toISOString(), order.id),
+    env.DB.prepare("UPDATE order_assets SET retention_until=?,updated_at=? WHERE order_id=?").bind(verificationRetention.toISOString(), now, order.id),
   ];
   for (const line of quote.lines) statements.push(env.DB.prepare(`INSERT INTO order_items (id, order_id, item_type, catalog_item_id, price_version_id, payment_type, quantity, unit_amount_minor, total_amount_minor, stripe_price_id, snapshot_json)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`).bind(crypto.randomUUID(), order.id, line.itemType, line.catalogItemId, line.priceVersionId, line.paymentType, line.quantity,

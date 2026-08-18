@@ -7,7 +7,7 @@ import test from "node:test";
 
 const directory = mkdtempSync(join(tmpdir(), "timzy-db-test-"));
 const database = join(directory, "timzy.sqlite");
-for (const migration of ["0000_clean_miracleman.sql", "0001_timzy_catalog_seed.sql", "0002_naive_turbo.sql", "0003_striped_absorbing_man.sql", "0004_steep_morph.sql", "0005_update_pl_activation_fee.sql", "0006_configure_basic_plan.sql", "0007_company_verification.sql", "0008_add_uk_gbp_market.sql"]) {
+for (const migration of ["0000_clean_miracleman.sql", "0001_timzy_catalog_seed.sql", "0002_naive_turbo.sql", "0003_striped_absorbing_man.sql", "0004_steep_morph.sql", "0005_update_pl_activation_fee.sql", "0006_configure_basic_plan.sql", "0007_company_verification.sql", "0008_add_uk_gbp_market.sql", "0009_order_brand_assets.sql"]) {
   execFileSync("sqlite3", [database], { input: readFileSync(new URL(`../drizzle/${migration}`, import.meta.url), "utf8") });
 }
 const sql = (statement) => execFileSync("sqlite3", [database, statement], { encoding: "utf8" }).trim();
@@ -21,6 +21,7 @@ test("all migrations apply with valid catalogue seed and database integrity", ()
   assert.equal(sql("SELECT COUNT(*) FROM pragma_table_info('orders') WHERE name IN ('final_tax_minor','final_total_minor');"), "2");
   assert.equal(sql("SELECT COUNT(*) FROM pragma_table_info('orders') WHERE name IN ('verification_status','company_verification_id');"), "2");
   assert.equal(sql("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('company_verifications','verification_status_history','registry_verification_cache','email_verification_challenges','verification_signers','second_signer_invites','verification_documents');"), "7");
+  assert.equal(sql("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='order_assets';"), "1");
 });
 
 test("idempotency constraints prevent duplicate Stripe, notification and provisioning records", () => {

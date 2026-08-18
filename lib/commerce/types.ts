@@ -118,6 +118,7 @@ export type ClientLegalData = {
   brandName: string;
   domain?: string;
   appName: string;
+  appContactEmail: string;
   communicationLanguage: Locale;
   authorityConfirmed: boolean;
   companyDataConfirmed: boolean;

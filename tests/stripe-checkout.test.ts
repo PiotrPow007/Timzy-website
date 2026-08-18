@@ -14,7 +14,7 @@ const market: MarketCatalog = {
 const client: ClientLegalData = {
   legalName: "Client sp. z o.o.", legalForm: "sp. z o.o.", registrationCountry: "PL", registeredAddress: "ul. Testowa 1", postalCode: "00-001", city: "Warszawa",
   billingAddressDifferent: false, billingCountry: "PL", taxId: "PL123", companyNumber: "0000123456", entityType: "PL_KRS", registryName: "Krajowy Rejestr Sądowy", representativeName: "Jan Test", representativePosition: "Prezes", representativeAuthorityBasis: "Samodzielna reprezentacja zgodnie z KRS", businessEmail: "jan@example.com",
-  phone: "+48123456789", brandName: "Client", appName: "Client App", communicationLanguage: "pl", authorityConfirmed: true, companyDataConfirmed: true,
+  phone: "+48123456789", brandName: "Client", appName: "Client App", appContactEmail: "kontakt@example.com", communicationLanguage: "pl", authorityConfirmed: true, companyDataConfirmed: true,
 };
 
 function quote(paymentType: "MONTHLY" | "ONE_TIME"): CommerceQuote {

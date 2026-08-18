@@ -23,8 +23,9 @@ export async function processProvisioning(env: TimzyEnv, orderId: string) {
   const order = await env.DB.prepare("SELECT * FROM orders WHERE id=? AND status IN ('PAID','PROVISIONING')").bind(orderId).first<OrderRow>();
   if (!order?.client_data_encrypted || !order.immutable_snapshot_json) throw new Error("Paid order snapshot is unavailable");
   const client = await decryptJson<ClientLegalData>(order.client_data_encrypted, env.DATA_ENCRYPTION_KEY); const snapshot = JSON.parse(order.immutable_snapshot_json) as { quote: unknown };
-  const payload = canonicalJson({ schemaVersion: 1, orderId: order.id, orderNumber: order.order_number, sellerMarket: order.market_code, language: order.language,
-    legalTenantData: client, acceptedOffer: snapshot.quote, paidAt: order.paid_at });
+  const brandAssets = await env.DB.prepare("SELECT id,kind,file_name,content_type,plaintext_hash,byte_length FROM order_assets WHERE order_id=? ORDER BY kind").bind(order.id).all<Record<string, unknown>>();
+  const payload = canonicalJson({ schemaVersion: 2, orderId: order.id, orderNumber: order.order_number, sellerMarket: order.market_code, language: order.language,
+    legalTenantData: client, brandAssets: brandAssets.results, acceptedOffer: snapshot.quote, paidAt: order.paid_at });
   const now = new Date().toISOString();
   const claimed = await env.DB.prepare("UPDATE provisioning_jobs SET status='RUNNING', attempt_count=attempt_count+1, updated_at=? WHERE id=? AND status IN ('QUEUED','FAILED')").bind(now, job.id).run();
   if ((claimed.meta.changes ?? 0) === 0) return;

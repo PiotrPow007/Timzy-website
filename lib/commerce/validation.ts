@@ -39,12 +39,12 @@ export function parseClientData(value: unknown): ClientLegalData {
     representativeName: text(input.representativeName, 140), representativePosition: text(input.representativePosition, 120),
     representativeAuthorityBasis: text(input.representativeAuthorityBasis, 240),
     businessEmail: text(input.businessEmail, 180).toLowerCase(), phone: text(input.phone, 40), brandName: text(input.brandName, 140),
-    domain: text(input.domain, 200), appName: text(input.appName, 140), communicationLanguage: text(input.communicationLanguage, 2) as Locale,
+    domain: text(input.domain, 200), appName: text(input.appName, 140), appContactEmail: text(input.appContactEmail, 180).toLowerCase(), communicationLanguage: text(input.communicationLanguage, 2) as Locale,
     authorityConfirmed: bool(input.authorityConfirmed), companyDataConfirmed: bool(input.companyDataConfirmed),
   };
   const required = [result.legalName, result.legalForm, result.registrationCountry, result.registeredAddress, result.postalCode, result.city, result.billingCountry,
-    result.representativeName, result.representativePosition, result.representativeAuthorityBasis, result.businessEmail, result.phone, result.brandName, result.appName];
-  if (required.some((entry) => !entry) || !localeSet.has(result.communicationLanguage) || !/^\S+@\S+\.\S+$/.test(result.businessEmail) || !result.authorityConfirmed || !result.companyDataConfirmed) throw new Error("Required company data is incomplete");
+    result.representativeName, result.representativePosition, result.representativeAuthorityBasis, result.businessEmail, result.phone, result.brandName, result.appName, result.appContactEmail];
+  if (required.some((entry) => !entry) || !localeSet.has(result.communicationLanguage) || !/^\S+@\S+\.\S+$/.test(result.businessEmail) || !/^\S+@\S+\.\S+$/.test(result.appContactEmail) || !result.authorityConfirmed || !result.companyDataConfirmed) throw new Error("Required company data is incomplete");
   if (result.registrationCountry !== result.billingCountry) throw new Error("Company and billing country must be the same");
   if (result.registrationCountry === "PL" && result.entityType === "FOREIGN") throw new Error("A Polish company must use a Polish entity type");
   if (result.registrationCountry === "PL" && !result.taxId) throw new Error("Polish tax ID is required");

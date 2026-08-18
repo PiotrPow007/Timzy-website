@@ -507,8 +507,9 @@ export async function signingScopeHash(db: D1Database, order: OrderRow): Promise
   if (versions.results.length !== 4) throw new Error("Published legal documents are unavailable");
   const verification = await db.prepare("SELECT raw_snapshot_hash FROM company_verifications WHERE order_id=?").bind(order.id).first<{ raw_snapshot_hash: string | null }>();
   if (!verification?.raw_snapshot_hash) throw new Error("Registry snapshot is unavailable");
+  const brandAssets = await db.prepare("SELECT kind,file_name,content_type,plaintext_hash,byte_length FROM order_assets WHERE order_id=? ORDER BY kind").bind(order.id).all<Record<string, unknown>>();
   return sha256(canonicalJson({ orderId: order.id, quoteFingerprint: order.quote_fingerprint, clientDataHash: order.client_data_hash, registrySnapshotHash: verification.raw_snapshot_hash,
-    market: order.market_code, language: order.language, contractTerm: order.contract_term, documents: versions.results }));
+    market: order.market_code, language: order.language, contractTerm: order.contract_term, documents: versions.results, brandAssets: brandAssets.results }));
 }
 
 type SecondSignerPublicView = { orderNumber: string; language: "pl" | "en" | "es"; companyName: string; registrationNumber: string; signerName: string; position: string; authorityBasis: string; contractTerm: string; documentHash: string; expiresAt: string };

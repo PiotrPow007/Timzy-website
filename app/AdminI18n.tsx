@@ -35,7 +35,7 @@ const en = {
   loadingOrder: "Loading secured order…", administration: "Administration", orderEvidence: "ORDER EVIDENCE", retryProvisioning: "Retry provisioning", resendNotifications: "Resend notifications", actionFailed: "Action failed", orderUnavailable: "Order unavailable",
   addDeploymentStatus: "Add deployment status", expectedStart: "Expected start date", expectedReady: "Expected ready date", googleStatus: "Google Play status", appleStatus: "Apple App Store status", internalNote: "Internal note", recordStatus: "Record status",
   order: "Order", immutableItems: "Immutable line items", clickwrapAcceptance: "Clickwrap acceptance", download: "download", deploymentHistory: "Deployment history", emailHistory: "Email history", auditLog: "Audit log",
-  companyVerification: "Company verification", verificationHistory: "Verification status history", verificationDocuments: "Verification documents", signers: "Signers", verificationDecision: "Manual verification decision", decisionReason: "Detailed reason (required)", saveDecision: "Save verification decision",
+  companyVerification: "Company verification", verificationHistory: "Verification status history", verificationDocuments: "Verification documents", orderAssets: "Application and brand materials", signers: "Signers", verificationDecision: "Manual verification decision", decisionReason: "Detailed reason (required)", saveDecision: "Save verification decision",
 } as const;
 
 type AdminTextKey = keyof typeof en;
@@ -72,7 +72,7 @@ const pl: Record<AdminTextKey, string> = {
   loadingOrder: "Wczytywanie zabezpieczonego zamówienia…", administration: "Administracja", orderEvidence: "DOWODY ZAMÓWIENIA", retryProvisioning: "Ponów wdrożenie", resendNotifications: "Wyślij powiadomienia ponownie", actionFailed: "Nie udało się wykonać działania", orderUnavailable: "Zamówienie jest niedostępne",
   addDeploymentStatus: "Dodaj status wdrożenia", expectedStart: "Przewidywana data rozpoczęcia", expectedReady: "Przewidywana data gotowości", googleStatus: "Status Google Play", appleStatus: "Status Apple App Store", internalNote: "Notatka wewnętrzna", recordStatus: "Zapisz status",
   order: "Zamówienie", immutableItems: "Niezmienne pozycje", clickwrapAcceptance: "Akceptacja clickwrap", download: "pobierz", deploymentHistory: "Historia wdrożenia", emailHistory: "Historia wiadomości", auditLog: "Dziennik audytowy",
-  companyVerification: "Weryfikacja firmy", verificationHistory: "Historia statusów weryfikacji", verificationDocuments: "Dokumenty weryfikacyjne", signers: "Osoby podpisujące", verificationDecision: "Ręczna decyzja weryfikacyjna", decisionReason: "Szczegółowe uzasadnienie (wymagane)", saveDecision: "Zapisz decyzję weryfikacyjną",
+  companyVerification: "Weryfikacja firmy", verificationHistory: "Historia statusów weryfikacji", verificationDocuments: "Dokumenty weryfikacyjne", orderAssets: "Materiały aplikacji i marki", signers: "Osoby podpisujące", verificationDecision: "Ręczna decyzja weryfikacyjna", decisionReason: "Szczegółowe uzasadnienie (wymagane)", saveDecision: "Zapisz decyzję weryfikacyjną",
 };
 
 const translations = { en, pl };

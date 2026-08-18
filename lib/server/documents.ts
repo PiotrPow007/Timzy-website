@@ -3,13 +3,14 @@ import { PDFDocument, rgb } from "pdf-lib";
 import type { ClientLegalData, CommerceCatalog, CommerceQuote, Locale } from "../commerce/types";
 import { canonicalJson, encryptBytes, sha256 } from "../commerce/security";
 import type { TimzyEnv } from "./env";
+import { brandLogoSnapshot, type OrderAssetView } from "./order-assets";
 
 type DocumentKind = "AGREEMENT" | "TERMS" | "DPA" | "PRIVACY";
 type VersionContent = { title?: string; sections?: string[] };
 type ContractVersionRow = { id: string; kind: DocumentKind; version: number; content_json: string; content_hash: string };
 
 export type ContractBundle = {
-  schemaVersion: 1;
+  schemaVersion: 2;
   orderId: string;
   orderNumber: string;
   generatedAt: string;
@@ -18,6 +19,7 @@ export type ContractBundle = {
   seller: CommerceQuote["market"]["seller"];
   technologyProvider: CommerceQuote["market"]["technologyProvider"];
   client: ClientLegalData;
+  brandAssets: OrderAssetView[];
   commercialSummary: {
     market: string; currency: string; contractTerm: string; lines: CommerceQuote["lines"]; monthlyNetMinor: number; oneTimeNetMinor: number;
     activationFeeMinor: number; annualCommitmentNetMinor: number | null; deploymentDays: number;
@@ -58,7 +60,7 @@ const rollout: Record<Locale, string> = {
   es: "El plazo estándar de preparación e implementación de la versión básica de Timzy es de aproximadamente 7 días laborables desde la recepción del pago requerido y de todos los datos, materiales y aprobaciones correctos del Cliente. El plazo puede variar según el paquete, las funciones adicionales, las integraciones, la rapidez de colaboración y la revisión de Google Play y Apple App Store. El tiempo de revisión de Google o Apple no depende del Vendedor ni del Proveedor de Tecnología.",
 };
 
-function mandatoryTerms(language: Locale, quote: CommerceQuote): string[] {
+function mandatoryTerms(language: Locale, quote: CommerceQuote, client: ClientLegalData): string[] {
   const annual = {
     pl: "Umowa ma minimalny okres 12 miesięcy. Abonament jest płatny miesięcznie z góry. Zwolnienie z opłaty aktywacyjnej jest udzielane w zamian za 12-miesięczne zobowiązanie. Po tym okresie umowa przechodzi na czas nieokreślony z 30-dniowym okresem wypowiedzenia.",
     en: "The agreement has a minimum term of 12 months and is billed monthly in advance. The activation-fee waiver is provided in exchange for the 12-month commitment. It then continues indefinitely with 30 days' notice.",
@@ -83,7 +85,17 @@ function mandatoryTerms(language: Locale, quote: CommerceQuote): string[] {
     en: "INNOVARE GROUP LTD is both the Seller and Technology Provider. 7Software sp. z o.o. is not a party. The agreement and any non-contractual obligations arising from or connected with it are governed by English law. The courts of England and Wales have exclusive jurisdiction, subject to mandatory applicable law.",
     es: "INNOVARE GROUP LTD es el Vendedor y el Proveedor de Tecnología. 7Software sp. z o.o. no es parte del contrato. El contrato y las obligaciones extracontractuales relacionadas se rigen por el Derecho inglés. Los tribunales de Inglaterra y Gales tendrán jurisdicción exclusiva, sin perjuicio de las normas imperativas aplicables.",
   }[language];
-  return [quote.contractTerm === "ANNUAL_12" ? annual : open, recurring, provider, rollout[language]];
+  const appDisclosures = {
+    pl: `Klient potwierdza, że publicznym adresem kontaktowym przeznaczonym do wyświetlania w aplikacji jest ${client.appContactEmail}. Dane identyfikacyjne i kontaktowe Klienta, w tym nazwa firmy lub marki oraz ten adres e-mail, zostaną zamieszczone w aplikacji, jej Polityce prywatności i Regulaminie odpowiednio do zakresu potrzebnego do wskazania administratora danych, usługodawcy lub właściwego kontaktu. Klient odpowiada za poprawność tych danych i niezwłoczne zgłaszanie ich zmian.`,
+    en: `The Client confirms that ${client.appContactEmail} is the public contact address to be displayed in the application. The Client's identification and contact details, including its company or brand name and this email address, will be included in the application, its Privacy Policy and Terms as appropriate to identify the data controller, service provider or relevant contact. The Client is responsible for their accuracy and for promptly reporting changes.`,
+    es: `El Cliente confirma que ${client.appContactEmail} es la dirección pública de contacto que se mostrará en la aplicación. Los datos identificativos y de contacto del Cliente, incluidos el nombre de la empresa o marca y este correo electrónico, se incluirán en la aplicación, su Política de privacidad y sus Condiciones según corresponda para identificar al responsable del tratamiento, al prestador del servicio o al contacto pertinente. El Cliente responde de su exactitud y de comunicar sin demora cualquier cambio.`,
+  }[language];
+  const brandLicence = {
+    pl: "Jeżeli Klient przekazuje logo lub inne materiały marki, potwierdza, że ma prawo z nich korzystać i zezwala Sprzedawcy oraz Dostawcy Technologii na ich utrwalanie i używanie w aplikacji oraz materiałach sklepowych wyłącznie w celu wykonania Umowy.",
+    en: "If the Client supplies a logo or other brand materials, it confirms that it has the right to use them and permits the Seller and Technology Provider to reproduce and use them in the application and app-store materials solely to perform the Agreement.",
+    es: "Si el Cliente facilita un logotipo u otros materiales de marca, confirma que tiene derecho a utilizarlos y autoriza al Vendedor y al Proveedor de Tecnología a reproducirlos y usarlos en la aplicación y en los materiales de las tiendas únicamente para ejecutar el Contrato.",
+  }[language];
+  return [quote.contractTerm === "ANNUAL_12" ? annual : open, recurring, provider, appDisclosures, brandLicence, rollout[language]];
 }
 
 export async function buildContractBundle(db: D1Database, input: { orderId: string; orderNumber: string; quote: CommerceQuote; catalog: CommerceCatalog; client: ClientLegalData; generatedAt?: string; acceptanceEvidence?: AcceptanceEvidence }): Promise<ContractBundle> {
@@ -98,16 +110,18 @@ export async function buildContractBundle(db: D1Database, input: { orderId: stri
     const content = JSON.parse(row.content_json) as VersionContent;
     return { kind: row.kind, versionId: row.id, version: row.version, contentHash: row.content_hash, title: content.title ?? row.kind, sections: Array.isArray(content.sections) ? content.sections : [] };
   }).sort((left, right) => left.kind.localeCompare(right.kind));
+  const brandAssets = await brandLogoSnapshot(db, input.orderId);
   const bundle: ContractBundle = {
-    schemaVersion: 1, orderId: input.orderId, orderNumber: input.orderNumber, generatedAt: input.generatedAt ?? new Date().toISOString(), language: input.catalog.language,
+    schemaVersion: 2, orderId: input.orderId, orderNumber: input.orderNumber, generatedAt: input.generatedAt ?? new Date().toISOString(), language: input.catalog.language,
     quoteFingerprint: input.quote.fingerprint, seller: input.quote.market.seller, technologyProvider: input.quote.market.technologyProvider, client: input.client,
+    brandAssets,
     commercialSummary: { market: input.quote.market.code, currency: input.quote.currency, contractTerm: input.quote.contractTerm, lines: input.quote.lines,
       monthlyNetMinor: input.quote.monthlyNetMinor, oneTimeNetMinor: input.quote.oneTimeNetMinor, activationFeeMinor: input.quote.activationFeeMinor,
       annualCommitmentNetMinor: input.quote.annualCommitmentNetMinor, deploymentDays: input.quote.deploymentDays },
-    documents, mandatoryTerms: mandatoryTerms(input.catalog.language, input.quote),
+    documents, mandatoryTerms: mandatoryTerms(input.catalog.language, input.quote, input.client),
   };
   if (input.acceptanceEvidence) {
-    const contentEvidence = { orderId: bundle.orderId, quoteFingerprint: bundle.quoteFingerprint, seller: bundle.seller, client: bundle.client, commercialSummary: bundle.commercialSummary,
+    const contentEvidence = { orderId: bundle.orderId, quoteFingerprint: bundle.quoteFingerprint, seller: bundle.seller, client: bundle.client, brandAssets: bundle.brandAssets, commercialSummary: bundle.commercialSummary,
       documents: bundle.documents, mandatoryTerms: bundle.mandatoryTerms, verificationSnapshotHash: input.acceptanceEvidence.verificationSnapshotHash };
     bundle.acceptanceCertificate = {
       title: input.catalog.language === "pl" ? "Certyfikat zawarcia umowy elektronicznej" : input.catalog.language === "es" ? "Certificado de celebración electrónica del contrato" : "Electronic agreement certificate",
@@ -128,9 +142,9 @@ function escapeHtml(value: string): string { return value.replace(/[&<>"']/g, (c
 
 function documentLabels(language: Locale) {
   return {
-    pl: { parties: "Strony", summary: "Podsumowanie handlowe", item: "Pozycja", quantity: "Liczba", net: "Netto", type: "Rodzaj", included: "Zawarte w pakiecie", monthly: "Miesięcznie netto", oneTime: "Jednorazowo netto", seller: "SPRZEDAWCA", client: "KLIENT" },
-    en: { parties: "Parties", summary: "Commercial summary", item: "Item", quantity: "Qty", net: "Net", type: "Type", included: "Included in the plan", monthly: "Monthly net", oneTime: "One-time net", seller: "SELLER", client: "CLIENT" },
-    es: { parties: "Partes", summary: "Resumen comercial", item: "Concepto", quantity: "Cantidad", net: "Neto", type: "Tipo", included: "Incluido en el plan", monthly: "Mensual neto", oneTime: "Único neto", seller: "VENDEDOR", client: "CLIENTE" },
+    pl: { parties: "Strony", brand: "Dane aplikacji i marki", appName: "Nazwa aplikacji", contactEmail: "Publiczny e-mail kontaktowy", logo: "Przekazane logo", noLogo: "Nie przekazano", summary: "Podsumowanie handlowe", item: "Pozycja", quantity: "Liczba", net: "Netto", type: "Rodzaj", included: "Zawarte w pakiecie", monthly: "Miesięcznie netto", oneTime: "Jednorazowo netto", seller: "SPRZEDAWCA", client: "KLIENT" },
+    en: { parties: "Parties", brand: "Application and brand details", appName: "Application name", contactEmail: "Public contact email", logo: "Supplied logo", noLogo: "Not supplied", summary: "Commercial summary", item: "Item", quantity: "Qty", net: "Net", type: "Type", included: "Included in the plan", monthly: "Monthly net", oneTime: "One-time net", seller: "SELLER", client: "CLIENT" },
+    es: { parties: "Partes", brand: "Datos de la aplicación y la marca", appName: "Nombre de la aplicación", contactEmail: "Correo público de contacto", logo: "Logotipo facilitado", noLogo: "No facilitado", summary: "Resumen comercial", item: "Concepto", quantity: "Cantidad", net: "Neto", type: "Tipo", included: "Incluido en el plan", monthly: "Mensual neto", oneTime: "Único neto", seller: "VENDEDOR", client: "CLIENTE" },
   }[language];
 }
 
@@ -142,7 +156,8 @@ export function renderContractHtml(bundle: ContractBundle): string {
   const items = bundle.commercialSummary.lines.map((line) => `<tr><td>${escapeHtml(line.name)}</td><td>${line.quantity}</td><td>${line.included ? labels.included : money(line.totalAmountMinor)}</td><td>${line.paymentType}</td></tr>`).join("");
   const docs = bundle.documents.map((document) => `<section><h2>${escapeHtml(document.title)} · v${document.version}</h2>${document.sections.map((section) => `<p>${escapeHtml(section)}</p>`).join("")}</section>`).join("");
   const certificate = bundle.acceptanceCertificate ? `<section class="certificate"><h2>${escapeHtml(bundle.acceptanceCertificate.title)}</h2>${bundle.acceptanceCertificate.signers.map((signer) => `<p><b>${escapeHtml(signer.name)}</b> · ${escapeHtml(signer.position)}<br>${escapeHtml(signer.email)} · ${escapeHtml(signer.acceptedAt)}</p>`).join("")}<p>${escapeHtml(bundle.acceptanceCertificate.companyName)} · ${escapeHtml(bundle.acceptanceCertificate.registrationNumber)}</p><p>${escapeHtml(bundle.acceptanceCertificate.confirmedEmail)} · ${escapeHtml(bundle.acceptanceCertificate.acceptedAt)} · ${escapeHtml(bundle.acceptanceCertificate.timezone)}</p><p>${escapeHtml(bundle.acceptanceCertificate.method)}</p><p>Content hash: <code>${escapeHtml(bundle.acceptanceCertificate.acceptedContentHash)}</code><br>Registry snapshot hash: <code>${escapeHtml(bundle.acceptanceCertificate.verificationSnapshotHash)}</code></p>${bundle.acceptanceCertificate.statements.map((statement) => `<p>✓ ${escapeHtml(statement)}</p>`).join("")}</section>` : "";
-  return `<!doctype html><html lang="${bundle.language}"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>${escapeHtml(bundle.orderNumber)}</title><style>body{font:15px/1.6 Arial,sans-serif;color:#20192b;max-width:850px;margin:40px auto;padding:0 24px}h1,h2{line-height:1.2}table{width:100%;border-collapse:collapse}td,th{padding:8px;border:1px solid #ddd;text-align:left}.meta{color:#665d70}.certificate{break-before:page;margin-top:50px;padding-top:30px;border-top:3px solid #6f48ec}.certificate code{overflow-wrap:anywhere}</style></head><body><h1>Timzy · ${escapeHtml(bundle.orderNumber)}</h1><p class="meta">${escapeHtml(bundle.generatedAt)} · ${escapeHtml(bundle.commercialSummary.market)} · ${escapeHtml(bundle.commercialSummary.currency)}</p><h2>${labels.parties}</h2><p><b>${escapeHtml(bundle.seller.legalName)}</b>, ${escapeHtml([bundle.seller.addressLine1,bundle.seller.postalCode,bundle.seller.city].filter(Boolean).join(", "))}</p><p><b>${escapeHtml(bundle.client.legalName)}</b>, ${escapeHtml(`${bundle.client.registeredAddress}, ${bundle.client.postalCode} ${bundle.client.city}`)}</p><h2>${labels.summary}</h2><table><thead><tr><th>${labels.item}</th><th>${labels.quantity}</th><th>${labels.net}</th><th>${labels.type}</th></tr></thead><tbody>${items}</tbody></table><p>${labels.monthly}: <b>${money(bundle.commercialSummary.monthlyNetMinor)}</b><br>${labels.oneTime}: <b>${money(bundle.commercialSummary.oneTimeNetMinor)}</b></p>${bundle.mandatoryTerms.map((term) => `<p>${escapeHtml(term)}</p>`).join("")}${docs}${certificate}</body></html>`;
+  const logo = bundle.brandAssets[0];
+  return `<!doctype html><html lang="${bundle.language}"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><title>${escapeHtml(bundle.orderNumber)}</title><style>body{font:15px/1.6 Arial,sans-serif;color:#20192b;max-width:850px;margin:40px auto;padding:0 24px}h1,h2{line-height:1.2}table{width:100%;border-collapse:collapse}td,th{padding:8px;border:1px solid #ddd;text-align:left}.meta{color:#665d70}.certificate{break-before:page;margin-top:50px;padding-top:30px;border-top:3px solid #6f48ec}.certificate code{overflow-wrap:anywhere}</style></head><body><h1>Timzy · ${escapeHtml(bundle.orderNumber)}</h1><p class="meta">${escapeHtml(bundle.generatedAt)} · ${escapeHtml(bundle.commercialSummary.market)} · ${escapeHtml(bundle.commercialSummary.currency)}</p><h2>${labels.parties}</h2><p><b>${escapeHtml(bundle.seller.legalName)}</b>, ${escapeHtml([bundle.seller.addressLine1,bundle.seller.postalCode,bundle.seller.city].filter(Boolean).join(", "))}</p><p><b>${escapeHtml(bundle.client.legalName)}</b>, ${escapeHtml(`${bundle.client.registeredAddress}, ${bundle.client.postalCode} ${bundle.client.city}`)}</p><h2>${labels.brand}</h2><p>${labels.appName}: <b>${escapeHtml(bundle.client.appName)}</b><br>${labels.contactEmail}: <b>${escapeHtml(bundle.client.appContactEmail)}</b><br>${labels.logo}: <b>${logo ? `${escapeHtml(logo.fileName)} · SHA-256 ${escapeHtml(logo.plaintextHash)}` : labels.noLogo}</b></p><h2>${labels.summary}</h2><table><thead><tr><th>${labels.item}</th><th>${labels.quantity}</th><th>${labels.net}</th><th>${labels.type}</th></tr></thead><tbody>${items}</tbody></table><p>${labels.monthly}: <b>${money(bundle.commercialSummary.monthlyNetMinor)}</b><br>${labels.oneTime}: <b>${money(bundle.commercialSummary.oneTimeNetMinor)}</b></p>${bundle.mandatoryTerms.map((term) => `<p>${escapeHtml(term)}</p>`).join("")}${docs}${certificate}</body></html>`;
 }
 
 function plainText(bundle: ContractBundle): string[] {
@@ -151,7 +166,8 @@ function plainText(bundle: ContractBundle): string[] {
   const content = [
     `TIMZY · ${bundle.orderNumber}`, `${bundle.generatedAt} · ${bundle.commercialSummary.market} · ${bundle.commercialSummary.currency}`, "",
     `${labels.seller}: ${bundle.seller.legalName}`, [bundle.seller.addressLine1, bundle.seller.postalCode, bundle.seller.city].filter(Boolean).join(", "),
-    `${labels.client}: ${bundle.client.legalName}`, `${bundle.client.registeredAddress}, ${bundle.client.postalCode} ${bundle.client.city}`, "", labels.summary.toUpperCase(),
+    `${labels.client}: ${bundle.client.legalName}`, `${bundle.client.registeredAddress}, ${bundle.client.postalCode} ${bundle.client.city}`, "", labels.brand.toUpperCase(),
+    `${labels.appName}: ${bundle.client.appName}`, `${labels.contactEmail}: ${bundle.client.appContactEmail}`, `${labels.logo}: ${bundle.brandAssets[0] ? `${bundle.brandAssets[0].fileName} · SHA-256 ${bundle.brandAssets[0].plaintextHash}` : labels.noLogo}`, "", labels.summary.toUpperCase(),
     ...bundle.commercialSummary.lines.map((line) => `${line.name} · ${line.quantity} · ${line.included ? labels.included : money(line.totalAmountMinor)} · ${line.paymentType}`),
     `${labels.monthly}: ${money(bundle.commercialSummary.monthlyNetMinor)}`, `${labels.oneTime}: ${money(bundle.commercialSummary.oneTimeNetMinor)}`, "",
     ...bundle.mandatoryTerms.flatMap((term) => [term, ""]),

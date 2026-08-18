@@ -944,6 +944,11 @@ footer { padding: 70px max(32px, calc((100vw - 1280px) / 2)) 30px; color: white;
 .contract-field input, .contract-field select, .admin-form input, .admin-form select, .admin-form textarea { width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid #dcd5e3; border-radius: 11px; color: #271f31; background: white; outline: 0; font: inherit; font-size: 12px; }
 .contract-field input:focus, .contract-field select:focus, .admin-form input:focus, .admin-form select:focus, .admin-form textarea:focus { border-color: var(--violet); box-shadow: 0 0 0 3px rgba(111,72,236,.1); }
 .contract-field input[readonly] { color: #544c5d; background: #f4f1f7; cursor: not-allowed; }
+.contract-field-hint { margin: 9px 0 18px; color: var(--muted); font-size: 10px; line-height: 1.55; }
+.brand-logo-upload { margin: 20px 0; padding: 18px; border: 1px solid #ded8e5; border-radius: 14px; background: white; }
+.brand-logo-upload input[type=file] { padding: 11px 12px; cursor: pointer; }
+.brand-logo-upload > small { display: block; margin-top: 8px; color: var(--muted); font-size: 9px; line-height: 1.5; }
+.brand-logo-upload .verification-success { margin-bottom: 0; overflow-wrap: anywhere; }
 .choice-grid, .plan-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; }
 .choice-grid.three { grid-template-columns: repeat(3,minmax(0,1fr)); }
 .choice-card, .plan-card { min-height: 122px; padding: 20px; border: 1px solid #ded8e5; border-radius: 17px; color: inherit; background: white; cursor: pointer; text-align: left; transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease; }

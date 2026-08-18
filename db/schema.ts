@@ -114,6 +114,12 @@ export const orderChanges = sqliteTable("order_changes", {
   changedFieldsJson: text("changed_fields_json").notNull(), previousFingerprint: text("previous_fingerprint"), nextFingerprint: text("next_fingerprint"), createdAt: createdAt(),
 }, (table) => [uniqueIndex("uq_order_change_revision").on(table.orderId, table.revision)]);
 
+export const orderAssets = sqliteTable("order_assets", {
+  id: text("id").primaryKey(), orderId: text("order_id").notNull().references(() => orders.id), kind: text("kind", { enum: ["BRAND_LOGO"] }).notNull(),
+  fileName: text("file_name").notNull(), contentType: text("content_type").notNull(), r2Key: text("r2_key").notNull().unique(), encryptionIv: text("encryption_iv").notNull(),
+  plaintextHash: text("plaintext_hash").notNull(), byteLength: integer("byte_length").notNull(), retentionUntil: text("retention_until").notNull(), createdAt: createdAt(), updatedAt: updatedAt(),
+}, (table) => [uniqueIndex("uq_order_asset_kind").on(table.orderId, table.kind), index("idx_order_assets_retention").on(table.retentionUntil)]);
+
 export const contractAcceptances = sqliteTable("contract_acceptances", {
   id: text("id").primaryKey(), orderId: text("order_id").notNull().references(() => orders.id), revision: integer("revision").notNull(),
   acceptedByName: text("accepted_by_name").notNull(), acceptedByPosition: text("accepted_by_position").notNull(), acceptedByEmail: text("accepted_by_email").notNull(),
