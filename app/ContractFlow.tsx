@@ -42,6 +42,8 @@ const companyCountries = [
 
 type ForeignIdentifierRule = { labels: Record<Locale, string>; registryName: string; taxBased?: boolean };
 const defaultForeignIdentifier: ForeignIdentifierRule = { labels: { pl: "Numer rejestrowy firmy", en: "Company registration number", es: "Número de registro de la empresa" }, registryName: "National company register" };
+const euViesCountries = new Set(["AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PT", "RO", "SE", "SI", "SK"]);
+const euVatIdentifier: ForeignIdentifierRule = { labels: { pl: "Numer VAT UE", en: "EU VAT number", es: "Número de IVA UE" }, registryName: "EU VIES", taxBased: true };
 const foreignIdentifierRules: Record<string, ForeignIdentifierRule> = {
   GB: { labels: { pl: "Company number", en: "Company number", es: "Company number" }, registryName: "Companies House" },
   ES: { labels: { pl: "NIF / CIF", en: "NIF / CIF", es: "NIF / CIF" }, registryName: "Registro Mercantil", taxBased: true },
@@ -63,7 +65,17 @@ const foreignIdentifierRules: Record<string, ForeignIdentifierRule> = {
   AE: { labels: { pl: "Numer licencji handlowej", en: "Trade licence number", es: "Número de licencia comercial" }, registryName: "Local economic department" },
 };
 
-function foreignIdentifierForCountry(country: string): ForeignIdentifierRule { return foreignIdentifierRules[country] ?? defaultForeignIdentifier; }
+function foreignIdentifierForCountry(country: string): ForeignIdentifierRule {
+  if (euViesCountries.has(country)) {
+    const labels = country === "ES" ? { pl: "NIF-IVA", en: "Spanish VAT number (NIF-IVA)", es: "NIF-IVA" }
+      : country === "DE" ? { pl: "USt-IdNr. / numer VAT UE", en: "USt-IdNr. / EU VAT number", es: "USt-IdNr. / número de IVA UE" }
+        : country === "IT" ? { pl: "Partita IVA", en: "Partita IVA / EU VAT number", es: "Partita IVA / número de IVA UE" }
+          : country === "PT" ? { pl: "NIF / NIPC zarejestrowany w VIES", en: "NIF / NIPC registered in VIES", es: "NIF / NIPC registrado en VIES" }
+            : euVatIdentifier.labels;
+    return { ...euVatIdentifier, labels };
+  }
+  return foreignIdentifierRules[country] ?? defaultForeignIdentifier;
+}
 function currencyForMarket(market: MarketCode): "PLN" | "GBP" | "EUR" { return market === "PL" ? "PLN" : market === "UK" ? "GBP" : "EUR"; }
 
 const copy = {
@@ -190,7 +202,7 @@ export function ContractFlow({ initialLocale }: { initialLocale: Locale }) {
     if (csrf) void loadCatalog(nextSelection).catch((failure) => setError(failure instanceof Error ? failure.message : "Catalogue unavailable"));
     trackEvent("company_country_selected", { country, market });
   };
-  const setClientField = (name: keyof ClientLegalData, value: string | boolean) => { const verificationSensitive = ["legalName","legalForm","registeredAddress","postalCode","city","taxId","companyNumber","registryName","representativeName","representativePosition","representativeAuthorityBasis","businessEmail"].includes(name); if (verificationSensitive) setVerification((current) => current ? { ...current, clientConfirmed: false } : current); setClient((current) => ({ ...current, [name]: value, ...(verificationSensitive ? { companyDataConfirmed: false } : {}) })); };
+  const setClientField = (name: keyof ClientLegalData, value: string | boolean) => { const verificationSensitive = ["legalName","legalForm","registeredAddress","postalCode","city","taxId","companyNumber","registryName","representativeName","representativePosition","representativeAuthorityBasis","businessEmail"].includes(name); const identifierChanged = ["taxId","companyNumber","registryName"].includes(name); if (verificationSensitive) setVerification((current) => identifierChanged ? null : current ? { ...current, clientConfirmed: false } : current); setClient((current) => ({ ...current, [name]: value, ...(verificationSensitive ? { companyDataConfirmed: false } : {}) })); };
   const setForeignIdentifier = (value: string) => { setClientField("companyNumber", value); if (foreignIdentifier.taxBased) setClientField("taxId", value); };
   const selectedPlan = catalog?.plans.find((plan) => plan.id === selection.planId);
   const toggleAddon = (addonId: string, enabled: boolean) => { setSelection((current) => ({ ...current, addons: enabled ? [...current.addons, { addonId, quantity: 1 }] : current.addons.filter((item) => item.addonId !== addonId) })); trackEvent("addon_selected", { addon_id: addonId, selected: enabled }); };
@@ -207,13 +219,16 @@ export function ContractFlow({ initialLocale }: { initialLocale: Locale }) {
   const uploadPowerOfAttorney = async (file: File | null) => { if (!file) return; setBusy(true); setError(""); try { const response = await fetch("/api/company-verification/power-of-attorney", { method: "POST", credentials: "same-origin", headers: { "x-csrf-token": csrf, "x-file-name": encodeURIComponent(file.name), "content-type": file.type }, body: file }); const result = await response.json() as ApiResult; if (!response.ok || !result.ok) throw new Error(result.message || "Upload failed"); setVerification(result.verification as CompanyVerificationView); setVerificationNotice(t.uploadPending); } catch (failure) { setError(failure instanceof Error ? failure.message : "Upload failed"); } finally { setBusy(false); } };
   const finish = async () => { setBusy(true); setError(""); try { const accepted = await api("/api/commerce/accept", { method: "POST", headers: { "x-csrf-token": csrf }, body: JSON.stringify({ acceptance: { ...acceptance, timezone: Intl.DateTimeFormat().resolvedOptions().timeZone } }) }); setOrder(accepted.order as OrderView); trackEvent("contract_accepted", { market: selection.market, contract_term: selection.contractTerm }); const checkout = await api("/api/commerce/checkout", { method: "POST", headers: { "x-csrf-token": csrf }, body: "{}" }); trackEvent("checkout_started", { market: selection.market, currency: quote?.currency, contract_term: selection.contractTerm }); window.location.assign(checkout.checkoutUrl as string); } catch (failure) { setError(failure instanceof Error ? failure.message : "Checkout could not be started"); } finally { setBusy(false); } };
   const allAccepted = acceptance.companyData && acceptance.agreementAndTerms && acceptance.dataProcessing && acceptance.authority && acceptance.recurringPayment && (selection.contractTerm !== "ANNUAL_12" || acceptance.annualCommitment);
-  const officialDataLocked = Boolean(verification && verification.adapter !== "MANUAL");
+  const officialDataLocked = Boolean(verification && verification.adapter !== "MANUAL" && verification.legalName && verification.entityTypeName && verification.registeredAddress && verification.postalCode && verification.city);
+  const registryLookupHint = locale === "pl" ? "Dane są pobierane z KRS, CEIDG, Companies House lub VIES zależnie od kraju. Dla firmy z UE wpisz aktywny numer VAT UE."
+    : locale === "es" ? "Los datos se obtienen de KRS, CEIDG, Companies House o VIES según el país. Para una empresa de la UE, introduce un número de IVA UE activo."
+      : "Data is retrieved from KRS, CEIDG, Companies House or VIES depending on the country. For an EU company, enter an active EU VAT number.";
   const selectedCompanyCountry = companyCountries.find((country) => country.code === selection.registrationCountry) ?? companyCountries[0];
   const companyScopeFields = <div className="verification-card">
     <div className="company-country-lock"><span>{t.companyCountry}</span><b>{selectedCompanyCountry[locale]}</b><small>{selectedCompanyCountry.code} · {selectedCurrency}</small></div>
     {selection.registrationCountry === "PL" ? <label className="contract-field"><span>{t.entityType} *</span><select value={client.entityType} onChange={(event) => selectEntityType(event.target.value as CompanyEntityType)}><option value="PL_KRS">{t.krsEntity}</option><option value="PL_CEIDG">{t.ceidgEntity}</option><option value="OTHER_PL">{t.otherEntity}</option></select></label> : null}
     <div className="contract-grid two">{client.entityType === "PL_KRS" ? <Field label="Numer KRS" name="companyNumber" value={client.companyNumber ?? ""} onChange={setClientField} /> : null}{client.entityType === "PL_CEIDG" ? <Field label="NIP" name="taxId" value={client.taxId} onChange={setClientField} /> : null}{client.entityType === "OTHER_PL" ? <><Field label={t.registryName} name="registryName" value={client.registryName ?? ""} onChange={setClientField} /><Field label={t.fields.companyNumber} name="companyNumber" value={client.companyNumber ?? ""} onChange={setClientField} /></> : null}{client.entityType === "FOREIGN" ? <label className="contract-field"><span>{foreignIdentifier.labels[locale]} *</span><input value={client.companyNumber ?? ""} onChange={(event) => setForeignIdentifier(event.target.value)} /></label> : null}</div>
-    {client.entityType === "FOREIGN" ? <small className="registry-source">{t.registryName}: {foreignIdentifier.registryName}</small> : null}
+    {client.entityType === "FOREIGN" ? <small className="registry-source">{t.registryName}: {foreignIdentifier.registryName}</small> : null}<small className="registry-source">{registryLookupHint}</small>
   </div>;
 
   return <main className="contract-page" lang={locale}><header className="contract-header"><a href={locale === "pl" ? "/pl/" : locale === "es" ? "/es/" : "/"}><img src="/assets/timzy-logo-official-purple.png" width="307" height="158" alt="Timzy" /></a><span>{order?.orderNumber}</span></header><div className="contract-shell"><nav className="contract-progress" aria-label={locale === "pl" ? "Postęp zawierania umowy" : locale === "es" ? "Progreso de contratación" : "Contract progress"}>{processLabels[locale].map((label, index) => index === 1 ? null : <span key={label} aria-current={index === phase ? "step" : undefined} className={index === phase ? "is-current" : index < phase ? "is-complete" : ""}><i>{index < phase ? "✓" : index === 0 ? 1 : index}</i>{label}</span>)}</nav><div className={phase <= 2 ? "contract-workspace contract-workspace--single" : "contract-workspace"}><section className="contract-main"><p className="eyebrow">TIMZY CONTRACT</p><h1>{t.title}</h1><p className="contract-intro">{t.intro}</p>{error ? <div className="contract-error" role="alert">{error}</div> : null}

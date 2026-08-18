@@ -57,6 +57,10 @@ type ConfirmInput = {
 class RegistryUnavailableError extends Error {}
 class RegistryNotFoundError extends Error {}
 
+const viesCountries = new Set([
+  "AT", "BE", "BG", "CY", "CZ", "DE", "DK", "EE", "ES", "FI", "FR", "GR", "HR", "HU", "IE", "IT", "LT", "LU", "LV", "MT", "NL", "PT", "RO", "SE", "SI", "SK",
+]);
+
 function clean(value: unknown, max = 240): string { return typeof value === "string" ? value.trim().slice(0, max) : ""; }
 function object(value: unknown): Record<string, unknown> { return value && typeof value === "object" ? value as Record<string, unknown> : {}; }
 function array(value: unknown): unknown[] { return Array.isArray(value) ? value : []; }
@@ -79,6 +83,17 @@ export function normalizeNip(value: unknown): string {
   const checksum = weights.reduce((sum, weight, index) => sum + weight * Number(nip[index]), 0) % 11;
   if (checksum === 10 || checksum !== Number(nip[9])) throw new Error("NIP checksum is invalid");
   return nip;
+}
+
+export function normalizeEuVatNumber(country: string, value: unknown): string {
+  const normalizedCountry = clean(country, 2).toUpperCase();
+  if (!viesCountries.has(normalizedCountry)) throw new Error("VIES is not available for this country");
+  const viesCountry = normalizedCountry === "GR" ? "EL" : normalizedCountry;
+  let vatNumber = clean(value, 40).toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if (vatNumber.startsWith(viesCountry)) vatNumber = vatNumber.slice(viesCountry.length);
+  else if (vatNumber.startsWith(normalizedCountry)) vatNumber = vatNumber.slice(normalizedCountry.length);
+  if (!/^[A-Z0-9]{2,14}$/.test(vatNumber)) throw new Error("EU VAT number has an invalid format");
+  return vatNumber;
 }
 
 export function mapKrsResponse(raw: unknown, now = new Date().toISOString()): RegistrySnapshot {
@@ -123,6 +138,22 @@ export function mapCeidgResponse(raw: unknown, expectedNip: string, now = new Da
   };
 }
 
+export function mapPolishVatResponse(raw: unknown, expectedNip: string, now = new Date().toISOString()): RegistrySnapshot {
+  const subject = object(object(raw).result && object(object(raw).result).subject);
+  if (!Object.keys(subject).length) throw new RegistryNotFoundError("Polish VAT register entry was not found");
+  const status = clean(subject.statusVat, 100).toUpperCase(); const sourceAddress = clean(subject.residenceAddress ?? subject.workingAddress, 400);
+  const addressMatch = sourceAddress.match(/^(.*?)(?:,\s*)?(\d{2}-\d{3})\s+(.+)$/); const riskFlags: string[] = [];
+  if (status && !/(CZYNNY|ZWOLNIONY)/.test(status)) riskFlags.push("NON_ACTIVE_VAT_STATUS");
+  if (!sourceAddress) riskFlags.push("LIMITED_REGISTRY_DATA");
+  return {
+    legalName: clean(subject.name, 300), registrationNumber: clean(subject.krs, 40), taxNumber: clean(subject.nip, 20) || expectedNip,
+    regon: clean(subject.regon, 20), country: "PL", registeredAddress: clean(addressMatch?.[1] ?? sourceAddress, 300),
+    postalCode: clean(addressMatch?.[2], 24), city: clean(addressMatch?.[3], 120), entityType: "PODATNIK VAT", status: status || "UNKNOWN",
+    representationMethod: "", representatives: [], representativeNamesComplete: false, jointRepresentation: false, riskFlags,
+    verificationSource: "POLISH_VAT_WHITELIST", verifiedAt: now,
+  };
+}
+
 export function mapCompaniesHouseResponse(profileRaw: unknown, officersRaw: unknown, now = new Date().toISOString()): RegistrySnapshot {
   const profile = object(profileRaw); const office = object(profile.registered_office_address); const officers = array(object(officersRaw).items)
     .map(object).filter((officer) => !officer.resigned_on && clean(officer.officer_role, 80).includes("director"));
@@ -133,6 +164,33 @@ export function mapCompaniesHouseResponse(profileRaw: unknown, officersRaw: unkn
     registeredAddress: address([office.premises, office.address_line_1, office.address_line_2]), postalCode: clean(office.postal_code, 24), city: clean(office.locality, 120),
     entityType: clean(profile.type, 120), status, representationMethod: "Active director", representatives: officers.map((officer) => clean(officer.name, 180)).filter(Boolean),
     representativeNamesComplete: officers.length > 0, jointRepresentation: false, riskFlags, verificationSource: "COMPANIES_HOUSE_API", verifiedAt: now,
+  };
+}
+
+function viesValue(value: unknown, max = 300): string {
+  const result = clean(value, max);
+  return !result || /^-+$/.test(result) ? "" : result;
+}
+
+export function mapViesResponse(raw: unknown, country: string, expectedVatNumber: string, now = new Date().toISOString()): RegistrySnapshot {
+  const response = object(raw); const errorCode = clean(response.userError ?? response.error, 100).toUpperCase();
+  if (errorCode && /UNAVAILABLE|TIMEOUT|CONCURRENT|BUSY|SERVER_ERROR/.test(errorCode)) throw new RegistryUnavailableError(`VIES registry unavailable (${errorCode})`);
+  if (response.valid !== true && response.isValid !== true) throw new RegistryNotFoundError("VAT number is not active in VIES");
+  const approximate = object(response.viesApproximate);
+  const legalName = viesValue(response.name) || viesValue(response.traderName) || viesValue(approximate.name);
+  const fullAddress = viesValue(response.address, 600);
+  const street = viesValue(response.traderStreet, 300) || viesValue(approximate.street, 300);
+  const postalCode = viesValue(response.traderPostalCode, 24) || viesValue(approximate.postalCode, 24);
+  const city = viesValue(response.traderCity, 120) || viesValue(approximate.city, 120);
+  const entityType = viesValue(response.traderCompanyType, 180) || viesValue(approximate.companyType, 180);
+  const vatNumber = normalizeEuVatNumber(country, response.vatNumber ?? response.originalVatNumber ?? expectedVatNumber);
+  const riskFlags: string[] = [];
+  if (!legalName || !(street || fullAddress)) riskFlags.push("LIMITED_REGISTRY_DATA");
+  return {
+    legalName, registrationNumber: vatNumber, taxNumber: vatNumber, regon: "", country,
+    registeredAddress: street || fullAddress.replace(/\s*[\r\n]+\s*/g, ", "), postalCode, city, entityType,
+    status: "VAT_REGISTERED", representationMethod: "", representatives: [], representativeNamesComplete: false, jointRepresentation: false,
+    riskFlags, verificationSource: `EU_VIES:${country}`, verifiedAt: now,
   };
 }
 
@@ -155,6 +213,30 @@ async function fetchJson(url: string, init: RequestInit = {}, fetcher: typeof fe
   throw lastError;
 }
 
+async function fetchText(url: string, init: RequestInit = {}, fetcher: typeof fetch = fetch): Promise<string> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 8_000);
+    try {
+      const response = await fetcher(url, { ...init, signal: controller.signal, headers: { accept: "text/xml", ...(init.headers ?? {}) } });
+      if (response.status === 404) throw new RegistryNotFoundError("Registry entry was not found");
+      if (response.status === 429 || response.status >= 500) throw new RegistryUnavailableError(`Registry unavailable (${response.status})`);
+      if (!response.ok) throw new Error(`Registry rejected request (${response.status})`);
+      return await response.text();
+    } catch (error) {
+      if (error instanceof RegistryNotFoundError || (error instanceof Error && /rejected/.test(error.message))) throw error;
+      lastError = error;
+      if (attempt === 1) throw new RegistryUnavailableError(error instanceof Error && error.name === "AbortError" ? "Registry request timed out" : "Registry is temporarily unavailable");
+    } finally { clearTimeout(timeout); }
+  }
+  throw lastError;
+}
+
+function xmlValue(xml: string, name: string): string {
+  const match = xml.match(new RegExp(`<(?:[A-Za-z0-9_-]+:)?${name}[^>]*>([\\s\\S]*?)<\\/(?:[A-Za-z0-9_-]+:)?${name}>`, "i"));
+  return (match?.[1] ?? "").replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&quot;/g, "\"").replace(/&apos;/g, "'").replace(/&amp;/g, "&").trim();
+}
+
 async function fetchKrs(krs: string, fetcher: typeof fetch): Promise<{ snapshot: RegistrySnapshot; raw: unknown }> {
   for (const registry of ["P", "S"] as const) {
     try {
@@ -166,10 +248,16 @@ async function fetchKrs(krs: string, fetcher: typeof fetch): Promise<{ snapshot:
 }
 
 async function fetchCeidg(env: TimzyEnv, nip: string, fetcher: typeof fetch): Promise<{ snapshot: RegistrySnapshot; raw: unknown }> {
-  if (!env.CEIDG_API_TOKEN) throw new RegistryUnavailableError("CEIDG API token is not configured");
-  const base = (env.CEIDG_API_BASE_URL ?? "https://dane.biznes.gov.pl/api/ceidg/v3").replace(/\/$/, "");
-  const raw = await fetchJson(`${base}/firmy?nip=${encodeURIComponent(nip)}`, { headers: { authorization: `Bearer ${env.CEIDG_API_TOKEN}` } }, fetcher);
-  return { snapshot: mapCeidgResponse(raw, nip), raw };
+  if (env.CEIDG_API_TOKEN) {
+    const base = (env.CEIDG_API_BASE_URL ?? "https://dane.biznes.gov.pl/api/ceidg/v3").replace(/\/$/, "");
+    const raw = await fetchJson(`${base}/firmy?nip=${encodeURIComponent(nip)}`, { headers: { authorization: `Bearer ${env.CEIDG_API_TOKEN}` } }, fetcher);
+    return { snapshot: mapCeidgResponse(raw, nip), raw };
+  }
+  const base = (env.POLISH_VAT_API_BASE_URL ?? "https://wl-api.mf.gov.pl").replace(/\/$/, "");
+  const dateParts = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Warsaw", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date());
+  const date = Object.fromEntries(dateParts.map((part) => [part.type, part.value]));
+  const raw = await fetchJson(`${base}/api/search/nip/${encodeURIComponent(nip)}?date=${date.year}-${date.month}-${date.day}`, {}, fetcher);
+  return { snapshot: mapPolishVatResponse(raw, nip), raw };
 }
 
 async function fetchCompaniesHouse(env: TimzyEnv, number: string, fetcher: typeof fetch): Promise<{ snapshot: RegistrySnapshot; raw: unknown }> {
@@ -183,10 +271,19 @@ async function fetchCompaniesHouse(env: TimzyEnv, number: string, fetcher: typeo
   return { snapshot: mapCompaniesHouseResponse(profile, officers), raw: { profile, officers } };
 }
 
+async function fetchVies(env: TimzyEnv, country: string, vatNumber: string, fetcher: typeof fetch): Promise<{ snapshot: RegistrySnapshot; raw: unknown }> {
+  const countryCode = country === "GR" ? "EL" : country;
+  const endpoint = env.VIES_SOAP_URL ?? "https://ec.europa.eu/taxation_customs/vies/services/checkVatService";
+  const xml = await fetchText(endpoint, { method: "POST", headers: { "content-type": "text/xml; charset=utf-8" }, body: `<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:ec.europa.eu:taxud:vies:services:checkVat:types"><soapenv:Body><urn:checkVat><urn:countryCode>${countryCode}</urn:countryCode><urn:vatNumber>${vatNumber}</urn:vatNumber></urn:checkVat></soapenv:Body></soapenv:Envelope>` }, fetcher);
+  const raw = { countryCode: xmlValue(xml, "countryCode"), vatNumber: xmlValue(xml, "vatNumber") || vatNumber, requestDate: xmlValue(xml, "requestDate"), valid: xmlValue(xml, "valid").toLowerCase() === "true", name: xmlValue(xml, "name"), address: xmlValue(xml, "address") };
+  return { snapshot: mapViesResponse(raw, country, vatNumber), raw };
+}
+
 function adapterFor(input: VerifyInput, market: MarketCode): string {
   if (market === "PL" && input.country === "PL" && input.entityType === "PL_KRS") return "KRS";
   if (market === "PL" && input.country === "PL" && input.entityType === "PL_CEIDG") return "CEIDG";
   if (market === "UK" && input.country === "GB") return "COMPANIES_HOUSE";
+  if (market === "INTERNATIONAL" && input.entityType === "FOREIGN" && viesCountries.has(input.country)) return "EU_VIES";
   return "MANUAL";
 }
 
@@ -245,7 +342,12 @@ export async function verifyCompany(env: TimzyEnv, context: DraftContext, rawInp
   if (input.entityType === "PL_KRS") input.registrationNumber = normalizeKrs(input.registrationNumber);
   if (input.entityType === "PL_CEIDG") input.taxNumber = normalizeNip(input.taxNumber);
   if (input.entityType === "FOREIGN" && (!input.registrationNumber || !input.registryName)) throw new Error("Foreign registry name and registration number are required");
-  const adapter = adapterFor(input, market); const current = await upsertFetching(env, { ...context.order, market_code: market }, input, adapter);
+  const adapter = adapterFor(input, market);
+  if (adapter === "EU_VIES") {
+    const vatNumber = normalizeEuVatNumber(input.country, input.taxNumber || input.registrationNumber);
+    input.registrationNumber = vatNumber; input.taxNumber = vatNumber; input.registryName = "EU VIES";
+  } else if (adapter === "COMPANIES_HOUSE") input.registryName = "Companies House";
+  const current = await upsertFetching(env, { ...context.order, market_code: market }, input, adapter);
   if (adapter === "MANUAL") {
     if (!input.legalName || !input.registeredAddress || !input.city) throw new Error("Company name and registered address are required for manual verification");
     const snapshot: RegistrySnapshot = { legalName: input.legalName, registrationNumber: input.registrationNumber ?? "", taxNumber: input.taxNumber ?? "", regon: "", country: input.country,
@@ -259,12 +361,15 @@ export async function verifyCompany(env: TimzyEnv, context: DraftContext, rawInp
       .bind(crypto.randomUUID(), current.id, "FETCHING", "MANUAL_REVIEW_REQUIRED", "NO_TRUSTED_AUTOMATIC_ADAPTER", `Country ${input.country}`, "SYSTEM").run();
     return (await verificationForOrder(env.DB, context.order.id))!;
   }
-  const identifier = adapter === "CEIDG" ? input.taxNumber! : input.registrationNumber!; const cacheKey = `${adapter}:${identifier}`;
+  const identifier = adapter === "CEIDG" || adapter === "EU_VIES" ? input.taxNumber! : input.registrationNumber!; const cacheKey = `${adapter}:${input.country}:${identifier}`;
   try {
     const cached = await cachedRegistry(env, cacheKey); let snapshot: RegistrySnapshot; let rawEncrypted: string; let rawHash: string;
     if (cached) ({ snapshot, rawEncrypted, rawHash } = cached);
     else {
-      const fetched = adapter === "KRS" ? await fetchKrs(identifier, fetcher) : adapter === "CEIDG" ? await fetchCeidg(env, identifier, fetcher) : await fetchCompaniesHouse(env, identifier, fetcher);
+      const fetched = adapter === "KRS" ? await fetchKrs(identifier, fetcher)
+        : adapter === "CEIDG" ? await fetchCeidg(env, identifier, fetcher)
+          : adapter === "EU_VIES" ? await fetchVies(env, input.country, identifier, fetcher)
+            : await fetchCompaniesHouse(env, identifier, fetcher);
       snapshot = fetched.snapshot; const rawJson = canonicalJson(fetched.raw); rawHash = await sha256(rawJson); rawEncrypted = await encryptJson(fetched.raw, env.DATA_ENCRYPTION_KEY);
       await env.DB.prepare(`INSERT INTO registry_verification_cache (cache_key,adapter,mapped_snapshot_json,raw_snapshot_encrypted,raw_snapshot_hash,verification_source,source_retrieved_at,expires_at)
         VALUES (?,?,?,?,?,?,?,?) ON CONFLICT(cache_key) DO UPDATE SET mapped_snapshot_json=excluded.mapped_snapshot_json,raw_snapshot_encrypted=excluded.raw_snapshot_encrypted,

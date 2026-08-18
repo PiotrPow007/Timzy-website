@@ -20,8 +20,10 @@ export interface TimzyEnv {
   STRIPE_TEST_WEBHOOK_SECRET?: string;
   CEIDG_API_TOKEN?: string;
   CEIDG_API_BASE_URL?: string;
+  POLISH_VAT_API_BASE_URL?: string;
   COMPANIES_HOUSE_API_KEY?: string;
   COMPANIES_HOUSE_API_BASE_URL?: string;
+  VIES_SOAP_URL?: string;
   EMAIL_VERIFICATION_TEST_MODE?: string;
   SMTP_HOST?: string;
   SMTP_PORT?: string;

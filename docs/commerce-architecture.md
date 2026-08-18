@@ -55,11 +55,25 @@ Copy `.env.example` to a local ignored environment file and supply:
 - `CAPTCHA_SECRET`;
 - `STRIPE_PL_SECRET_KEY`, `STRIPE_PL_WEBHOOK_SECRET`;
 - `STRIPE_INTERNATIONAL_SECRET_KEY`, `STRIPE_INTERNATIONAL_WEBHOOK_SECRET`;
+- optional `CEIDG_API_TOKEN` for full Polish sole-trader data; without it the flow uses the official keyless Polish VAT register;
+- `COMPANIES_HOUSE_API_KEY` for United Kingdom company and officer data;
+- optional registry endpoint overrides listed in `.env.example`;
 - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`;
 - `CONTACT_TO`, `NEW_CONTRACT_NOTIFICATION_EMAIL`;
 - optional `PROVISIONING_WEBHOOK_URL` and `PROVISIONING_WEBHOOK_SECRET`.
 
 Do not commit `.env` files or paste secrets into catalogue fields, logs or source code.
+
+## Official company registry lookups
+
+Registry lookup is selected from the company country and identifier:
+
+- Polish KRS entities use the Ministry of Justice open KRS API;
+- Polish sole traders use CEIDG when its token is configured, otherwise the Ministry of Finance VAT register supplies the available name, NIP, REGON, VAT status and public address;
+- United Kingdom companies use Companies House and require an API key;
+- companies from EU member states supported by VIES use the European Commission service with the country's VAT identifier. Greece is translated to the VIES `EL` country code.
+
+VIES validates whether a VAT number is active for intra-EU transactions. Some national authorities, including Spain, do not return the legal name or address through VIES. In that case Timzy records the official validation, leaves unavailable fields editable and requires manual review. It must not invent or silently source missing government data from an unofficial provider.
 
 ## Stripe sandbox configuration
 
